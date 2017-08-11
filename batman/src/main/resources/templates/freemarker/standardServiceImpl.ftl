@@ -18,7 +18,7 @@ import java.util.*;
 import com.rayleigh.core.model.PageModel;
 import com.rayleigh.core.util.StringUtil;
 /**
-*
+* Generated Code By BatMan on ${.now},@Author-->山猫
 */
 public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 public Logger logger = LoggerFactory.getLogger(getClass());
@@ -216,3 +216,7 @@ private JdbcTemplate jdbcTemplate;
     }
     </#list>
 }
+
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/

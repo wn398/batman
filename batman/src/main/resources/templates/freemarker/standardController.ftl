@@ -25,7 +25,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 /**
-* Created by batman on ${.now}
+* Generated Code By BatMan on ${.now},@Author-->山猫
 */
 
 public class ${entity.name}Controller extends BaseController{
@@ -227,3 +227,8 @@ private  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_first}
 }
 
 }
+
+
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/

@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/
 @RequestMapping("/${entity.name ?uncap_first}Ctl")
 @Controller
 public class ${entity.name}ExtendController extends ${entity.name}Controller{
@@ -24,3 +27,6 @@ private ${entity.name}ExtendService ${entity.name ?uncap_first}ExtendService;
 
 
 }
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/

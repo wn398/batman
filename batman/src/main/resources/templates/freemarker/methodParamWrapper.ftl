@@ -5,7 +5,9 @@ import com.rayleigh.core.model.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.*;
-
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/
 public class ${entity.name}$${method.methodName ?cap_first}ParamWrapper{
 
 <#--分页参数-->
@@ -145,3 +147,8 @@ public void set${entityName}${fieldName ?cap_first}(${fieldType} ${entityName ?u
 
 
 }
+
+
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/

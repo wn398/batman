@@ -7,6 +7,10 @@ import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
     </#if>
 </#list>
 import java.util.*;
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/
+
 public class ${entity.name}Util {
 
 public static ${entity.name} copySimplePropertyIncludeNullValue(${entity.name} source,${entity.name} target){
@@ -76,3 +80,7 @@ public static ${entity.name} preventMutualRef(${entity.name} ${entity.name ?unca
 }
 
 }
+
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/

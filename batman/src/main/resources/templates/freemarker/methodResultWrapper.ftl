@@ -3,7 +3,9 @@ package ${project.packageName}.standard.methodModel;
 import java.util.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/
 public class ${entity.name}$${method.methodName ?cap_first}ResultWrapper{
 
 <#list method.searchResults as result>
@@ -66,3 +68,7 @@ public void set${entityName}${fieldName ?cap_first}(${fieldType} ${entityName ?u
 </#list>
 
 }
+
+/**
+* Generated Code By BatMan on ${.now},@Author-->山猫
+*/
