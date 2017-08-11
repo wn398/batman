@@ -1,0 +1,64 @@
+<link rel="stylesheet" th:href="@{/js/DataTables-1.10.15/media/css/dataTables.bootstrap.css}"/>
+<link rel="stylesheet" th:href="@{/js/data-tables/DT_bootstrap.css}"/>
+
+
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                      <div th:text="${project.name}+'-->实体列表'"/>
+                    <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <a href="javascript:;" class="fa fa-times"></a>
+             </span>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <div><button type="button" class="btn btn-success" th:onclick="|goAddEntities('${project.id}')|">&nbsp;&nbsp;&nbsp;新增实体&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                        <table class="display table table-bordered table-striped" id="entityTable" width="100%">
+                            <thead>
+                            <tr>
+                                <th>实体名称</th>
+                                <th>实体描述</th>
+                                <th>所属模块</th>
+                                <!--<th>关联数目</th>-->
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                                <th>版本号</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="entity:${project.entities}">
+                                    <td th:text="${entity.name}"></td>
+                                    <td th:text="${entity.description}"></td>
+                                    <td th:text="${entity.module.name}"></td>
+                                    <!--<td th:text="${#lists.size(entity.mainEntityRelationShips)}"></td>-->
+                                    <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd')}"></td>
+                                    <td th:text="${#dates.format(entity.updateDate, 'yyyy-MM-dd')}"></td>
+                                    <td th:text="${entity.version}"></td>
+                                    <td>
+                                        <a class="btn btn-success btn-xs" th:onclick="|showUpdate('${entity.id}',this,'${project.id}')|">更新</a>
+                                        <a class="btn btn-danger btn-xs" th:onclick="|deleteById('${entity.id}',this,'${project.id}')|">删除</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="|showAddRelation('${entity.id}',this,'${entity.module.id}','${project.id}')|">关联</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="|showMethodList('${entity.id}')|">方法服务</a>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--body wrapper end-->
+
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/data-tables/DT_bootstrap.js/}"></script>-->
+<script type="text/javascript" th:src="@{/pageJs/entities-list.js}"/>

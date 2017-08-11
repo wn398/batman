@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="project" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">修改项目信息</h3>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">项目名称</label>
+                            </td>
+                            <td>
+                                <input type="hidden" class="form-control" th:name="id" th:value="${project.id}">
+                                <input type="hidden" class="form-control" th:name="version" th:value="${project.version}">
+                                <input type="text" class="form-control" th:name="name" th:value="${project.name}" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label class="control-label">项目描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" th:value="${project.description}"  placeholder="文字">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">基本包名路径</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="packageName" th:value="${project.packageName}" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label for="inputPassword15" class="control-label">启动端口</label>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" th:name="port" id="inputPassword15" th:value="${project.port}" placeholder="数字">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="项目模块部署" onclick="addTr('moduleTable','demoTr')">点击为项目添加模块</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="moduleTable">
+                        <thead>
+                        <tr>
+                            <th>模块名字</th>
+                            <th>模块描述</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="module:${project.modules}">
+                                <td>
+                                    <input type="hidden" class="form-control" name="modules[][id]"  th:value="${module.id}">
+                                    <input type="hidden" class="form-control" name="modules[][createDate]"  th:value="${module.createDate}">
+                                    <input type="hidden" class="form-control" name="modules[][version]"  th:value="${module.version}">
+
+                                    <input type="text" class="form-control" name="modules[][name]"  th:value="${module.name}" placeholder="字母数字">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" name="modules[][description]"  th:value="${module.description}" placeholder="字母数字">
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteTr(\''+${module.id}+'\','+this+');'">删除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<div hidden="true" >
+    <table id="demoTr">
+        <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="modules[][name]"  placeholder="字母数字">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="modules[][description]"  placeholder="汉字">
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+</body>
+</html>
+
+<script type="text/javascript" th:src="@{/pageJs/project-update.js}"/>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="entities" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">新增实体信息</h3>
+                </header>
+                <input type="hidden" th:value="${project.id}" name="project[id]">
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">实体名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="name" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label class="control-label">实体描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" placeholder="文字">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">选择模块</label>
+                            </td>
+                            <td>
+                                <select name="module[id]" class="form-control">
+                                    <option th:each="module:${project.modules}" th:text="${module.name}" th:value="${module.id}"></option>
+                                </select>
+                            </td>
+                            <!--<td>-->
+                            <!--<label  class="control-label">启动端口</label>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                            <!--<input type="text" class="form-control" th:name="port"  th:value="8080" placeholder="数字">-->
+                            <!--</td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="实体属性" onclick="addTr('moduleTable','demoTr')">点击为表增加属性</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="moduleTable">
+                        <thead>
+                        <tr>
+                            <th>名字</th>
+                            <th>属性描述</th>
+                            <th>数据类型</th>
+                            <th>长度</th>
+                            <th>是否非空</th>
+                            <th>是否唯一</th>
+                            <th>是否索引</th>
+                            <th>参数验证</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<div hidden="true" >
+    <table id="demoTr">
+        <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="fields[][name]" required="required"  placeholder="字母数字下划线">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="fields[][description]" required="required"  placeholder="文字">
+            </td>
+            <td>
+                <select class="form-control" name="fields[][dataType]">
+                    <option th:value="String" th:text="字符串"></option>
+                    <option th:value="Integer" th:text="整数类型"></option>
+                    <option th:value="Double" th:text="小数类型"></option>
+                    <option th:value="Date" th:text="日期类型"></option>
+                    <option th:value="BigDecimal" th:text="BigDecimal"></option>
+                    <option th:value="Boolean" th:text="布尔类型"></option>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" name="fields[][size]"  placeholder="长度">
+            </td>
+            <td>
+                <select class="form-control" name="fields[][isNull]">
+                    <option th:value="false" th:text="否"></option>
+                    <option th:value="true" th:text="是"></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fields[][isUnique]">
+                    <option th:value="false" th:text="否"></option>
+                    <option th:value="true" th:text="是"></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fields[][isIndex]">
+                    <option th:value="false" th:text="否"></option>
+                    <option th:value="true" th:text="是"></option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="fields[][validMessage]"  placeholder="如@NotNull多个||分隔">
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+</body>
+</html>

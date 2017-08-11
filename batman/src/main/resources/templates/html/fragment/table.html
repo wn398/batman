@@ -1,0 +1,59 @@
+<!--dynamic table-->
+<!--<link th:href="@{/js/advanced-datatable/css/demo_page.css}" rel="stylesheet"/>-->
+<!--<link th:href="@{/js/advanced-datatable/css/demo_table.css}" rel="stylesheet"/>-->
+<!--<link rel="stylesheet" th:href="@{/js/DataTables-1.10.15/media/css/jquery.dataTables.css}"/>-->
+<link rel="stylesheet" th:href="@{/js/DataTables-1.10.15/media/css/dataTables.bootstrap.css}"/>
+<link rel="stylesheet" th:href="@{/js/data-tables/DT_bootstrap.css}"/>
+
+<div class="hidden" id="hidden_filter">
+    <!--把需要搜索的条件放到hidden里面，在table格式化完成的时候直接调用$.html()赋值，免去了在js拼接标签的麻烦-->
+    <div class="row" style="margin-right:0;">
+        <input type="text" name="name" class = "form-control input-small" placeholder = "请输入名字">
+        <input type="text" name="port" class = "form-control input-small" placeholder = "请输入端口" >
+        <button id="go_search" class="btn btn-default">搜索</button>
+    </div>
+
+</div>
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    项目列表
+                    <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <a href="javascript:;" class="fa fa-times"></a>
+             </span>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <div><button type="button" class="btn btn-success" onclick="test()">&nbsp;&nbsp;&nbsp;新增&nbsp;&nbsp;&nbsp;</button>
+                            <button type="button" class="btn btn-success" onclick="show()">&nbsp;&nbsp;&nbsp;显示&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                        <table class="display table table-bordered table-striped" id="projectTable" width="100%">
+                            <thead>
+                            <tr>
+
+                                <th>项目名称</th>
+                                <th>项目描述</th>
+                                <th>基本包路径</th>
+                                <th>启动端口</th>
+                                <th>操作</th>
+                                <th>删除</th>
+                            </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--body wrapper end-->
+
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/data-tables/DT_bootstrap.js/}"></script>-->
+<script type="text/javascript" th:src="@{/project-list.js}"/>

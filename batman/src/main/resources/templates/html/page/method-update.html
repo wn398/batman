@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="method" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">更新服务方法信息</h3>
+                </header>
+                <input type="hidden" th:value="${entity.Id}" name="entities[id]">
+                <input type="hidden" th:value="${method.id}" name="id">
+                <input type="hidden" th:value="${method.version}" name="version">
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">方法名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="methodName" placeholder="字母数字" th:value="${method.methodName}">
+                            </td>
+                            <td>
+                                <label class="control-label">方法描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" placeholder="文字" th:value="${method.description}">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="主对象" th:text="|主对象->${entity.description}(${entity.name})|"></button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table objTable">
+                        <thead>
+                        <tr>
+                            <th>属性名</th>
+                            <th>数据类型</th>
+                            <th>选择结果</th>
+                            <th>排序类型</th>
+                            <th>排序级别</th>
+                            <th>选择条件</th>
+                            <th>查询操作符</th>
+                            <th>优先级别</th>
+                            <th>逻辑操作符</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr th:each="map : ${mainMap}">
+                            <input type="hidden" th:if="${map.value.searchResult.id}" th:value="${map.value.searchResult.id}" name="searchResults[][id]">
+                            <input type="hidden" th:if="${map.value.searchCondition.id}" th:value="${map.value.searchCondition.id}" name="conditionList[][id]">
+
+                            <input type="hidden" th:if="${map.value.searchResult.id}" th:value="${map.value.searchResult.version}" name="searchResults[][version]">
+                            <input type="hidden" th:if="${map.value.searchCondition.id}" th:value="${map.value.searchCondition.version}" name="conditionList[][version]">
+
+                            <input type="hidden" th:value="|${map.key}|" name="searchResults[][fieldName]">
+                            <input type="hidden" th:value="|${map.key}|" name="conditionList[][fieldName]">
+
+                            <td th:text="|${map.value.entityName}->${map.value.fieldName}|"></td>
+                            <td th:text="${map.value.fieldDataType}"></td>
+                            <td><input th:type="checkbox" th:value="${map.value.fieldId}" name="searchResults[][field][id]" th:checked="${map.value.searchResult.fieldName eq map.key}"></td>
+                            <td>
+                                <select name="searchResults[][orderByType]" class="form-control">
+                                    <option th:value="desc" th:selected="${map.value.searchResult.orderByType eq 'desc'}">降序</option>
+                                    <option th:value="asc" th:selected="${map.value.searchResult.orderByType eq 'asc'}">升序</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" th:value="${map.value.searchResult.orderByNum}==null?0:${map.value.searchResult.orderByNum}" name="searchResults[][orderByNum]" class="form-control">
+                            </td>
+                            <td><input th:type="checkbox" th:value="${map.value.fieldId}" name="conditionList[][field][id]" th:checked="${map.value.searchCondition.fieldName eq map.key}"></td>
+                            <td>
+                                <select name="conditionList[][operation]" class="form-control">
+                                    <option th:value="Equal" th:selected="${map.value.searchCondition.operation?.toString() eq 'Equal' }">=</option>
+                                    <option th:value="NotEqual" th:selected="${map.value.searchCondition.operation?.toString() eq 'NotEqual' }">!=</option>
+                                    <option th:value="Like" th:text="like" th:selected="${map.value.searchCondition.operation?.toString() eq 'Like' }"></option>
+                                    <option th:value="GreaterThan"  th:selected="${map.value.searchCondition.operation?.toString() eq 'GreaterThan' }" > > </option>
+                                    <option th:value="LessThan"   th:selected="${map.value.searchCondition.operation?.toString() eq 'LessThan' }"> < </option>
+                                    <option th:value="GreaterThanOrEqualTo"   th:selected="${map.value.searchCondition.operation?.toString() eq 'GreaterThanOrEqualTo' }" > >= </option>
+                                    <option th:value="LessThanOrEqualTo"  th:selected="${map.value.searchCondition.operation?.toString() eq 'LessThanOrEqualTo' }" > <= </option>
+                                    <option th:value="Between" th:text="between"  th:selected="${map.value.searchCondition.operation?.toString() eq 'Between' }"></option>
+                                    <option th:value="In" th:text="in"  th:selected="${map.value.searchCondition.operation?.toString() eq 'In' }"></option>
+                                    <option th:value="IsNull" th:text="isNull"  th:selected="${map.value.searchCondition.operation?.toString() eq 'IsNull' }"></option>
+                                    <option th:value="IsNotNull" th:text="isNotNull"  th:selected="${map.value.searchCondition.operation?.toString() eq 'IsNotNull' }"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" th:if="${map.value.searchCondition.priority}" th:value="${map.value.searchCondition.priority}" name="conditionList[][priority]" class="form-control">
+                                <input type="number" th:unless="${map.value.searchCondition.priority}" th:value="0" name="conditionList[][priority]" class="form-control">
+                            </td>
+                            <td>
+                                <select name="conditionList[][logicOperation]" class="form-control">
+                                    <option th:value="|and|" th:selected="${map.value.searchCondition.logicOperation.toString() eq 'and'}">and</option>
+                                    <option th:value="|or|" th:selected="${map.value.searchCondition.logicOperation.toString() eq 'or'}">or</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <section th:each="otherMap:${otherMap}" class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="关联对象" th:text="|关联对象->(${otherMap.key})|"></button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table objTable">
+                        <thead>
+                        <tr>
+                            <th>属性名</th>
+                            <th>数据类型</th>
+                            <th>选择结果</th>
+                            <th>排序类型</th>
+                            <th>排序级别</th>
+                            <th>选择条件</th>
+                            <th>查询操作符</th>
+                            <th>优先级别</th>
+                            <th>逻辑操作符</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr th:each="subOtherMap:${otherMap.value}">
+                            <input type="hidden" th:if="${subOtherMap.value.searchResult.fieldName}" th:value="${subOtherMap.value.searchResult.id}" name="searchResults[][id]">
+                            <input type="hidden" th:if="${subOtherMap.value.searchCondition.fieldName}" th:value="${subOtherMap.value.searchCondition.id}" name="conditionList[][id]">
+
+                            <input type="hidden" th:if="${subOtherMap.value.searchResult.fieldName}" th:value="${subOtherMap.value.searchResult.version}" name="searchResults[][version]">
+                            <input type="hidden" th:if="${subOtherMap.value.searchCondition.fieldName}" th:value="${subOtherMap.value.searchCondition.version}" name="conditionList[][version]">
+
+                            <input type="hidden" th:value="|${subOtherMap.key}|" name="searchResults[][fieldName]">
+                            <input type="hidden" th:value="|${subOtherMap.key}|" name="conditionList[][fieldName]">
+
+                            <td th:text="|${subOtherMap.value.entityName}->${subOtherMap.value.fieldName}|" ></td>
+                            <td th:text="${subOtherMap.value.fieldDataType}" ></td>
+                            <td><input th:type="checkbox" th:value="${subOtherMap.value.fieldId}" th:checked="${subOtherMap.value.searchResult.fieldName eq subOtherMap.key}" name="searchResults[][field][id]" ></td>
+                            <td>
+                                <select name="searchResults[][orderByType]" class="form-control">
+                                    <option th:value="desc" th:selected="${subOtherMap.value.searchResult.orderByType eq 'desc'}">降序</option>
+                                    <option th:value="asc" th:selected="${subOtherMap.value.searchResult.orderByType eq 'asc'}">升序</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" th:value="${subOtherMap.value.searchResult.orderByNum}==null?0:${subOtherMap.value.searchResult.orderByNum}" name="searchResults[][orderByNum]" class="form-control">
+                            </td>
+                            <td><input th:type="checkbox" th:value="${subOtherMap.value.fieldId}" th:checked="${subOtherMap.value.searchCondition.fieldName eq subOtherMap.key}" name="conditionList[][field][id]" ></td>
+                            <td>
+                                <select name="conditionList[][operation]" class="form-control">
+                                    <option th:value="Equal" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'Equal'}">=</option>
+                                    <option th:value="NotEqual" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'NotEqual'}" >!=</option>
+                                    <option th:value="Like" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'Like'}" >like</option>
+                                    <option th:value="GreaterThan" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'GreaterThan'}" >></option>
+                                    <option th:value="LessThan" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'LessThan'}" ><</option>
+                                    <option th:value="GreaterThanOrEqualTo" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'GreaterThanOrEqualTo'}" >>=</option>
+                                    <option th:value="LessThanOrEqualTo" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'LessThanOrEqualTo'}" ><=</option>
+                                    <option th:value="Between" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'Between'}" >between</option>
+                                    <option th:value="In" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'In'}" >in</option>
+                                    <option th:value="IsNull" th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'IsNull'}" >isNull</option>
+                                    <option th:value="IsNotNull" th:text="isNotNull"  th:selected="${subOtherMap.value.searchCondition.operation?.toString() eq 'IsNotNull' }"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" th:if="${subOtherMap.value.searchCondition.priority}" th:value="${subOtherMap.value.searchCondition.priority}" name="conditionList[][priority]" class="form-control">
+                                <input type="number" th:unless="${subOtherMap.value.searchCondition.priority}" th:value="0" name="conditionList[][priority]" class="form-control">
+                            </td>
+                            <td>
+                                <select class="form-control" name="conditionList[][logicOperation]">
+                                    <option th:value="|and|" th:selected="${subOtherMap.value.searchCondition.logicOperation.toString() eq 'and'}" >and</option>
+                                    <option th:value="|or|" th:selected="${subOtherMap.value.searchCondition.logicOperation.toString() eq 'or'}" >or</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</form>
+
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+<script type="text/javascript" th:src="@{/pageJs/method-update.js}"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="entities" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">新增实体信息</h3>
+                </header>
+                <!--<input type="hidden" th:value="${project.id}" name="project[id]">-->
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">实体名称</label>
+                            </td>
+                            <td>
+                                <input type="hidden" class="form-control" th:name="id" th:value="${entities.id}">
+                                <input type="hidden" class="form-control" th:name="version" th:value="${entities.version}">
+                                <input type="hidden" class="form-control" th:name="project[id]" th:value="${entities.project.id}">
+                                <input type="text" class="form-control" th:name="name" th:value="${entities.name}" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label class="control-label">实体描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" th:value="${entities.description}" placeholder="文字">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">选择模块</label>
+                            </td>
+                            <td>
+                                <select name="module[id]" class="form-control">
+                                    <option th:each="module:${entities.project.modules}" th:text="${module.name}" th:value="${module.id}" th:if="${module.id eq entities.module.id}"  th:selected="selected"></option>
+                                    <option th:each="module:${entities.project.modules}" th:text="${module.name}" th:value="${module.id}" th:unless="${module.id eq entities.module.id}"></option>
+                                </select>
+                            </td>
+                            <!--<td>-->
+                            <!--<label  class="control-label">启动端口</label>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                            <!--<input type="text" class="form-control" th:name="port"  th:value="8080" placeholder="数字">-->
+                            <!--</td>-->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="实体属性" onclick="addTr('moduleTable','demoTr')">点击为表增加属性</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="moduleTable">
+                        <thead>
+                        <tr>
+                            <th>名字</th>
+                            <th>属性描述</th>
+                            <th>数据类型</th>
+                            <th>长度</th>
+                            <th>是否非空</th>
+                            <th>是否唯一</th>
+                            <th>是否索引</th>
+                            <th>参数验证</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                         <tr th:each="field:${entities.fields}">
+                            <td>
+                                <input type="hidden" class="form-control" name="fields[][id]" th:value="${field.id}" >
+                                <input type="hidden" class="form-control" name="fields[][version]" th:value="${field.version}" >
+                                <input type="text" class="form-control" name="fields[][name]" th:value="${field.name}"  placeholder="字母数字下划线">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][description]" th:value="${field.description}" placeholder="文字">
+                            </td>
+                            <td>
+                                <select class="form-control" name="fields[][dataType]">
+                                    <option th:value="String" th:text="字符串" th:if="${field.dataType.toString() eq 'String'}" th:selected="selected"></option>
+                                    <option th:value="Integer" th:text="整数类型" th:if="${field.dataType.toString() eq 'Integer'}" th:selected="selected"></option>
+                                    <option th:value="Double" th:text="小数类型" th:if="${ field.dataType.toString() eq 'Double'}" th:selected="selected"></option>
+                                    <option th:value="Date" th:text="日期类型" th:if="${field.dataType.toString() eq 'Date'}" th:selected="selected"></option>
+                                    <option th:value="BigDecimal" th:text="BigDecimal" th:if="${field.dataType.toString() eq 'BigDecimal'}" th:selected="selected"></option>
+                                    <option th:value="Boolean" th:text="布尔类型" th:if="${field.dataType.toString() eq 'Boolean'}" th:selected="selected"></option>
+
+                                    <option th:value="String" th:text="字符串" th:unless="${field.dataType eq 'String'}" ></option>
+                                    <option th:value="Integer" th:text="整数类型" th:unless="${field.dataType eq 'Integer'}" ></option>
+                                    <option th:value="Double" th:text="小数类型" th:unless="${ field.dataType eq 'Double'}" ></option>
+                                    <option th:value="Date" th:text="日期类型" th:unless="${field.dataType eq 'Date'}" ></option>
+                                    <option th:value="BigDecimal" th:text="BigDecimal" th:unless="${field.dataType eq 'BigDecimal'}" ></option>
+                                    <option th:value="Boolean" th:text="布尔类型" th:unless="${field.dataType eq 'Boolean'}" ></option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="fields[][size]" th:value="${field.size}" placeholder="长度">
+                            </td>
+                            <td>
+                                <select class="form-control" name="fields[][isNull]">
+                                    <option th:value="false" th:text="否" th:if="${field.isNull ==false}" th:selected="selected"></option>
+                                    <option th:value="true" th:text="是" th:if="${field.isNull == true}" th:selected="selected"></option>
+
+                                    <option th:value="false" th:text="否" th:unless="${field.isNull ==false}" ></option>
+                                    <option th:value="true" th:text="是" th:unless="${field.isNull == true}" ></option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" name="fields[][isUnique]">
+                                    <option th:value="false" th:text="否" th:if="${field.isUnique ==false}" th:selected="selected"></option>
+                                    <option th:value="true" th:text="是" th:if="${field.isUnique ==true}" th:selected="selected"></option>
+
+                                    <option th:value="false" th:text="否" th:unless="${field.isUnique ==false}"></option>
+                                    <option th:value="true" th:text="是" th:unless="${field.isUnique ==true}" ></option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" name="fields[][isIndex]" >
+                                    <option th:value="false" th:text="否" th:if="${field.isIndex ==false}" th:selected="selected"></option>
+                                    <option th:value="true" th:text="是" th:if="${field.isIndex ==true} " th:selected="selected" ></option>
+
+                                    <option th:value="false" th:text="否" th:unless="${field.isIndex ==false}" ></option>
+                                    <option th:value="true" th:text="是" th:unless="${field.isIndex ==true} "  ></option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][validMessage]" th:value="${field.validMessage}" placeholder="验证表达式">
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" th:onclick="|deleteRemoteTr('${field.id}',this)|">删除</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<div hidden="true" >
+    <table id="demoTr">
+        <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="fields[][name]"  placeholder="字母数字下划线">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="fields[][description]"  placeholder="文字">
+            </td>
+            <td>
+                <select class="form-control" name="fields[][dataType]">
+                    <option th:value="String" th:text="字符串"></option>
+                    <option th:value="Integer" th:text="整数类型"></option>
+                    <option th:value="Double" th:text="小数类型"></option>
+                    <option th:value="Date" th:text="日期类型"></option>
+                    <option th:value="BigDecimal" th:text="BigDecimal"></option>
+                    <option th:value="Boolean" th:text="布尔类型"></option>
+                </select>
+            </td>
+            <td>
+                <input type="number" class="form-control" name="fields[][size]"  placeholder="长度">
+            </td>
+            <td>
+                <select class="form-control" name="fields[][isNull]">
+                    <option th:value="false" th:text="否"></option>
+                    <option th:value="true" th:text="是"></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fields[][isUnique]">
+                    <option th:value="false" th:text="否"></option>
+                    <option th:value="true" th:text="是"></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fields[][isIndex]">
+                    <option th:value="false" th:text="否"></option>
+                    <option th:value="true" th:text="是"></option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="fields[][validMessage]"  placeholder="如@NotNull多个||分隔">
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+<script type="text/javascript" th:src="@{/pageJs/entities-update.js}"/>
+</body>
+</html>

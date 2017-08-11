@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+<link rel="stylesheet" th:href="@{/js/DataTables-1.10.15/media/css/dataTables.bootstrap.css}"/>
+<link rel="stylesheet" th:href="@{/js/data-tables/DT_bootstrap.css}"/>
+
+<body style="background: #E3E4E8">
+
+
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <label th:text="|${entity.description}(${entity.name}) 服务方法列表|"></label>
+                    <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <!--<a href="javascript:;" class="fa fa-times"></a>-->
+             </span>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <input type="hidden" id="entityId" th:value="${entity.id}">
+                        <div><button type="button" class="btn btn-success" th:onclick="|showAddMethod('${entity.id}')|">&nbsp;&nbsp;&nbsp;新增方法服务&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                        <table class="display table table-bordered table-striped" id="methodTable" width="100%">
+                            <thead>
+                            <tr>
+                                <th>方法名称</th>
+                                <th>方法描述</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                                <th>版本号</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--<tr th:each="method:${entity.methods}">-->
+                                <!--<td th:text="${method.methodName}"></td>-->
+                                <!--<td th:text="${method.description}"></td>-->
+                                <!--<td th:text="${method.createDate}"></td>-->
+                                <!--<td th:text="${method.updateDate}"></td>-->
+                                <!--<td th:text="${method.version}"></td>-->
+                                <!--<td>-->
+                                    <!--<a class="btn btn-success btn-xs" th:onclick="|showUpdate('${method.id}',this,'${entity.id}')|">更新</a>-->
+                                    <!--<a class="btn btn-danger btn-xs" th:onclick="|deleteById('${method.id}',this,'${entity.id}')|">删除</a>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--body wrapper end-->
+
+<script th:replace="fragment/script"></script>
+
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
+<script type="text/javascript" th:src="@{/pageJs/method-list.js}"></script>
+</body>
+</html>

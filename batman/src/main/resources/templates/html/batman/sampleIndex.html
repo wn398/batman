@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment/head"></head>
+
+<body class="sticky-header">
+
+<section>
+    <div th:replace="fragment/sampleLeftSide"></div>
+    <!-- left side end-->
+    
+    <!-- main content start-->
+    <div class="main-content" >
+        <div th:replace="fragment/sampleHeader"></div>
+
+
+        <!--body wrapper start-->
+            <div th:replace="fragment/sampleContent"></div>
+        <!--body wrapper end-->
+
+            <footer th:replace="fragment/footer"></footer>
+
+    </div>
+    <!-- main content end-->
+</section>
+
+
+<script th:replace="fragment/script"></script>
+
+
+</body>
+</html>

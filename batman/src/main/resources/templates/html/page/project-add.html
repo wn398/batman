@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="project" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">新增项目信息</h3>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">项目名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="name" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label class="control-label">项目描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" placeholder="文字">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">基本包名路径</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="packageName" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label  class="control-label">启动端口</label>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" th:name="port"  th:value="8080" placeholder="数字">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="项目模块部署" onclick="addTr('moduleTable','demoTr')">点击为项目添加模块</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="moduleTable">
+                        <thead>
+                        <tr>
+                            <th>模块名字</th>
+                            <th>模块描述</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<div hidden="true" >
+    <table id="demoTr">
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" name="modules[][name]"  placeholder="字母数字">
+                </td>
+                <td>
+                    <input type="text" class="form-control" name="modules[][description]"  placeholder="文字">
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+</body>
+</html>

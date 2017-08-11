@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="project" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="添加关联关系" onclick="addTr('relationTable','demoTr')">添加关联关系</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="relationTable">
+                        <thead>
+                        <tr>
+                            <th>左边实体</th>
+                            <th>映射关系</th>
+                            <th>右边实体</th>
+                            <th>是否级联删除</th>
+                            <th>是否级懒加载</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="relationShip:${relationShipList}">
+                                <td>
+                                    <input type="hidden" class="form-control" name="relationShip[][id]"  th:value="${relationShip.id}">
+                                    <input type="hidden" class="form-control" name="relationShip[][createDate]"  th:value="${relationShip.createDate}">
+                                    <input type="hidden" class="form-control" name="relationShip[][version]"  th:value="${relationShip.version}">
+                                    <select class="form-control" name="relationShip[][mainEntity][id]" readonly="true">
+                                        <option th:value="${relationShip.mainEntity.id}" th:text="${relationShip.mainEntity.name}"></option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="relationShip[][relationType]">
+                                        <option th:value="OneToMany" th:text="一对多" th:if="${relationShip.relationType.toString() eq 'OneToMany'}" th:selected="selected"></option>
+                                        <option th:value="OneToOne" th:text="一对一" th:if="${relationShip.relationType.toString() eq 'OneToOne'}" th:selected="selected"></option>
+                                        <option th:value="ManyToOne" th:text="多对一" th:if="${relationShip.relationType.toString() eq 'ManyToOne'}" th:selected="selected"></option>
+                                        <option th:value="ManyToMany" th:text="多对多" th:if="${relationShip.relationType.toString() eq 'ManyToMany'}" th:selected="selected"></option>
+
+                                        <option th:value="OneToMany" th:text="一对多" th:unless="${relationShip.relationType.toString() eq 'OneToMany'}" ></option>
+                                        <option th:value="OneToOne" th:text="一对一" th:unless="${relationShip.relationType.toString() eq 'OneToOne'}" ></option>
+                                        <option th:value="ManyToOne" th:text="多对一" th:unless="${relationShip.relationType.toString() eq 'ManyToOne'}" ></option>
+                                        <option th:value="ManyToMany" th:text="多对多" th:unless="${relationShip.relationType.toString() eq 'ManyToMany'}"></option>
+
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="relationShip[][otherEntity][id]" >
+                                        <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="${otherEntity.name}" th:if="${relationShip.otherEntity.id eq otherEntity.id}" th:selected="selected"></option>
+                                        <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="${otherEntity.name}" th:unless="${relationShip.otherEntity.id eq otherEntity.id}"></option>
+
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="relationShip[][isCascadeDelete]">
+                                        <option th:value="false" th:if="${relationShip.isCascadeDelete == false}" th:selected="selected">否</option>
+                                        <option th:value="true" th:if="${relationShip.isCascadeDelete == true}" th:selected="selected">是</option>
+
+                                        <option th:value="false" th:unless="${relationShip.isCascadeDelete == false}" >否</option>
+                                        <option th:value="true" th:unless="${relationShip.isCascadeDelete == true}" >是</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="relationShip[][isLazyFetch]">
+                                        <option th:value="false" th:if="${relationShip.isLazyFetch == false}" th:selected="selected">否</option>
+                                        <option th:value="true" th:if="${relationShip.isLazyFetch == true}" th:selected="selected">是</option>
+
+                                        <option th:value="false" th:unless="${relationShip.isLazyFetch == false}" >否</option>
+                                        <option th:value="true" th:unless="${relationShip.isLazyFetch == true}" >是</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-large" th:onclick="|javascript:deleteRemoteTr('${relationShip.id}','${relationShip.mainEntity.id}','${relationShip.otherEntity.id}',this);|">删除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<div hidden="true" >
+    <table id="demoTr">
+        <tbody>
+        <tr>
+            <td>
+                <select class="form-control" name="relationShip[][mainEntity][id]" readonly="true">
+                    <option th:value="${mainEntites.id}" th:text="${mainEntites.name}" ></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="relationShip[][relationType]">
+
+
+                    <option th:value="OneToMany" th:text="一对多"  ></option>
+                    <option th:value="OneToOne" th:text="一对一"  ></option>
+                    <option th:value="ManyToOne" th:text="多对一"  ></option>
+                    <option th:value="ManyToMany" th:text="多对多" ></option>
+
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="relationShip[][otherEntity][id]" >
+                    <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="${otherEntity.name}" ></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="relationShip[][isCascadeDelete]">
+
+
+                    <option th:value="false">否</option>
+                    <option th:value="true">是</option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="relationShip[][isLazyFetch]">
+
+                    <option th:value="true">是</option>
+                    <option th:value="false">否</option>
+
+                </select>
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+</body>
+</html>
+
+<script type="text/javascript" th:src="@{/pageJs/relationShip-list.js}"/>

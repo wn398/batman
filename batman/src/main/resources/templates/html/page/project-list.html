@@ -1,0 +1,46 @@
+<link rel="stylesheet" th:href="@{/js/DataTables-1.10.15/media/css/dataTables.bootstrap.css}"/>
+<link rel="stylesheet" th:href="@{/js/data-tables/DT_bootstrap.css}"/>
+
+
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    项目列表
+                    <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <a href="javascript:;" class="fa fa-times"></a>
+             </span>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <div><button type="button" class="btn btn-success" onclick="showAdd()">&nbsp;&nbsp;&nbsp;新增项目&nbsp;&nbsp;&nbsp;</button>
+                        </div>
+                        <table class="display table table-bordered table-striped" id="projectTable" width="100%">
+                            <thead>
+                            <tr>
+                                <th>项目名称</th>
+                                <th>项目描述</th>
+                                <th>基本包路径</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                                <th>版本号</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--body wrapper end-->
+
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/data-tables/DT_bootstrap.js/}"></script>-->
+<script type="text/javascript" th:src="@{/pageJs/project-list.js}"/>

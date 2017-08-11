@@ -1,0 +1,56 @@
+<link rel="stylesheet" th:href="@{/js/DataTables-1.10.15/media/css/dataTables.bootstrap.css}"/>
+<link rel="stylesheet" th:href="@{/js/data-tables/DT_bootstrap.css}"/>
+
+
+<!--body wrapper start-->
+<div class="wrapper">
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    项目列表
+                    <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <a href="javascript:;" class="fa fa-times"></a>
+             </span>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <table class="display table table-bordered table-striped" id="projectTableForCode" width="100%">
+                            <thead>
+                            <tr>
+                                <th>项目名称</th>
+                                <th>模块数</th>
+                                <th>实体数</th>
+                                <th>创建时间</th>
+                                <th>更新时间</th>
+                                <th>版本号</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="project:${projects}">
+                                    <td th:text="${project.name}"></td>
+                                    <td th:text="${#lists.size(project.modules)}"></td>
+                                    <td th:text="${#lists.size(project.entities)}"></td>
+                                    <td th:text="${project.createDate}"></td>
+                                    <td th:text="${project.updateDate}"></td>
+                                    <td th:text="${project.version}"></td>
+                                    <td>
+                                        <a class="btn btn-success btn-xs" th:href="@{'/codeGeneratorCtl/generateProject/'+${project.id}}">下载代码</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!--body wrapper end-->
+
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
+<script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/data-tables/DT_bootstrap.js/}"></script>-->
+<script type="text/javascript" th:src="@{/pageJs/project-list-for-code-generator.js}"/>

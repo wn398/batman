@@ -1,0 +1,142 @@
+<!-- left side start-->
+<div class="left-side sticky-left-side">
+
+    <!--logo and iconic logo start-->
+    <div class="logo">
+        <a th:href="@{/test}"><img th:src="@{/images/logo.png}" alt=""></a>
+    </div>
+
+    <div class="logo-icon text-center">
+        <a th:href="@{/test}"><img th:src="@{/images/logo_icon.png}" alt=""></a>
+    </div>
+    <!--logo and iconic logo end-->
+
+    <div class="left-side-inner">
+
+        <!-- visible to small devices only -->
+        <div class="visible-xs hidden-sm hidden-md hidden-lg">
+            <div class="media logged-user">
+                <img alt="" th:src="@{/images/photos/user-avatar.png}" class="media-object">
+                <div class="media-body">
+                    <h4><a href="#">John Doe</a></h4>
+                    <span>"Hello There..."</span>
+                </div>
+            </div>
+
+            <h5 class="left-nav-title">Account Information</h5>
+            <ul class="nav nav-pills nav-stacked custom-nav">
+                <li><a href="#"><i class="fa fa-user"></i> <span>Profile</span></a></li>
+                <li><a href="#"><i class="fa fa-cog"></i> <span>Settings</span></a></li>
+                <li><a href="#"><i class="fa fa-sign-out"></i> <span>Sign Out</span></a></li>
+            </ul>
+        </div>
+
+        <!--sidebar nav start-->
+        <ul class="nav nav-pills nav-stacked custom-nav">
+            <li class="menu-list nav-active"><a th:href="@{/test/index}"><i class="fa fa-home"></i> <span>Dashboard</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/index_alt}"> Dashboard 1</a></li>
+                    <li class="active"><a th:href="@{/index}"> Dashboard 2</a></li>
+                </ul>
+            </li>
+
+            <li class="menu-list"><a href=""><i class="fa fa-laptop"></i> <span>Layouts</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/blank_page}"> Blank Page</a></li>
+                    <li><a th:href="@{/test/boxed_view}"> Boxed Page</a></li>
+                    <li><a th:href="@{/test/leftmenu_collapsed_view}"> Sidebar Collapsed</a></li>
+                    <li><a th:href="@{/test/horizontal_menu}"> Horizontal Menu</a></li>
+
+                </ul>
+            </li>
+            <li class="menu-list"><a href=""><i class="fa fa-book"></i> <span>UI Elements</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/general}"> General</a></li>
+                    <li><a th:href="@{/test/buttons}"> Buttons</a></li>
+                    <li><a th:href="@{/test/tabs-accordions}"> Tabs & Accordions</a></li>
+                    <li><a th:href="@{/test/typography}"> Typography</a></li>
+                    <li><a th:href="@{/test/slider}"> Slider</a></li>
+                    <li><a th:href="@{/test/panels}"> Panels</a></li>
+                    <li><a th:href="@{/test/widgets}"> Widgets</a></li>
+                </ul>
+            </li>
+            <li class="menu-list"><a href=""><i class="fa fa-cogs"></i> <span>Components</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/grids}"> Grids</a></li>
+                    <li><a th:href="@{/test/gallery}"> Media Gallery</a></li>
+                    <li><a th:href="@{/test/calendar}"> Calendar</a></li>
+                    <li><a th:href="@{/test/tree_view}"> Tree View</a></li>
+                    <li><a th:href="@{/test/nestable}"> Nestable</a></li>
+
+                </ul>
+            </li>
+
+            <li><a th:href="@{/test/fontawesome}"><i class="fa fa-bullhorn"></i> <span>Fontawesome</span></a></li>
+
+            <li class="menu-list"><a href=""><i class="fa fa-envelope"></i> <span>Mail</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/mail}"> Inbox</a></li>
+                    <li><a th:href="@{/test/mail_compose}"> Compose Mail</a></li>
+                    <li><a th:href="@{/test/mail_view}"> View Mail</a></li>
+                </ul>
+            </li>
+
+            <li class="menu-list"><a href=""><i class="fa fa-tasks"></i> <span>Forms</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/form_layouts}"> Form Layouts</a></li>
+                    <li><a th:href="@{/test/form_advanced_components}"> Advanced Components</a></li>
+                    <li><a th:href="@{/test/form_wizard}"> Form Wizards</a></li>
+                    <li><a th:href="@{/test/form_validation}"> Form Validation</a></li>
+                    <li><a th:href="@{/test/editors}"> Editors</a></li>
+                    <li><a th:href="@{/test/inline_editors}"> Inline Editors</a></li>
+                    <li><a th:href="@{/test/pickers}"> Pickers</a></li>
+                    <li><a th:href="@{/test/dropzone}"> Dropzone</a></li>
+                </ul>
+            </li>
+            <li class="menu-list"><a href=""><i class="fa fa-bar-chart-o"></i> <span>Charts</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/flot_chart}"> Flot Charts</a></li>
+                    <li><a th:href="@{/test/morris}"> Morris Charts</a></li>
+                    <li><a th:href="@{/test/chartjs}"> Chartjs</a></li>
+                    <li><a th:href="@{/test/c3chart}"> C3 Charts</a></li>
+                </ul>
+            </li>
+            <li class="menu-list"><a href="#"><i class="fa fa-th-list"></i> <span>Data Tables</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/basic_table}"> Basic Table</a></li>
+                    <li><a th:href="@{/test/dynamic_table}"> Advanced Table</a></li>
+                    <li><a th:href="@{/test/responsive_table}"> Responsive Table</a></li>
+                    <li><a th:href="@{/test/editable_table}"> Edit Table</a></li>
+                </ul>
+            </li>
+
+            <li class="menu-list"><a href="#"><i class="fa fa-map-marker"></i> <span>Maps</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/google_map}"> Google Map</a></li>
+                    <li><a th:href="@{/test/vector_map}"> Vector Map</a></li>
+                </ul>
+            </li>
+            <li class="menu-list"><a href=""><i class="fa fa-file-text"></i> <span>Extra Pages</span></a>
+                <ul class="sub-menu-list">
+                    <li><a th:href="@{/test/profile}"> Profile</a></li>
+                    <li><a th:href="@{/test/invoice}"> Invoice</a></li>
+                    <li><a th:href="@{/test/pricing_table}"> Pricing Table</a></li>
+                    <li><a th:href="@{/test/timeline}"> Timeline</a></li>
+                    <li><a th:href="@{/test/blog_list}"> Blog List</a></li>
+                    <li><a th:href="@{/test/blog_details}"> Blog Details</a></li>
+                    <li><a th:href="@{/test/directory}"> Directory </a></li>
+                    <li><a th:href="@{/test/chat}"> Chat </a></li>
+                    <li><a th:href="@{/test/404}"> 404 Error</a></li>
+                    <li><a th:href="@{/test/500}"> 500 Error</a></li>
+                    <li><a th:href="@{/test/registration}"> Registration Page</a></li>
+                    <li><a th:href="@{/test/lock_screen}"> Lockscreen </a></li>
+                </ul>
+            </li>
+            <li><a th:href="@{/test/login}"><i class="fa fa-sign-in"></i> <span>Login Page</span></a></li>
+
+        </ul>
+        <!--sidebar nav end-->
+
+    </div>
+</div>
+<!-- left side end-->

@@ -1,0 +1,95 @@
+package com.rayleigh.batman.model;
+
+import com.rayleigh.core.annotation.FieldInfo;
+import com.rayleigh.core.enums.LogicOperation;
+import com.rayleigh.core.enums.Operation;
+import com.rayleigh.core.model.BaseModel;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "batman_search_condition")
+public class SearchCondition extends BaseModel{
+
+
+
+    @FieldInfo("优先级别")
+    @Column
+    private Integer priority = 0;
+
+    @FieldInfo("逻辑操作符")
+    @Enumerated(EnumType.STRING)
+    @Column
+    private LogicOperation logicOperation = LogicOperation.and;
+
+    @FieldInfo("属性")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "field_id")
+    private Field field;
+
+    //因为id,createDate,updateDate都是通过继承得到的，在属性里拿不到，所以要用此字段来表示，当然此时属性id就不存在，结果用（实体id_createDate类似表示）
+    @FieldInfo("属性名字,此属性只适用于id,createDate,updateDate")
+    @Column
+    @NotEmpty
+    private String fieldName;
+
+    @FieldInfo("操作符")
+    @Enumerated(EnumType.STRING)
+    @Column
+    @NotNull
+    private Operation operation;
+
+    @ManyToOne
+    @JoinColumn(name = "search_method_id")
+    private SearchMethod searchMethod;
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
+
+    public SearchMethod getSearchMethod() {
+        return searchMethod;
+    }
+
+    public void setSearchMethod(SearchMethod searchMethod) {
+        this.searchMethod = searchMethod;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public LogicOperation getLogicOperation() {
+        return logicOperation;
+    }
+
+    public void setLogicOperation(LogicOperation logicOperation) {
+        this.logicOperation = logicOperation;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+}
