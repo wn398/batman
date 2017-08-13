@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
-
+import java.util.stream.Collectors;
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */
@@ -225,6 +225,48 @@ private  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_first}
 </#list>
     return ${entity.name ?uncap_first}Result;
 }
+
+<#--处理实体之间的关系-->
+<#list entity.mainEntityRelationShips as relationShip>
+<#if relationShip.mainEntity.name == relationShip.otherEntity.name>
+
+<#else>
+    <#if relationShip.relationType == "OneToMany" || relationShip.relationType == "ManyToMany">
+    //增加与${relationShip.otherEntity.name}的关系
+    @ApiOperation(value = "关联${relationShip.otherEntity.name},只需要传入id即可")
+    @PostMapping("/add${relationShip.otherEntity.name}")
+    @ResponseBody
+    public ResultWrapper add${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+        String result = ${entity.name ?uncap_first}Service.add${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}List().parallelStream().map(it->it.getId()).collect(Collectors.toList()));
+        return getSuccessResult(result);
+    }
+    //解除与${relationShip.otherEntity.name}的关系
+    @ApiOperation(value = "解除关联${relationShip.otherEntity.name},只需要传入id即可")
+    @PostMapping("/remove${relationShip.otherEntity.name}")
+    @ResponseBody
+    public ResultWrapper remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+        String result = ${entity.name ?uncap_first}Service.remove${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}List().parallelStream().map(it->it.getId()).collect(Collectors.toList()));
+        return getSuccessResult(result);
+    }
+    <#elseif relationShip.relationType == "ManyToOne" ||relationShip.relationType == "OneToOne">
+    @ApiOperation(value = "设置${relationShip.otherEntity.name}关系,只需要传入id即可")
+    @PostMapping("/set${relationShip.otherEntity.name}")
+    @ResponseBody
+    public ResultWrapper set${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+        String result = ${entity.name ?uncap_first}Service.set${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}().getId());
+        return getSuccessResult(result);
+    }
+
+    @ApiOperation(value = "取消${relationShip.otherEntity.name}关系,只需要传入id即可")
+    @PostMapping("/remove${relationShip.otherEntity.name}")
+    @ResponseBody
+    public  ResultWrapper remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+        String result = ${entity.name ?uncap_first}Service.remove${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}().getId());
+        return getSuccessResult(result);
+    }
+    </#if>
+</#if>
+</#list>
 
 }
 

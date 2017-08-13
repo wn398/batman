@@ -44,6 +44,23 @@ public interface ${entity.name}Service extends BaseService{
     PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
 
     </#list>
+
+    <#--处理实体之间的关系-->
+    <#list entity.mainEntityRelationShips as relationShip>
+        <#if relationShip.mainEntity.name == relationShip.otherEntity.name>
+        <#else>
+            <#if relationShip.relationType == "OneToMany" || relationShip.relationType == "ManyToMany">
+     //增加与${relationShip.otherEntity.name}的关系
+    String add${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids);
+     //解除与${relationShip.otherEntity.name}的关系
+    String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids);
+            <#elseif relationShip.relationType == "ManyToOne" ||relationShip.relationType == "OneToOne">
+     //重新设置与${relationShip.otherEntity.name}的关系
+    String set${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2);
+    String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2);
+            </#if>
+        </#if>
+    </#list>
 }
 
 /**
