@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 
@@ -22,7 +23,7 @@ import java.util.Locale;
 //@JSONType(ignores={"logger"})
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class BaseModel {
+public class BaseModel implements Serializable {
 
     @Id
     @GeneratedValue(generator = "system-uuid")
