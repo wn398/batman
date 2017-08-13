@@ -5,6 +5,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by wangn20 on 2017/7/6.
  */
@@ -16,6 +18,23 @@ public class PagePathController {
     public String goBatman(){
         return "batman/batmanIndex";
     }
+    //注册页面
+    @RequestMapping(value = "/register")
+    public String goRegisterPage(){
+        return "batman/registration";
+    }
+    //登陆页面
+    @RequestMapping(value = "/login")
+    public String goLoginPage(){
+        return "batman/login";
+    }
+    //返回到登陆页面
+    @RequestMapping(value = "/goLogin")
+    public String goLogin(HttpServletRequest request){
+        request.getSession().removeAttribute("user");
+        return "batman/login";
+    }
+
     @RequestMapping("/test")
     public String goTest(){
         return "batman/sampleIndex";

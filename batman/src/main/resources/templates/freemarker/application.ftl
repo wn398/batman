@@ -2,6 +2,12 @@ spring.application.name=${module.name}
 server.port=${project.port}
 server.context-path=/api
 swagger.basePackage=${project.packageName}
+
+#jwt 过期时间
+jwt.expire.millisecond=600000
+#是否开启jwt
+jwt.enable=false
+jwt.exclude.urls=swagger-ui.html,webjars/springfox-swagger-ui,api-docs,/druid/,swagger-resources
 <#--
         String port = new Random().nextInt(9000)+8080+"";
         map.put("moduleName","testModel");
