@@ -32,6 +32,7 @@ public class GlobalExceptionHandler {
     //拦截请求参数验证不通过的请求，封装后返回友好的格式
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResultWrapper handleIOException(HttpServletRequest request, HttpServletResponse response, Model model, MethodArgumentNotValidException e) {
+        e.printStackTrace();
         //重新封装需要返回的错误信息
         ResultWrapper resultWrapper = new ResultWrapper();
         resultWrapper.setStatus(ResultStatus.NOT_VALID);
@@ -48,6 +49,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = TransactionSystemException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResultWrapper handleResException(TransactionSystemException e, HttpServletResponse response, HttpServletRequest request) {
+        e.printStackTrace();
         ResultWrapper resultWrapper = new ResultWrapper();
         //如果是验证导致的
         if (e.getRootCause() instanceof ConstraintViolationException) {
@@ -65,7 +67,7 @@ public class GlobalExceptionHandler {
             resultWrapper.setStatus(ResultStatus.EXCEPTION);
             StringBuilder sb = new StringBuilder(e.getMessage());
             for(StackTraceElement element:e.getStackTrace()){
-                sb.append(element.toString()).append("\\br");
+                sb.append(element.toString()).append(" <br> ");
             }
             resultWrapper.setExceptionMessage(sb.toString());
         }
@@ -73,14 +75,16 @@ public class GlobalExceptionHandler {
     }
 
     //所有异常
-    @ExceptionHandler( Exception.class)
-    public ResultWrapper runtimeExceptionHandler(RuntimeException excetion) {
+    @ExceptionHandler(value = {Exception.class,RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResultWrapper runtimeExceptionHandler(RuntimeException e) {
+        e.printStackTrace();
         ResultWrapper resultWrapper = new ResultWrapper();
         //设置状态异常
         resultWrapper.setStatus(ResultStatus.EXCEPTION);
-        StringBuilder sb = new StringBuilder(excetion.getMessage()).append("\\br");
-        for(StackTraceElement element:excetion.getStackTrace()){
-            sb.append(element.toString()).append("\\br");
+        StringBuilder sb = new StringBuilder(e.getMessage()).append(" <br> ");
+        for(StackTraceElement element:e.getStackTrace()){
+            sb.append(element.toString()).append(" <br> ");
         }
         resultWrapper.setExceptionMessage(sb.toString());
         return resultWrapper;

@@ -8,7 +8,9 @@ public enum ResultStatus {
     SUCCESS("success"),
     FAILURE("failure"),
     EXCEPTION("exception"),
-    NOT_VALID("not_valid");
+    NOT_VALID("not_valid"),
+    INVALID_TOKEN("invalid_token"),
+    EXPIRED_TOKEN("expired_token");
 
 
     ResultStatus(String status){

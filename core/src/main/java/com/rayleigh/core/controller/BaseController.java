@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * Created by wangn20 on 2017/6/29.
  */
-public abstract class BaseController<T extends BaseService,R extends BaseModel> {
+public abstract class BaseController {
     protected Logger logger= LoggerFactory.getLogger(getClass());
 
 
