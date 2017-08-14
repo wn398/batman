@@ -91,6 +91,12 @@ public class BuildProjectDirUtil {
         return new StringBuilder(standardJavaBasePackagePath).append("/methodModel").toString();
     }
 
+    //获取moduleRelation包路径
+    public static String getModuleRelationDirPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
+        String standardJavaBasePackagePath = getStandardJavaBasePackagePath(generatorBasePath,projectName,moduleName,basePackageName);
+        return new StringBuilder(standardJavaBasePackagePath).append("/modelRelation").toString();
+    }
+
     //获取extend基本路径
     public static String getExtendJavaBasePackagePath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
         String projectBasePath = getProjectBasePath(generatorBasePath,projectName);
@@ -163,6 +169,7 @@ public class BuildProjectDirUtil {
             File moduleServiceImpl = new File(moduleJavaBasePackage,"service/impl");
             File moduleUtil = new File(moduleJavaBasePackage,"util");
             File moduleMethodModel = new File(moduleJavaBasePackage,"methodModel");
+            File moduleRelation = new File(moduleJavaBasePackage,"modelRelation");
 
             boolean moduleControllerDir = moduleController.mkdirs();
             if(!moduleControllerDir){
@@ -191,6 +198,11 @@ public class BuildProjectDirUtil {
             boolean moduleMethodModelDir = moduleMethodModel.mkdirs();
             if(!moduleMethodModelDir){
                 logger.error(new StringBuilder("创建目录:").append(moduleMethodModel.getAbsolutePath()).append(" 失败").toString());
+            }
+
+            boolean moduleRelationDir = moduleRelation.mkdirs();
+            if(!moduleRelationDir){
+                logger.error(new StringBuilder("创建目录:").append(moduleRelation.getAbsolutePath()).append(" 失败").toString());
             }
 
             File testModuleJava = new File(moduleDir,"src/test/java");

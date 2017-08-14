@@ -101,6 +101,8 @@ public class CodeGeneratorController extends BaseController{
             File standardEntityUtil = new File(BuildProjectDirUtil.getStandardUtilPath(generatorBasePath, project.getName(), module.getName(),project.getPackageName()));
             //standard methodModel 方法的入参和结果模型目录
             File standardMethodModelPath = new File(BuildProjectDirUtil.getStandardMethodModel(generatorBasePath, project.getName(), module.getName(),project.getPackageName()));
+            //standard modelRelation 路径
+            File standardModelRelation = new File(BuildProjectDirUtil.getModuleRelationDirPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //extend Java根路径
             File extendJavaRootPath = new File(BuildProjectDirUtil.getExtendJavaBasePackagePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //extend repository根路径
@@ -132,6 +134,8 @@ public class CodeGeneratorController extends BaseController{
             generateServiceFile(standardServicePath,project,module,false);
             //生成方法的入参和结果类型 ---【2017-8-4】
             generateMethodWrapperFile(standardMethodModelPath,project,module);
+            //生成modelRelation文件
+            generateModuleRelationFile(standardModelRelation,project,module);
             //生成extendService文件
             generateServiceFile(extendServicePath,project,module,true);
             //生成standServiceImpl文件
@@ -307,6 +311,29 @@ public class CodeGeneratorController extends BaseController{
             logger.error(e.getMessage());
         }
 
+    }
+    //生成每个类关联关系包装文件，为获取实体时，findOneWithRelationObj
+    private void generateModuleRelationFile(File dir,Project project,Module module){
+        String templateFile = "modelRelationWrapper.ftl";
+        try {
+            Template modelRelationTemplate = configuration.getTemplate(templateFile);
+            for (Entities entities : module.getEntities()) {
+                    Map<String,Object> map = new HashMap();
+                    map.put("project", project);
+                    map.put("entity", entities);
+                    File modelRelationFile = new File(dir,entities.getName()+"$Relation.java");
+                    try(Writer writer = new OutputStreamWriter(new FileOutputStream(modelRelationFile),"utf-8");) {
+                        modelRelationTemplate.process(map, writer);
+                        writer.flush();
+                    }
+            }
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            logger.error("处理方法包装类失败");
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
     }
 
     //生成serviceImpl文件

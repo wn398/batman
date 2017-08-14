@@ -1,6 +1,7 @@
 package ${project.packageName}.standard.service.impl;
 <#--project,entity,constructSearchMethodUtil-->
 import ${project.packageName}.standard.model.*;
+import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
 import ${project.packageName}.standard.repository.${entity.name}Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,30 @@ private JdbcTemplate jdbcTemplate;
 
     public ${entity.name} findOne(String id){
         return   ${entity.name ?uncap_first}Repository.findOne(id);
+    }
+
+    public ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation){
+        ${entity.name} ${entity.name ?uncap_first} = ${entity.name ?uncap_first}Repository.findOne(${entity.name ?uncap_first}$Relation.getId());
+        <#list entity.mainEntityRelationShips as mainR>
+            <#if mainR.relationType == "OneToMany" || mainR.relationType == "ManyToMany">
+            if(${entity.name ?uncap_first}$Relation.get${mainR.otherEntity.name}List()){
+                <#if mainR.relationType == "OneToMany">
+                ${entity.name ?uncap_first}.get${mainR.otherEntity.name}List().parallelStream().forEach(it->it.set${entity.name}(null));
+                <#else>
+                ${entity.name ?uncap_first}.get${mainR.otherEntity.name}List().parallelStream().forEach(it->it.set${entity.name}List(null));
+                </#if>
+               }
+            <#else>
+            if(${entity.name ?uncap_first}$Relation.get${mainR.otherEntity.name}()){
+                <#if mainR.relationType =="OneToOne">
+                ${entity.name ?uncap_first}.get${mainR.otherEntity.name}().set${entity.name}(null);
+                <#else>
+                ${entity.name ?uncap_first}.get${mainR.otherEntity.name}().set${entity.name}List(null);
+                </#if>
+            }
+            </#if>
+        </#list>
+        return ${entity.name ?uncap_first};
     }
 
     public List<Object[]> listBySQL(String sql){

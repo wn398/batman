@@ -2,6 +2,7 @@ package ${project.packageName}.standard.service;
 
 import com.rayleigh.core.model.PageModel;
 import ${project.packageName}.standard.model.${entity.name};
+import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
 import com.rayleigh.core.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,8 @@ public interface ${entity.name}Service extends BaseService{
     List<${entity.name}> findByIds(List<String> ids);
 
     ${entity.name} findOne(String id);
+    //获取带关系的实体
+    ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
 
     List<Object[]> listBySQL(String sql);
 

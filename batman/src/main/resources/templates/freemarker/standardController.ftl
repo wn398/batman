@@ -7,6 +7,7 @@ import ${project.packageName}.standard.service.${relationShip.otherEntity.name}S
 import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util;
 </#list>
 import ${project.packageName}.standard.methodModel.*;
+import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
 import ${project.packageName}.standard.service.${entity.name}Service;
 import ${project.packageName}.standard.util.${entity.name}Util;
 import com.rayleigh.core.controller.BaseController;
@@ -54,6 +55,23 @@ public ResultWrapper saveOrUpdate(@RequestBody ${entity.name} ${entity.name ?unc
         return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
     }
 }
+
+@ApiOperation(value = "获取带有关系的数据，需要的关系指定true")
+@PostMapping("/findOneWithRelationObj")
+@ResponseBody
+public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation ${entity.name ?uncap_first}Relation){
+    try {
+        ${entity.name} ${entity.name ?uncap_first} = ${entity.name ?uncap_first}Service.findOneWithRelationObj(${entity.name ?uncap_first}Relation);
+        return getSuccessResult(${entity.name ?uncap_first});
+    }catch (Exception e){
+        e.printStackTrace();
+        return getFailureResultAndInfo(${entity.name ?uncap_first}Relation,e.getMessage());
+    }
+}
+
+
+
+
 
 @ApiOperation(value = "保存自己分配id的实体,忽略关联实体")
 @PostMapping("/saveWithAssignedId")
