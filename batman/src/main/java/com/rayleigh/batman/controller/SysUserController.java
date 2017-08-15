@@ -28,7 +28,7 @@ public class SysUserController extends BaseController {
         List<SysUser> list = sysUserService.findByNameAndPassword(sysUser.getName(),sysUser.getPassword());
 
         if(null !=list &&list.size()>0){
-            request.getSession().setAttribute("user",sysUser);
+            request.getSession().setAttribute("user",sysUser.getName());
             return  "/batman/batmanIndex";
         }else{
             return "/login";

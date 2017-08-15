@@ -21,8 +21,8 @@ import java.util.Date;
 public class JwtFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     //是否开启了jwt
-    @Value("${jwt.enable}")
-    private Boolean isEnable;
+    @Value("${jwt.enabled}")
+    private boolean isEnable;
     @Value("${jwt.secret.key}")
     private String base64Key;
     @Value("${jwt.exclude.urls}")

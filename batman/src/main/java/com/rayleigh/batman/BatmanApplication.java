@@ -5,17 +5,29 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.rayleigh.core.annotation.EnableCustomRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication(scanBasePackages = {"com.rayleigh"})
 @ServletComponentScan("com.rayleigh")
 @EnableCustomRepository
-public class BatmanApplication{
+public class BatmanApplication  extends SpringBootServletInitializer{
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(BatmanApplication.class);
+	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(BatmanApplication.class, args);
+		//SpringApplication.run(BatmanApplication.class, args);
+		new SpringApplicationBuilder(BatmanApplication.class)
+				.web(true)
+				.run(args);
+
 	}
 	//使用自定义的MappingJackson2HttpMessageConverter覆盖默认的实现,防止加载懒加载的实体
 	@Bean
