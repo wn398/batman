@@ -22,7 +22,8 @@ public class LoginFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        if(!uri.endsWith("/login")&&!uri.endsWith("/register")){
+        //if(!uri.endsWith("/login")&&!uri.endsWith("/register")){
+        if(!uri.endsWith("/login")){//关闭注册功能
             if(null ==request.getSession().getAttribute("user")){
                 //转发
                 request.getRequestDispatcher("/login").forward(request,response);

@@ -6,7 +6,9 @@ import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
 import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
 import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util;
 </#list>
+<#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
+</#if>
 import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
 import ${project.packageName}.standard.service.${entity.name}Service;
 import ${project.packageName}.standard.util.${entity.name}Util;

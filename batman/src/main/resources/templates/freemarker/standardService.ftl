@@ -8,8 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import java.util.*;
+<#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
-
+</#if>
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */

@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ${project.packageName}.standard.service.${entity.name}Service;
+<#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
+</#if>
 import javax.persistence.EntityManager;
 import javax.annotation.Resource;
 import javax.persistence.Query;
