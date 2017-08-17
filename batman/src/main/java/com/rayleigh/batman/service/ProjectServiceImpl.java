@@ -3,8 +3,7 @@ package com.rayleigh.batman.service;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.repository.ModuleRepository;
 import com.rayleigh.batman.repository.ProjectRepository;
-import com.rayleigh.batman.util.MapperUtil;
-import com.rayleigh.core.customQuery.CustomRepository;
+import com.rayleigh.core.util.BaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,16 +40,17 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project partUpdate(Project project) {
         //更新必须先查出来
-        Project dataBaseProject = projectRepository.findOne(project.getId());
+       // Project dataBaseProject = projectRepository.findOne(project.getId());
         //部分更新
-        MapperUtil.getModelMapper().updatePropertyForProject(project,dataBaseProject);
+        Project resultProject = (Project)BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(project);
+       // MapperUtil.getModelMapper().updatePropertyForProject(project,dataBaseProject);
        // dataBaseProject.getModules().parallelStream().forEach(module -> module.setProject(dataBaseProject));
-        projectRepository.save(dataBaseProject);
+        projectRepository.save(resultProject);
 
         //防止循环解析json
         //dataBaseProject.getModules().parallelStream().forEach(module -> module.setProject(null));
 
-        return dataBaseProject;
+        return resultProject;
 
     }
 
