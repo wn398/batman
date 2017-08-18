@@ -3,10 +3,9 @@ package com.rayleigh.batman.controller;
 import com.rayleigh.batman.model.SysUser;
 import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.core.controller.BaseController;
-import com.rayleigh.core.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,7 @@ public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
 
-    @RequestMapping("/login")
+    @PostMapping("/login")
     public String login(SysUser sysUser, HttpServletRequest request){
         List<SysUser> list = sysUserService.findByNameAndPassword(sysUser.getName(),sysUser.getPassword());
 

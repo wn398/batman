@@ -44,5 +44,10 @@ public class StringUtil {
             return "false";
         }
     }
+    //Date转化成字符串yyyy-MM-dd hh:mm:ss
+    public static String dateToString(Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        return simpleDateFormat.format(date);
+    }
 
 }
