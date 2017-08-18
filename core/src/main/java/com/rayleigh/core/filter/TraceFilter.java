@@ -51,11 +51,11 @@ public class TraceFilter implements Filter {
         AccessLog accessLog = new AccessLog();
         try {
             accessLog.setStart(System.currentTimeMillis());
-            httpServletResponse.addHeader("traceId", traceId);
-           // httpServletResponse.addHeader("user", user);
-            httpServletResponse.addHeader("ip", ip);
-            httpServletResponse.addHeader("path", path);
-            httpServletResponse.addHeader("method", method);
+//            httpServletResponse.addHeader("traceId", traceId);
+//           // httpServletResponse.addHeader("user", user);
+//            httpServletResponse.addHeader("ip", ip);
+//            httpServletResponse.addHeader("path", path);
+//            httpServletResponse.addHeader("method", method);
             chain.doFilter(httpServletRequest, httpServletResponse);
             accessLog.setSuccess("true");
             accessLog.setEnd(System.currentTimeMillis());
