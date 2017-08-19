@@ -43,22 +43,24 @@ public class EntityController extends BaseController{
         List<String> filedNames = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
         if(filedNames.size()>0)
         if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
-            return getFailureResultAndInfo(entities,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
+            return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
         }
+        entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
         List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
         for(String validationMessage:validationMessages){
-            String[] arrays = validationMessage.split("||");
-            for(int i=0;i<arrays.length;i++){
-                if(!arrays[i].contains("@")){
-                    return getFailureResultAndInfo(entities,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                String[] arrays = validationMessage.split("||");
+                for (int i = 0; i < arrays.length; i++) {
+                    if (!arrays[i].contains("@")) {
+                        return getFailureResultAndInfo(null,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                    }
                 }
-            }
+
         }
 
         Entities resultEntities = (Entities) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
 
         Entities entities1 = entityService.save(resultEntities);
-        //BaseModelUtil.preventMutualRef(entities1,new ArrayList());
+        BaseModelUtil.preventMutualRef(entities1,new ArrayList());
 
         return getSuccessResult(entities1);
     }
@@ -71,21 +73,24 @@ public class EntityController extends BaseController{
             List<String> filedNames = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
             if(filedNames.size()>0)
             if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
-                return getFailureResultAndInfo(entities,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
+                return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
             }
+            entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
             List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
             for(String validationMessage:validationMessages){
-                String[] arrays = validationMessage.split("||");
-                for(int i=0;i<arrays.length;i++){
-                    if(!arrays[i].contains("@")){
-                        return getFailureResultAndInfo(entities,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                if(!StringUtil.isEmpty(validationMessage)) {
+                    String[] arrays = validationMessage.split("||");
+                    for (int i = 0; i < arrays.length; i++) {
+                        if (!arrays[i].contains("@")) {
+                            return getFailureResultAndInfo(null,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                        }
                     }
                 }
             }
 
             Entities entities1 = entityService.partUpdate(entities);
             //entities1 = preventCirculation(entities1);
-           // BaseModelUtil.preventMutualRef(entities1,new ArrayList());
+            BaseModelUtil.preventMutualRef(entities1,new ArrayList());
             return getSuccessResult(entities1);
         }else{
             return getFailureResultAndInfo(entities,"id不能空!");

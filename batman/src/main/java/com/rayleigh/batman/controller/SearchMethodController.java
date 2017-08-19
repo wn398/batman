@@ -79,7 +79,7 @@ public class SearchMethodController extends BaseController {
             searchMethod.setSearchResults(realResultList);
             SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
-           // BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
+            BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
             return getSuccessResult(searchMethod1);
         } else {
             return getFailureResultAndInfo("", "传入对象为空");
@@ -311,7 +311,7 @@ public class SearchMethodController extends BaseController {
             searchMethod.setSearchResults(realResultList);
             SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
-            //BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
+            BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
             return getSuccessResult(searchMethod1);
         } else {
             return getFailureResultAndInfo("", "传入对象为空");
