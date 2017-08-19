@@ -42,7 +42,8 @@ $(document).ready(function () {
             {
                 "data": function (e) {//这里给最后一列返回一个操作列表 e是得到的json数组中的一个item ，可以用于控制标签的属性。
                     return '<a class="btn btn-success btn-xs" onclick=showUpdate("'+e.id+'",this)>更新</a>'+'&nbsp;&nbsp;'
-                        +'<a  class="btn btn-danger btn-xs" onclick=deleteById("'+e.id+'",this)>删除</a>';
+                        +'<a  class="btn btn-danger btn-xs" onclick=deleteById("'+e.id+'",this)>删除</a>'+'&nbsp;&nbsp;'
+                        +'<a class="btn btn-info btn-xs" href='+getRootPath()+'/projectCtl/goAllEntity/'+e.id+'>实体列表</a>';
                 }
             }
         ],

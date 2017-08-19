@@ -15,10 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by wangn20 on 2017/6/13.
@@ -29,17 +29,50 @@ public class ProjectController extends BaseController{
     @Autowired
     private ProjectService projectService;
 
+    @GetMapping(value = "/goAllEntity/{projectId}")
+    public String goAllEntity(@PathVariable("projectId") String projectId,Model model){
+        Project project = projectService.findOne(projectId);
+        model.addAttribute("project",project);
+        return "/page/project-all-entities";
+    }
 
     @PostMapping(value = "/doAdd")
     @ResponseBody
     public ResultWrapper doAdd(@Valid @RequestBody Project project){
+        //必须至少含有一个模块
+        if(project.getModules().size()==0){
+            return getFailureResultAndInfo(null,"请至少增加一个模块!");
+        }
+        //检查model名字不能重复，并且不能等于projectName
+        List<String> modelNames = project.getModules().parallelStream().map(module -> module.getName()).collect(Collectors.toList());
+        Set<String> modelNameSet = new HashSet<>();
+        for(String name:modelNames){
+            if(StringUtil.isEmpty(name)){
+                return getFailureResultAndInfo(null,"模块名不能为空!");
+            }else{
+                if(name.equalsIgnoreCase(project.getName())){
+                    return getFailureResultAndInfo(null,"模块名和项目名不能一样!");
+                }
+                modelNameSet.add(name);
+            }
+        }
+        if(modelNames.size() !=modelNameSet.size()){
+            return getFailureResultAndInfo(null,"模块名不能重复");
+        }
         project = projectService.save(project);
         preventCirculation(project);
         return getSuccessResult(project);
     }
-
-
-
+    //获取所有模块名字
+    @RequestMapping(value = "/getModelNames/{projectId}")
+    public void getModelNames(@PathVariable("projectId") String projectId, HttpServletResponse httpResponse)throws Exception{
+        Project project = projectService.findOne(projectId);
+        String modelNames = project.getModules().parallelStream().map(module -> module.getName()).collect(Collectors.toList()).parallelStream().collect(Collectors.joining(":"));
+        httpResponse.setCharacterEncoding("UTF-8");
+        httpResponse.setContentType("application/json; charset=utf-8");
+        httpResponse.getWriter().write(modelNames);
+        return;
+    }
 
     @DeleteMapping(value = "/doDelete")
     @ResponseBody
@@ -85,6 +118,27 @@ public class ProjectController extends BaseController{
     @ResponseBody
     public ResultWrapper partUpdate(@Valid @RequestBody Project project){
         if(null!=project&&!StringUtil.isEmpty(project.getId())){
+            //必须至少含有一个模块
+            if(project.getModules().size()==0){
+                return getFailureResultAndInfo(null,"请至少增加一个模块!");
+            }
+            //检查model名字不能重复，并且不能等于projectName
+            List<String> modelNames = project.getModules().parallelStream().map(module -> module.getName()).collect(Collectors.toList());
+            Set<String> modelNameSet = new HashSet<>();
+            for(String name:modelNames){
+                if(StringUtil.isEmpty(name)){
+                    return getFailureResultAndInfo(null,"模块名不能为空!");
+                }else{
+                    if(name.equalsIgnoreCase(project.getName())){
+                        return getFailureResultAndInfo(null,"模块名和项目名不能一样!");
+                    }
+                    modelNameSet.add(name);
+                }
+            }
+            if(modelNames.size() !=modelNameSet.size()){
+                return getFailureResultAndInfo(null,"模块名不能重复");
+            }
+
             Project project1 =projectService.partUpdate(project);
             project1 = preventCirculation(project1);
             return getSuccessResult(project1);
@@ -118,17 +172,6 @@ public class ProjectController extends BaseController{
         return pageModel;
     }
 
-    @RequestMapping("/test")
-    @ResponseBody
-    public String test(){
-        projectService.testListSql();
-        return "success";
-    }
-
-    @GetMapping("/test2")
-    public int testError(){
-        return 9 / 0;  // 除 0异常
-    }
 
     @RequestMapping("/goEntitiesList/{id}")
     public String goEntityList(@PathVariable String id,Model model){

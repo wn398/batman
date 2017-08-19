@@ -45,7 +45,65 @@ public class CodeGeneratorController extends BaseController{
         return "/page/project-list-for-code-generator";
     }
 
-    //生成代码
+    //生成standard部分代码
+    @RequestMapping("/generateProjectStandard/{projectId}")
+    public void generatorByProjectStandard(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId) throws IOException {
+        String realPath = request.getServletContext().getRealPath("/");
+        //生成的每个项目根据时间生成对应目录
+        String basePath = new StringBuilder("/").append(System.currentTimeMillis()).append("_").append(projectId).toString();
+        String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
+
+        Project project = projectService.findOne(projectId);
+
+        generatorProjectStandard(generatorBasePath, project);
+
+        File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
+        File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("standard").append(".zip").toString());
+        FileCompressUtil.compress(sourceDir,targetFile);
+
+        String fileName=new String(new StringBuilder(project.getName()).append("standard").append(".zip").toString().getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
+        response.reset();
+        response.addHeader("Content-Length", "" + targetFile.length());
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        try(OutputStream outputStream =response.getOutputStream();InputStream in = new FileInputStream(targetFile);){
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf, 0, 1024)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+        }
+    }
+
+    @RequestMapping("/generateProjectExtend/{projectId}")
+    public void generatorByProjectExtend(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId) throws IOException {
+        String realPath = request.getServletContext().getRealPath("/");
+        //生成的每个项目根据时间生成对应目录
+        String basePath = new StringBuilder("/").append(System.currentTimeMillis()).append("_").append(projectId).toString();
+        String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
+
+        Project project = projectService.findOne(projectId);
+
+        generatorProjectExtend(generatorBasePath, project);
+
+        File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
+        File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("extend").append(".zip").toString());
+        FileCompressUtil.compress(sourceDir,targetFile);
+
+        String fileName=new String(new StringBuilder(project.getName()).append("extend").append(".zip").toString().getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
+        response.reset();
+        response.addHeader("Content-Length", "" + targetFile.length());
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        try(OutputStream outputStream =response.getOutputStream();InputStream in = new FileInputStream(targetFile);){
+            int len = 0;
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf, 0, 1024)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+        }
+    }
+    //生成项目全部代码
     @RequestMapping("/generateProject/{projectId}")
     public void generatorByProject(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId) throws IOException {
         String realPath = request.getServletContext().getRealPath("/");
@@ -74,13 +132,87 @@ public class CodeGeneratorController extends BaseController{
             }
         }
     }
-    //生成项目
+    //生成standard部分代码
+    private void generatorProjectStandard(String generatorBasePath, Project project) {
+        BuildProjectDirUtil.createDirForProjectStandard(generatorBasePath,project);
+        for(Module module:project.getModules()) {
+            //获取模块根路径，用于pom文件
+            File moduleRootPath = new File(BuildProjectDirUtil.getModuleBasePath(generatorBasePath,project.getName(),module.getName()));
+            //standard Model根路径
+            File standardModelPath = new File(BuildProjectDirUtil.getStandardModelPath(generatorBasePath, project.getName(),module.getName(),project.getPackageName()));
+            //standard Repository根路径
+            File standardRepositoryPath = new File(BuildProjectDirUtil.getStandardRepositoryPath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
+            //standard Java根路径
+            File standardJavaRootPath = new File(BuildProjectDirUtil.getStandardJavaBasePackagePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            // standard Service根路径
+            File standardServicePath = new File(BuildProjectDirUtil.getStandardServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //standard Controller根路径
+            File standardControllerPath = new File(BuildProjectDirUtil.getStandardControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //standard资源根路径
+            File resourceRootPath = new File(BuildProjectDirUtil.getStandardModuleResourcePath(generatorBasePath, project.getName(), module.getName()));
+            //standard util路径
+            File standardEntityUtil = new File(BuildProjectDirUtil.getStandardUtilPath(generatorBasePath, project.getName(), module.getName(),project.getPackageName()));
+            //standard methodModel 方法的入参和结果模型目录
+            File standardMethodModelPath = new File(BuildProjectDirUtil.getStandardMethodModel(generatorBasePath, project.getName(), module.getName(),project.getPackageName()));
+            //standard modelRelation 路径
+            File standardModelRelation = new File(BuildProjectDirUtil.getModuleRelationDirPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //standard serviceImpl路径
+            File standardServiceImplPath = new File(BuildProjectDirUtil.getStandardServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+
+             //生成entity文件
+            generateModelFile(standardModelPath,project,module);
+            //生成standRepository文件
+            generateRepositoryFile(standardRepositoryPath,project,module,false);
+            //生成standService文件
+            generateServiceFile(standardServicePath,project,module,false);
+            //生成方法的入参和结果类型 ---【2017-8-4】
+            generateMethodWrapperFile(standardMethodModelPath,project,module);
+            //生成modelRelation文件
+            generateModuleRelationFile(standardModelRelation,project,module);
+            //生成standServiceImpl文件
+            generateServiceImplFile(standardServiceImplPath,project,module,false);
+            //生成standController文件
+            generateControllerFile(standardControllerPath,project,module,false);
+            //生成standardEntityUtil文件
+            generateStandardUtilFile(standardEntityUtil,project,module,false);
+        }
+    }
+    //生成项目extend部分代码文件
+    private void generatorProjectExtend(String generatorBasePath, Project project) {
+        BuildProjectDirUtil.createDirForProjectExtend(generatorBasePath,project);
+        for(Module module:project.getModules()) {
+            //extend Java根路径
+            File extendJavaRootPath = new File(BuildProjectDirUtil.getExtendJavaBasePackagePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //extend repository根路径
+            File extendRepositoryPath = new File(BuildProjectDirUtil.getExtendRepositoryPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //extend service根路径
+            File extendServicePath = new File(BuildProjectDirUtil.getExtendServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //extend controller根路径
+            File extendControllerPath = new File(BuildProjectDirUtil.getExtendControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //extend serviceImpl路径
+            File extendServiceImplPath = new File(BuildProjectDirUtil.getExtendServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+
+            //生成extendRepository文件
+            generateRepositoryFile(extendRepositoryPath,project,module,true);
+            //生成extendService文件
+            generateServiceFile(extendServicePath,project,module,true);
+            //生成extendServiceImpl文件
+            generateServiceImplFile(extendServiceImplPath,project,module,true);
+            //生成extendController文件
+            generateControllerFile(extendControllerPath,project,module,true);
+        }
+    }
+    //生成项目全部
     private void generatorProject(String generatorBasePath, Project project) {
         BuildProjectDirUtil.createDirForProject(generatorBasePath,project);
         //项目根路径
         File projectRoot = new File(BuildProjectDirUtil.getProjectBasePath(generatorBasePath,project.getName()));
         //生成项目pom文件
         generatorProjectPomFile(projectRoot,project);
+        //生成update.sh文件
+        generatorUpdateFile(projectRoot,project);
+        //生成git .ignore文件
+        generatorIgnoreFile(projectRoot,project);
 
         for(Module module:project.getModules()) {
             //获取模块根路径，用于pom文件
@@ -187,7 +319,42 @@ public class CodeGeneratorController extends BaseController{
             logger.error("获取projectPom.ftl模板失败");
         }
     }
-    //生成POM文件
+
+    //生成update.sh文件，更新代码脚本文件
+    private void generatorUpdateFile(File projectRootDir, Project project) {
+        try {
+            Template template = configuration.getTemplate("updateScript.ftl");
+            Map<String, Project> map = new HashMap<>();
+            map.put("project",project);
+            File pomFile = new File(projectRootDir,"update.sh");
+
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取updateScript.ftl模板失败");
+        }
+    }
+
+    private void generatorIgnoreFile(File projectRootDir, Project project) {
+        try {
+            Template template = configuration.getTemplate("gitIgnore.ftl");
+            Map<String, Project> map = new HashMap<>();
+            map.put("project",project);
+            File pomFile = new File(projectRootDir,".gitignore");
+
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取gitIgnore.ftl模板失败");
+        }
+    }
+    //生成模块POM文件
     private void generatePOMFile(File dir,Project project,Module module){
             try {
                 Template template = configuration.getTemplate("modulePom.ftl");
