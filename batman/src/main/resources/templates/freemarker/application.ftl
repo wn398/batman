@@ -17,20 +17,20 @@ jwt.exclude.urls=swagger-ui.html,webjars/springfox-swagger-ui,api-docs,/druid/,s
 spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
 spring.datasource.name=main
 #Pgsql
-#spring.datasource.url = jdbc:postgresql://localhost:5432/${module.name}
-#spring.datasource.username = postgres
-#spring.datasource.password = 541998
-#spring.datasource.driverClassName =org.postgresql.Driver
-#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
+spring.datasource.url = jdbc:postgresql://localhost:5432/${module.name}
+spring.datasource.username = postgres
+spring.datasource.password = 541998
+spring.datasource.driverClassName =org.postgresql.Driver
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
 
 #MYSQL
-spring.jpa.database=mysql
-spring.datasource.url = jdbc:mysql://localhost:3306/${module.name}?characterEncoding=UTF-8
-spring.datasource.username=root
-spring.datasource.password=root
-spring.datasource.driverClassName=com.mysql.jdbc.Driver
-spring.jpa.hibernate.naming-strategy = org.hibernate.cfg.ImprovedNamingStrategy
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+#spring.jpa.database=mysql
+#spring.datasource.url = jdbc:mysql://localhost:3306/${module.name}?characterEncoding=UTF-8
+#spring.datasource.username=root
+#spring.datasource.password=root
+#spring.datasource.driverClassName=com.mysql.jdbc.Driver
+#spring.jpa.hibernate.naming-strategy = org.hibernate.cfg.ImprovedNamingStrategy
+#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
 
 spring.jpa.open-in-view=true
 
