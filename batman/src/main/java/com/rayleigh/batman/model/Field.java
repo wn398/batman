@@ -31,6 +31,10 @@ public class Field extends BaseModel{
     @Column
     private Integer size;
 
+    @FieldInfo("默认值")
+    @Column
+    private String defaultValue;
+
     @FieldInfo("是否非空")
     @Column(length = 1)
     private boolean isNull = true;
@@ -143,5 +147,13 @@ public class Field extends BaseModel{
 
     public void setResultList(List<SearchResult> resultList) {
         this.resultList = resultList;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 }

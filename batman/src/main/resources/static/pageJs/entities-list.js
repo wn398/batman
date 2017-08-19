@@ -121,7 +121,7 @@ function save(index,url,data,projectId){
             }
         },
         error: function (msg) {
-            layerFailMsg("更新失败!")
+            alert("保存失败!"+msg.responseText);
         }
     });
 }
@@ -174,7 +174,7 @@ function doUpdate(index,url,data,projectId){
             }
         },
         error: function (msg) {
-            layerFailMsg("更新失败")
+            alert("更新失败"+msg.responseText);
         }
     });
 }
@@ -194,6 +194,7 @@ function doDelete(url,data){
         },
         error: function (msg) {
             //alert("errror");
+            alert("出错了:"+msg.responseText);
         }
     });
 }
@@ -223,7 +224,7 @@ function deleteById(id, obj,projectId) {
                     });
                 },
                 error: function (msg) {
-                    alert("errror");
+                    alert("出错了:"+msg.responseText)
                 }
             });
 
@@ -283,7 +284,7 @@ function saveRelationShips(index,url,data,projectId) {
             }
         },
         error: function (msg) {
-            showInfo("保存或更新失败")
+            alert("保存或更新失败"+msg.responseText);
         }
     });
 }

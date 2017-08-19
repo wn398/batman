@@ -49,5 +49,15 @@ public class StringUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         return simpleDateFormat.format(date);
     }
+    //字符串yyyy-MM-dd hh:mm:ss 转化成Date类型
+    public static Date stringToDate(String dateString){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            return simpleDateFormat.parse(dateString);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

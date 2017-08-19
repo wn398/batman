@@ -68,7 +68,8 @@
                             <th>属性描述</th>
                             <th>数据类型</th>
                             <th>长度</th>
-                            <th>是否非空</th>
+                            <th>默认值</th>
+                            <th>是否空</th>
                             <th>是否唯一</th>
                             <th>是否索引</th>
                             <th>参数验证</th>
@@ -103,7 +104,10 @@
                                 </select>
                             </td>
                             <td>
-                                <input type="number" class="form-control" name="fields[][size]" th:value="${field.size}" placeholder="长度">
+                                <input type="number" class="form-control" name="fields[][size]" th:value="${field.size}" placeholder="长度" th:title="|不设置默认映射255,本长度设置只对字符串类型起作用,设成text类型需要大于65535|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][defaultValue]" th:value="${field.defaultValue}" placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|">
                             </td>
                             <td>
                                 <select class="form-control" name="fields[][isNull]">

@@ -125,7 +125,7 @@ function saveMethod(index,url,data,entityId) {
             }
         },
         error: function (msg) {
-            layerFailMsg("保存失败!"+msg.responseText)
+            alert("保存失败!"+msg.responseText)
         }
         // error: function(XMLHttpRequest, textStatus, errorThrown) {
         //     alert(XMLHttpRequest.status);
@@ -161,7 +161,7 @@ function deleteById(methodId,obj,entityId) {
                     });
                 },
                 error: function (msg) {
-                    alert("errror"+msg.responseText);
+                    alert("删除出错:"+msg.responseText);
                 }
             });
 
@@ -222,7 +222,7 @@ function doUpdate(index,url,data,enitityId){
             }
         },
         error: function (msg) {
-            layerFailMsg("更新失败"+msg.responseText)
+            alert("更新失败"+msg.responseText)
         }
     });
 }

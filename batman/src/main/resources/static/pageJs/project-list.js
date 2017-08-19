@@ -126,7 +126,7 @@ function save(index,url,data){
             }
         },
         error: function (msg) {
-            layerFailMsg("新增失败!")
+            alert("新增失败!"+msg.responseText)
         }
     });
 }
@@ -178,7 +178,7 @@ function doUpdate(index,url,data){
             }
         },
         error: function (msg) {
-            layerFailMsg("更新失败")
+            alert("更新失败"+msg.responseText);
         }
     });
 }
@@ -197,7 +197,7 @@ function doDelete(url,data){
             //alert(data);
         },
         error: function (msg) {
-            //alert("errror");
+            alert("删除出错:"+msg.responseText);
         }
     });
 }

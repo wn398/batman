@@ -1,11 +1,13 @@
 package ${project.packageName}.standard.model;
 
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.util.StringUtil;
 import com.rayleigh.core.annotation.FieldInfo;
 import org.hibernate.validator.constraints.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
+import java.math.BigDecimal;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.*;
@@ -34,12 +36,12 @@ public class ${entity.name} extends BaseModel {
 @FieldInfo("${field.description}")
     <#if field.dataType == "Date">
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
-@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 @Temporal(TemporalType.TIMESTAMP)
     </#if>
 <#--长度设置只对字符串类型有用-->
     <#if field.dataType == "String" && field.size ?exists>
-@Column(nullable = ${field.isNull ?string("true","false")},length=${field.size}<#if field.isUnique>,unique = true</#if>)
+@Column(nullable = ${field.isNull ?string("true","false")},length=${field.size ?c}<#if field.isUnique>,unique = true</#if>)
     <#else>
 @Column(nullable = ${field.isNull ?string("true","false")}<#if field.isUnique>,unique = true</#if>)
     </#if>
@@ -48,8 +50,22 @@ public class ${entity.name} extends BaseModel {
 ${validMessage}
     </#list>
 </#if>
+    <#--处理默认值-->
+    <#if field.defaultValue ?exists>
+        <#if field.dataType == "Date">
+private ${field.dataType} ${field.name} = StringUtil.stringToDate("${field.defaultValue}");
+        <#elseif field.dataType == "Boolean">
+private ${field.dataType} ${field.name} = new Boolean("${field.defaultValue}");
+        <#elseif field.dataType == "BigDecimal">
+private ${field.dataType} ${field.name} = new BigDecimal("${field.defaultValue}");
+        <#elseif field.dataType == "String">
+private ${field.dataType} ${field.name} = "${field.defaultValue}";
+        <#else>
+private ${field.dataType} ${field.name} = ${field.defaultValue};
+        </#if>
+    <#else>
 private ${field.dataType} ${field.name};
-
+    </#if>
 </#list>
 
 <#--生成关联关系属性-->
