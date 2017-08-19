@@ -40,18 +40,18 @@ public class ${entity.name} extends BaseModel {
 @Temporal(TemporalType.TIMESTAMP)
     </#if>
 <#--长度设置只对字符串类型有用-->
-    <#if field.dataType == "String" && field.size ?exists>
+    <#if (field.dataType == "String" && field.size ?exists)>
 @Column(nullable = ${field.isNull ?string("true","false")},length=${field.size ?c}<#if field.isUnique>,unique = true</#if>)
     <#else>
 @Column(nullable = ${field.isNull ?string("true","false")}<#if field.isUnique>,unique = true</#if>)
     </#if>
-<#if (field.validMessage ?length>0)>
+<#if (field.validMessage ?exists && field.validMessage ?length>0)>
     <#list field.validMessage ?split("||") as validMessage>
 ${validMessage}
     </#list>
 </#if>
     <#--处理默认值-->
-    <#if field.defaultValue ?exists>
+    <#if (field.defaultValue ?exists && field.defaultValue ?length>0)>
         <#if field.dataType == "Date">
 private ${field.dataType} ${field.name} = StringUtil.stringToDate("${field.defaultValue}");
         <#elseif field.dataType == "Boolean">

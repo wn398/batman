@@ -3,6 +3,8 @@ package com.rayleigh.batman.model;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.util.StringUtil;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.List;
 public class Field extends BaseModel{
     @FieldInfo("名称")
     @Column
+    @NotEmpty
     private String name;
 
     @FieldInfo("属性描述")
@@ -74,7 +77,11 @@ public class Field extends BaseModel{
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(StringUtil.isEmpty(name)){
+            this.name = null;
+        }else {
+            this.name = name;
+        }
     }
 
     public String getDescription() {
@@ -82,7 +89,11 @@ public class Field extends BaseModel{
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        if(StringUtil.isEmpty(description)){
+            this.description = null;
+        }else {
+            this.description = description;
+        }
     }
 
     public DataType getDataType() {
@@ -130,7 +141,11 @@ public class Field extends BaseModel{
     }
 
     public void setValidMessage(String validMessage) {
-        this.validMessage = validMessage;
+        if(StringUtil.isEmpty(validMessage)){
+            this.validMessage = null;
+        }else {
+            this.validMessage = validMessage;
+        }
     }
 
     public List<SearchCondition> getConditionList() {
@@ -154,6 +169,10 @@ public class Field extends BaseModel{
     }
 
     public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+        if(StringUtil.isEmpty(defaultValue)){
+            this.defaultValue = null;
+        }else {
+            this.defaultValue = defaultValue;
+        }
     }
 }

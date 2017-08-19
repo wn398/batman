@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by wangn20 on 2017/6/13.
@@ -38,11 +39,26 @@ public class EntityController extends BaseController{
     @PostMapping(value = "/doAdd")
     @ResponseBody
     public ResultWrapper doAdd(@Valid @RequestBody Entities entities){
+        //验证，传入的字段名称不能包含id,createDate,updateDate,version
+        List<String> filedNames = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+        if(filedNames.size()>0)
+        if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
+            return getFailureResultAndInfo(entities,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
+        }
+        List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
+        for(String validationMessage:validationMessages){
+            String[] arrays = validationMessage.split("||");
+            for(int i=0;i<arrays.length;i++){
+                if(!arrays[i].contains("@")){
+                    return getFailureResultAndInfo(entities,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                }
+            }
+        }
 
         Entities resultEntities = (Entities) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
 
         Entities entities1 = entityService.save(resultEntities);
-        BaseModelUtil.preventMutualRef(entities1,new ArrayList());
+        //BaseModelUtil.preventMutualRef(entities1,new ArrayList());
 
         return getSuccessResult(entities1);
     }
@@ -51,9 +67,25 @@ public class EntityController extends BaseController{
     @ResponseBody
     public ResultWrapper partUpdate(@RequestBody Entities entities){
         if(null!=entities&& !StringUtil.isEmpty(entities.getId())) {
+            //验证，传入的字段名称不能包含id,createDate,updateDate,version
+            List<String> filedNames = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+            if(filedNames.size()>0)
+            if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
+                return getFailureResultAndInfo(entities,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
+            }
+            List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
+            for(String validationMessage:validationMessages){
+                String[] arrays = validationMessage.split("||");
+                for(int i=0;i<arrays.length;i++){
+                    if(!arrays[i].contains("@")){
+                        return getFailureResultAndInfo(entities,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                    }
+                }
+            }
+
             Entities entities1 = entityService.partUpdate(entities);
             //entities1 = preventCirculation(entities1);
-            BaseModelUtil.preventMutualRef(entities1,new ArrayList());
+           // BaseModelUtil.preventMutualRef(entities1,new ArrayList());
             return getSuccessResult(entities1);
         }else{
             return getFailureResultAndInfo(entities,"id不能空!");

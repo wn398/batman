@@ -175,6 +175,9 @@
                 <input type="number" class="form-control" name="fields[][size]"  placeholder="长度">
             </td>
             <td>
+                <input type="text" class="form-control" name="fields[][defaultValue]" placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|">
+            </td>
+            <td>
                 <select class="form-control" name="fields[][isNull]">
                     <option th:value="false" th:text="否"></option>
                     <option th:value="true" th:text="是"></option>
