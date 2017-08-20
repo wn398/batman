@@ -87,7 +87,7 @@ private JdbcTemplate jdbcTemplate;
         return ${entity.name ?uncap_first};
     }
 
-    public List<Object[]> listBySQL(String sql){
+    public List<Object[]> findBySQL(String sql){
         return   ${entity.name ?uncap_first}Repository.listBySQL(sql);
     }
 

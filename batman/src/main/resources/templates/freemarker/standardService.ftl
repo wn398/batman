@@ -32,7 +32,7 @@ public interface ${entity.name}Service extends BaseService{
     //获取带关系的实体
     ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
 
-    List<Object[]> listBySQL(String sql);
+    List<Object[]> findBySQL(String sql);
 
     Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable);
 
@@ -67,6 +67,6 @@ public interface ${entity.name}Service extends BaseService{
     </#list>
 }
 
-/**
+/*
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */
