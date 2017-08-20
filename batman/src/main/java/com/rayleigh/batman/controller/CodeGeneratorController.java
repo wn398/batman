@@ -254,8 +254,10 @@ public class CodeGeneratorController extends BaseController{
             generateApplicationPropertyFile(resourceRootPath,project,module);
             //生成模块applicationJava文件,放在基础路径下
             generateApplicationJavaFile(relativePackagePath,project,module);
-            //生成模块pom文件
+            //生成模块pom.xml文件
             generatePOMFile(moduleRootPath,project,module);
+            //生成模块pom-war.xml文件
+            generatePOMWarFile(moduleRootPath,project,module);
             //生成entity文件
             generateModelFile(standardModelPath,project,module);
             //生成standRepository文件
@@ -373,6 +375,26 @@ public class CodeGeneratorController extends BaseController{
                 e.printStackTrace();
                 logger.error("获取modulePom.ftl模板失败");
             }
+    }
+    //生成模块pom-war文件
+    private void generatePOMWarFile(File dir,Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("modulePom-War.ftl");
+            Map<String, String> map = new HashMap<>();
+            map.put("projectName",project.getName());
+            map.put("moduleName",module.getName());
+            map.put("basePackage",project.getPackageName());
+            map.put("springBootVersion",springBootVersion);
+            File pomFile = new File(dir,"pom-war.xml");
+
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取modulePom-War.ftl模板失败");
+        }
     }
     //生成application文件
     private void generateApplicationPropertyFile(File dir, Project project,Module module){

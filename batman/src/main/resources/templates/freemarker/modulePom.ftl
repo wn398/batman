@@ -19,16 +19,16 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <gicloud.version>1.0-SNAPSHOT</gicloud.version>
-        <start-class>${basePackage+"."+projectName+"Application"}</start-class>
         <junit.version>4.12</junit.version>
+        <rayleigh.core.version>0.0.1-SNAPSHOT</rayleigh.core.version>
+        <start-class>${basePackage}.${moduleName ?cap_first}Application</start-class>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.rayleigh</groupId>
             <artifactId>core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${r"${rayleigh.core.version}"}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
