@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import ${project.packageName}.standard.service.impl.${entity.name}ServiceImpl;
 import ${project.packageName}.extend.service.${entity.name}ExtendService;
 /**
-* Generated Code By BatMan on ${.now},@Author-->山猫
+* Generated Code By BatMan,@Author-->山猫
 */
 @Service
 public class ${entity.name}ExtendServiceImpl extends ${entity.name}ServiceImpl implements ${entity.name}ExtendService {
@@ -23,5 +23,5 @@ private ${entity.name}ExtendRepository ${entity.name ?uncap_first}ExtendReposito
 }
 
 /**
-* Generated Code By BatMan on ${.now},@Author-->山猫
+* Generated Code By BatMan,@Author-->山猫
 */
