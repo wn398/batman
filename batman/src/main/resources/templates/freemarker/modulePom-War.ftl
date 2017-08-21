@@ -95,12 +95,12 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>deploy</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <finalName>${r"${project.artifactId}"}-boot</finalName>
+                            <finalName>${r"${project.artifactId}"}</finalName>
                         </configuration>
                     </execution>
                 </executions>
