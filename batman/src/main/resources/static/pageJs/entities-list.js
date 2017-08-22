@@ -270,7 +270,7 @@ function saveRelationShips(index,url,data,projectId) {
         dataType: "json",
         success: function (data) {
             if(data.status=="SUCCESS") {
-                divLoadUrl('entities','/projectCtl/goEntitiesList/'+projectId);//重新加载
+                //divLoadUrl('entities','/projectCtl/goEntitiesList/'+projectId);//重新加载
                 layer.close(index); //关闭窗口
                 layerSuccessMsg("保存或更新成功！")
             }else if(data.status=="FAILURE"){

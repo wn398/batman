@@ -116,16 +116,23 @@ public class RelationShipController extends BaseController {
     }
     //检查与之建立关系的对象，防止重复
     private Boolean isOtherEntityRepeated(List<RelationShip> list){
+        List<RelationShip> list2 = new ArrayList<>();
+        //去掉自关联时的自己关联自己
+        for(RelationShip relationShip:list2){
+            if(!relationShip.getMainEntity().getId().equals(relationShip.getOtherEntity().getId())){
+                list2.add(relationShip);
+            }
+        }
         Set<String> set = new HashSet<>();
-        list.parallelStream().forEach(relationShip -> set.add(relationShip.getOtherEntity().getId()));
-        if(set.size()==list.size()){
+        list2.parallelStream().forEach(relationShip -> set.add(relationShip.getOtherEntity().getId()));
+        if(set.size()==list2.size()){
             return false;
         }else{
             return true;
         }
     }
 
-    //构造一个双向映射的另一个映射关系,如果不存在id则新建，如果存在id，则是更新不作改变，返回null
+    //构造一个双向映射的另一个映射关系,如果不存在id则新建一个相反的返回，如果存在id，并且作了修改关系，则把另一个关系对应修改了返回，以作持久化
     private RelationShip constructOppositeRelationShip(RelationShip relationShip){
         if(StringUtil.isEmpty(relationShip.getId())){
             //如果是一对一，并且双方为同一个实体类，则不作反向增加关系
@@ -154,6 +161,37 @@ public class RelationShipController extends BaseController {
             oppositeRelationShip.setIsLazyFetch(true);
             return oppositeRelationShip;
         }else{
+            //如果存在id，这一方的关系改变了，就需要改变另一方的关系变成对应的关联关系，先查出对方的关系
+            List<RelationShip> otherRelationShips = relationShipService.getByMainEntityAndOtherEntityIds(relationShip.getOtherEntity().getId(),relationShip.getMainEntity().getId());
+            RelationShip oppositeRelationShip = null;
+            if(null!=otherRelationShips && otherRelationShips.size()>0) {
+                oppositeRelationShip = otherRelationShips.get(0);
+            }
+            if(null!=oppositeRelationShip){
+                RelationType type = relationShip.getRelationType();
+                RelationType otherType = oppositeRelationShip.getRelationType();
+                if(type ==RelationType.OneToMany){
+                    if(otherType !=RelationType.ManyToOne) {
+                        oppositeRelationShip.setRelationType(RelationType.ManyToOne);
+                        return oppositeRelationShip;
+                    }
+                }else if(type ==RelationType.ManyToOne){
+                    if(otherType !=RelationType.OneToMany){
+                        oppositeRelationShip.setRelationType(RelationType.OneToMany);
+                        return oppositeRelationShip;
+                    }
+                }else if(type == RelationType.OneToOne){
+                    if(otherType !=RelationType.OneToOne){
+                        oppositeRelationShip.setRelationType(RelationType.OneToOne);
+                        return oppositeRelationShip;
+                    }
+                }else if(type == RelationType.ManyToMany){
+                    if(otherType !=RelationType.ManyToMany){
+                        oppositeRelationShip.setRelationType(RelationType.ManyToMany);
+                        return oppositeRelationShip;
+                    }
+                }
+            }
             return null;
         }
     }

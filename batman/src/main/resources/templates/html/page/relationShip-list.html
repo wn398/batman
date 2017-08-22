@@ -33,7 +33,7 @@
                                     <input type="hidden" class="form-control" name="relationShip[][createDate]"  th:value="${relationShip.createDate}">
                                     <input type="hidden" class="form-control" name="relationShip[][version]"  th:value="${relationShip.version}">
                                     <select class="form-control" name="relationShip[][mainEntity][id]" readonly="true">
-                                        <option th:value="${relationShip.mainEntity.id}" th:text="${relationShip.mainEntity.name}"></option>
+                                        <option th:value="${relationShip.mainEntity.id}" th:text="|${relationShip.mainEntity.description}(${relationShip.mainEntity.name})|"></option>
                                     </select>
                                 </td>
                                 <td>
@@ -52,8 +52,8 @@
                                 </td>
                                 <td>
                                     <select class="form-control" name="relationShip[][otherEntity][id]" >
-                                        <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="${otherEntity.name}" th:if="${relationShip.otherEntity.id eq otherEntity.id}" th:selected="selected"></option>
-                                        <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="${otherEntity.name}" th:unless="${relationShip.otherEntity.id eq otherEntity.id}"></option>
+                                        <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="|${otherEntity.description}(${otherEntity.name})|" th:if="${relationShip.otherEntity.id eq otherEntity.id}" th:selected="selected"></option>
+                                        <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="|${otherEntity.description}(${otherEntity.name})|" th:unless="${relationShip.otherEntity.id eq otherEntity.id}"></option>
 
                                     </select>
                                 </td>
@@ -93,7 +93,7 @@
         <tr>
             <td>
                 <select class="form-control" name="relationShip[][mainEntity][id]" readonly="true">
-                    <option th:value="${mainEntites.id}" th:text="${mainEntites.name}" ></option>
+                    <option th:value="${mainEntites.id}" th:text="|${mainEntites.description}(${mainEntites.name})|" ></option>
                 </select>
             </td>
             <td>
@@ -109,7 +109,7 @@
             </td>
             <td>
                 <select class="form-control" name="relationShip[][otherEntity][id]" >
-                    <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="${otherEntity.name}" ></option>
+                    <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="|${otherEntity.description}(${otherEntity.name})|" ></option>
                 </select>
             </td>
             <td>
