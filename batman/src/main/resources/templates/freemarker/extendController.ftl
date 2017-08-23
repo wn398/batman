@@ -9,6 +9,7 @@ import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
 import com.rayleigh.core.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 /**
 * Generated Code By BatMan,@Author-->山猫
 */
+@Api(value = "${entity.name}ExtendController", description = "${entity.description}相关api")
 @RequestMapping("/${entity.name ?uncap_first}Ctl")
 @Controller
 public class ${entity.name}ExtendController extends ${entity.name}Controller{

@@ -48,10 +48,12 @@ public class EntityController extends BaseController{
         entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
         List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
         for(String validationMessage:validationMessages){
-                String[] arrays = validationMessage.split("||");
-                for (int i = 0; i < arrays.length; i++) {
-                    if (!arrays[i].contains("@")) {
-                        return getFailureResultAndInfo(null,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                if(null!=validationMessage) {
+                    String[] arrays = validationMessage.split("||");
+                    for (int i = 0; i < arrays.length; i++) {
+                        if (!arrays[i].contains("@")) {
+                            return getFailureResultAndInfo(null, new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
+                        }
                     }
                 }
 

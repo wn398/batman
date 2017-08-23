@@ -50,7 +50,7 @@ public ResultWrapper saveOrUpdate(@RequestBody ${entity.name} ${entity.name ?unc
     try {
         ${entity.name} ${entity.name ?uncap_first}Result = buildRelation(${entity.name ?uncap_first});
         ${entity.name ?uncap_first}Service.saveOrUpdate(${entity.name ?uncap_first}Result);
-        //${entity.name ?uncap_first}Result = ${entity.name}Util.preventMutualRef(${entity.name ?uncap_first}Result);
+        ${entity.name ?uncap_first}Result = ${entity.name}Util.preventMutualRef(${entity.name ?uncap_first}Result);
         return getSuccessResult(${entity.name ?uncap_first}Result);
     }catch (Exception e){
         e.printStackTrace();
