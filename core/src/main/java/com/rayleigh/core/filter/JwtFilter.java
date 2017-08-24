@@ -68,20 +68,21 @@ public class JwtFilter implements Filter {
                 if (null == claims) {
                     resultWrapper.setStatus(ResultStatus.INVALID_TOKEN);
                     logger.info(new StringBuilder("请求:").append(url).append(" 未知token:[").append(auth).append("] 被拦截！").toString());
-                    resultWrapper.setInfo("未知token,请在");
+                    resultWrapper.setInfo("未知token,请检查");
                 } else {
                     resultWrapper.setStatus(ResultStatus.EXPIRED_TOKEN);
                     logger.info(new StringBuilder("请求:").append(url).append(" 过期token:[").append(auth).append("] 被拦截").toString());
                     resultWrapper.setInfo("过期token,请检查");
                 }
                 //ajax请求
-                String requestType = httpRequest.getHeader("X-Requested-With");
-                if (null != requestType) {
-                    httpResponse.getWriter().write(JSONObject.toJSONString(resultWrapper));
-                    return;
-                } else {
-                    httpRequest.getRequestDispatcher(noPermissionPageUrl).forward(httpRequest, httpResponse);
-                }
+                //String requestType = httpRequest.getHeader("X-Requested-With");
+                //if (null != requestType ||httpRequest.getHeader("Accept").contains("json")) {
+                //直接返回json数据
+                httpResponse.getWriter().write(JSONObject.toJSONString(resultWrapper));
+                //    return;
+                //} else {
+                //    httpRequest.getRequestDispatcher(noPermissionPageUrl).forward(httpRequest, httpResponse);
+                //}
                 return;
             }
         } else {
@@ -93,7 +94,7 @@ public class JwtFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        logger.info("jwtFilter销毁！");
     }
 
     //是否排除的uri
