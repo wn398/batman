@@ -1,4 +1,4 @@
-package com.rayleigh.core.DynamicDataSource;
+package com.rayleigh.core.dynamicDataSource;
 
 import org.springframework.context.annotation.Import;
 

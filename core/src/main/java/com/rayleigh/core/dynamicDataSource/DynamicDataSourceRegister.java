@@ -1,4 +1,4 @@
-package com.rayleigh.core.DynamicDataSource;
+package com.rayleigh.core.dynamicDataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.MutablePropertyValues;
@@ -136,11 +136,11 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
         Map<Object, Object> targetDataSources = new HashMap<Object, Object>();
         // 将主数据源添加到更多数据源中
         targetDataSources.put("dataSource", defaultDataSource);
-        DynamicDataSourceContextHolder.dataSourceIds.add("dataSource");
+        DynamicDataSourceContextHolder.getDataSourceIds().add("dataSource");
         // 添加更多数据源
         targetDataSources.putAll(customDataSources);
         for (String key : customDataSources.keySet()) {
-            DynamicDataSourceContextHolder.dataSourceIds.add(key);
+            DynamicDataSourceContextHolder.getDataSourceIds().add(key);
         }
 
         // 创建DynamicDataSource

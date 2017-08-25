@@ -1,4 +1,4 @@
-package com.rayleigh.core.Exception;
+package com.rayleigh.core.exception;
 
 public class NotBaseModelException extends RuntimeException {
     public NotBaseModelException(String message){

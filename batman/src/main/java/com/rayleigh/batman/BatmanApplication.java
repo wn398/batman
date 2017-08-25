@@ -2,16 +2,14 @@ package com.rayleigh.batman;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.rayleigh.core.DynamicDataSource.EnableDynamicDataSource;
+import com.rayleigh.core.dynamicDataSource.EnableDynamicDataSource;
 import com.rayleigh.core.annotation.EnableCustomRepository;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication(scanBasePackages = {"com.rayleigh"})
 @ServletComponentScan("com.rayleigh")

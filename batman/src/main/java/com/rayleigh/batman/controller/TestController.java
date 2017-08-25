@@ -6,7 +6,7 @@ import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.batman.util.BuildProjectDirUtil;
 import com.rayleigh.batman.util.GeneratorStringUtil;
-import com.rayleigh.core.DynamicDataSource.TargetDataSource;
+import com.rayleigh.core.dynamicDataSource.TargetDataSource;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.ResultWrapper;
 import freemarker.template.Configuration;

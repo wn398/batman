@@ -1,6 +1,6 @@
 package com.rayleigh.core.util;
 
-import com.rayleigh.core.Exception.NotBaseModelException;
+import com.rayleigh.core.exception.NotBaseModelException;
 import com.rayleigh.core.model.BaseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
