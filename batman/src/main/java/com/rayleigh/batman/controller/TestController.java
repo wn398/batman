@@ -6,12 +6,15 @@ import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.batman.util.BuildProjectDirUtil;
 import com.rayleigh.batman.util.GeneratorStringUtil;
+import com.rayleigh.core.DynamicDataSource.TargetDataSource;
 import com.rayleigh.core.controller.BaseController;
+import com.rayleigh.core.model.ResultWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,16 @@ public class TestController extends BaseController{
     private String basePath;
     @Autowired
     private Configuration configuration;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @GetMapping("/testDynamicDataSource")
+    @ResponseBody
+    @TargetDataSource("ds1")
+    public ResultWrapper test(){
+        List<Map<String,Object>> list = jdbcTemplate.queryForList("select * from course_student");
+        return getSuccessResult(list);
+    }
 
     @GetMapping("/generateProjectDir")
     @ResponseBody

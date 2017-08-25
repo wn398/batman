@@ -2,6 +2,7 @@ package com.rayleigh.batman;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.rayleigh.core.DynamicDataSource.EnableDynamicDataSource;
 import com.rayleigh.core.annotation.EnableCustomRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootApplication(scanBasePackages = {"com.rayleigh"})
 @ServletComponentScan("com.rayleigh")
 @EnableCustomRepository
+@EnableDynamicDataSource
 public class BatmanApplication  extends SpringBootServletInitializer{
 
 	@Override
