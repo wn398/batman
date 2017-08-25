@@ -34,6 +34,14 @@ public interface ${entity.name}Service extends BaseService{
 
     List<Object[]> findBySQL(String sql);
 
+    List<${entity.name}> findByProperties(Map<String,Object> map);
+
+    Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable);
+
+    List<${entity.name}> findByProperty(String name,Object value);
+
+    Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable);
+
     Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable);
 
     Page<${entity.name}> findAll(Pageable pageable);
