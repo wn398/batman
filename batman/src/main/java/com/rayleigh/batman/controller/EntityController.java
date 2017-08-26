@@ -1,6 +1,7 @@
 package com.rayleigh.batman.controller;
 
 import com.rayleigh.batman.model.Entities;
+import com.rayleigh.batman.model.Field;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.model.SearchMethod;
 import com.rayleigh.batman.service.EntityService;
@@ -45,6 +46,12 @@ public class EntityController extends BaseController{
         if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
             return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
         }
+        //添加对字段名字和描述不能为空的验证
+        for(Field field:entities.getFields()){
+            if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){
+                return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!").toString());
+            }
+        }
         entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
         List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
         for(String validationMessage:validationMessages){
@@ -76,6 +83,12 @@ public class EntityController extends BaseController{
             if(filedNames.size()>0)
             if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
                 return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
+            }
+            //添加对字段名字和描述不能为空的验证
+            for(Field field:entities.getFields()){
+                if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){
+                    return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!").toString());
+                }
             }
             entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
             List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
