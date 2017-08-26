@@ -7,9 +7,10 @@ package com.rayleigh.core.enums;
 public enum DataType {
     String("String"),
     Integer("Integer"),
+    Long("Long"),
+    BigDecimal("BigDecimal"),
     Double("Double"),
     Date("Date"),
-    BigDecimal("BigDecimal"),
     Boolean("Boolean");
 
     DataType(String name){}

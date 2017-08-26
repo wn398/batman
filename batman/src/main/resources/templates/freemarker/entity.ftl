@@ -60,6 +60,8 @@ private ${field.dataType} ${field.name} = new Boolean("${field.defaultValue}");
 private ${field.dataType} ${field.name} = new BigDecimal("${field.defaultValue}");
         <#elseif field.dataType == "String">
 private ${field.dataType} ${field.name} = "${field.defaultValue}";
+        <#elseif field.dataType == "Long">
+private ${field.dataType} ${field.name} = "${field.defaultValue}L";
         <#else>
 private ${field.dataType} ${field.name} = ${field.defaultValue};
         </#if>

@@ -23,6 +23,13 @@ spring.datasource.password = 541998
 spring.datasource.driverClassName =org.postgresql.Driver
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
 
+#其它数据源名字 ds1,ds2这样区分开配置，多数据源开启@EnableDynamicDataSource,在需要切换的方法上注解 @TargetDataSource("ds1")
+#custom.datasource.names=ds1
+#custom.datasource.ds1.driverClassName =org.postgresql.Driver
+#custom.datasource.ds1.url=jdbc:postgresql://localhost:5432/cources
+#custom.datasource.ds1.username=postgres
+#custom.datasource.ds1.password=541998
+
 #MYSQL
 #spring.jpa.database=mysql
 #spring.datasource.url = jdbc:mysql://localhost:3306/${module.name}?characterEncoding=UTF-8

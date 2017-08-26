@@ -90,6 +90,7 @@
                                 <select class="form-control" name="fields[][dataType]">
                                     <option th:value="String" th:text="字符串" th:if="${field.dataType.toString() eq 'String'}" th:selected="selected"></option>
                                     <option th:value="Integer" th:text="整数类型" th:if="${field.dataType.toString() eq 'Integer'}" th:selected="selected"></option>
+                                    <option th:value="Long" th:text="长整数类型" th:if="${field.dataType.toString() eq 'Long'}" th:selected="selected"></option>
                                     <option th:value="Double" th:text="小数类型" th:if="${ field.dataType.toString() eq 'Double'}" th:selected="selected"></option>
                                     <option th:value="Date" th:text="日期类型" th:if="${field.dataType.toString() eq 'Date'}" th:selected="selected"></option>
                                     <option th:value="BigDecimal" th:text="BigDecimal" th:if="${field.dataType.toString() eq 'BigDecimal'}" th:selected="selected"></option>
@@ -97,6 +98,7 @@
 
                                     <option th:value="String" th:text="字符串" th:unless="${field.dataType eq 'String'}" ></option>
                                     <option th:value="Integer" th:text="整数类型" th:unless="${field.dataType eq 'Integer'}" ></option>
+                                    <option th:value="Long" th:text="长整数类型" th:unless="${field.dataType eq 'Long'}" ></option>
                                     <option th:value="Double" th:text="小数类型" th:unless="${ field.dataType eq 'Double'}" ></option>
                                     <option th:value="Date" th:text="日期类型" th:unless="${field.dataType eq 'Date'}" ></option>
                                     <option th:value="BigDecimal" th:text="BigDecimal" th:unless="${field.dataType eq 'BigDecimal'}" ></option>
@@ -165,6 +167,7 @@
                 <select class="form-control" name="fields[][dataType]">
                     <option th:value="String" th:text="字符串"></option>
                     <option th:value="Integer" th:text="整数类型"></option>
+                    <option th:value="Long"  th:text="长整数类型"></option>
                     <option th:value="Double" th:text="小数类型"></option>
                     <option th:value="Date" th:text="日期类型"></option>
                     <option th:value="BigDecimal" th:text="BigDecimal"></option>
