@@ -41,6 +41,8 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
 
 spring.jpa.open-in-view=true
 
+#日志配置
+logging.file=logs/${module.name}.log
 
 # Specify the DBMS
 #spring.jpa.database =

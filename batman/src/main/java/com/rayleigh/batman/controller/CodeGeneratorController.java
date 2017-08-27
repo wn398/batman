@@ -252,6 +252,8 @@ public class CodeGeneratorController extends BaseController{
 
             //生成根目录下application.property文件
             generateApplicationPropertyFile(resourceRootPath,project,module);
+            //生成日志配置文件
+            generateLogbackConfigerationFile(resourceRootPath,project,module);
             //生成模块applicationJava文件,放在基础路径下
             generateApplicationJavaFile(relativePackagePath,project,module);
             //生成模块pom.xml文件
@@ -415,6 +417,24 @@ public class CodeGeneratorController extends BaseController{
             e.printStackTrace();
             logger.error("获取application模板失败");
         }
+    }
+
+    private void generateLogbackConfigerationFile(File dir,Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("logbackXML.ftl");
+            Map<String, Object> map = new HashMap<>();
+            map.put("module",module);
+            File applicationFile = new File(dir,"logback-spring.xml");
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取logbackXML模板失败");
+        }
+
+
     }
     //生成实体类文件
     private void generateModelFile(File dir,Project project,Module module){

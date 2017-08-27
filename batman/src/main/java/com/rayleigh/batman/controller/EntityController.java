@@ -1,5 +1,7 @@
 package com.rayleigh.batman.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
 import com.rayleigh.batman.model.Project;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -40,16 +43,17 @@ public class EntityController extends BaseController{
     @PostMapping(value = "/doAdd")
     @ResponseBody
     public ResultWrapper doAdd(@Valid @RequestBody Entities entities){
-        //验证，传入的字段名称不能包含id,createDate,updateDate,version
-        List<String> filedNames = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
-        if(filedNames.size()>0)
-        if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
-            return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
-        }
         //添加对字段名字和描述不能为空的验证
         for(Field field:entities.getFields()){
             if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){
                 return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!").toString());
+            }
+        }
+        //检测字段名是否重复,是否包含id,createDate,updateDate,version
+        Map<String,Long> map = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.groupingBy(it->it,Collectors.counting()));
+        if(map.entrySet().size()>0){
+            if(null !=map.get("id")||null !=map.get("createDate")||null !=map.get("updateDate")||null !=map.get("version")){
+                return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
             }
         }
         entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
@@ -78,17 +82,22 @@ public class EntityController extends BaseController{
     @ResponseBody
     public ResultWrapper partUpdate(@RequestBody Entities entities){
         if(null!=entities&& !StringUtil.isEmpty(entities.getId())) {
-            //验证，传入的字段名称不能包含id,createDate,updateDate,version
-            List<String> filedNames = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
-            if(filedNames.size()>0)
-            if(filedNames.contains("id")||filedNames.contains("createDate")||filedNames.contains("updateDate")||filedNames.contains("version")){
-                return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
-            }
             //添加对字段名字和描述不能为空的验证
             for(Field field:entities.getFields()){
                 if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){
-                    return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!").toString());
+                    return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!-").append(JSON.toJSON(field)).toString());
                 }
+            }
+            //检测字段名是否重复,是否包含id,createDate,updateDate,version
+            Map<String,Long> map = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.groupingBy(it->it,Collectors.counting()));
+            if(map.entrySet().size()>0){
+                if(null !=map.get("id")||null !=map.get("createDate")||null !=map.get("updateDate")||null !=map.get("version")){
+                    return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
+                }
+            }
+            if(map.size() !=entities.getFields().size()){
+                List<String> list2 = map.entrySet().parallelStream().filter(it->it.getValue()>1).map(it->it.getKey()).collect(Collectors.toList());
+                return getFailureResultAndInfo(list2, new StringBuilder("属性名重复:").append(list2.parallelStream().collect(Collectors.joining(","))).toString());
             }
             entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
             List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
