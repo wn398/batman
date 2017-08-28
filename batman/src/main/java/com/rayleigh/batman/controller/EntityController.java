@@ -163,6 +163,14 @@ public class EntityController extends BaseController{
     public ResultWrapper showEntityMethodData(@PathVariable("id") String entityId){
         Entities entities = entityService.findOne(entityId);
         List<SearchMethod> methods = entities.getMethods();
+        //设置默认值
+        methods.parallelStream().forEach(method -> {
+        if(null ==method.getIsReturnObject()){
+            method.setIsReturnObject(false);
+        if(null ==method.getIsInterface()){
+            method.setIsInterface(true);
+        }
+        }});
         methods.parallelStream().forEach(method->{method.setConditionList(null);method.setSearchResults(null);
             method.setEntities(null);
         });

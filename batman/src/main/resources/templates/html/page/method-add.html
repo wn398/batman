@@ -29,6 +29,26 @@
                                 <input type="text" class="form-control" th:name="description" placeholder="文字">
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否提供接口出去</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isInterface">
+                                    <option th:value="true" th:text="是"></option>
+                                    <option th:value="false" th:text="否"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">方法返回类型</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isReturnObject">
+                                    <option th:value="false" th:text="字段包装类型"></option>
+                                    <option th:value="true" th:text="主对象类型"></option>
+                                </select>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

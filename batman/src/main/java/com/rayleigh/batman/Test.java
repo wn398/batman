@@ -19,10 +19,21 @@ public class Test {
 //        Paser(path);
         //this.getClass().getClassLoader().get
         //testMap();
+//        List<String> list = new ArrayList<>();
+//        list.add("teset");
+//        System.out.println(list.parallelStream().collect(Collectors.joining(",")));
+////testLink();
+        Map map = new HashMap();
+        System.out.println(null == map.get("test"));
+
         List<String> list = new ArrayList<>();
-        list.add("teset");
-        System.out.println(list.parallelStream().collect(Collectors.joining(",")));
-//testLink();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.add("d");
+        list.add("e");
+        System.out.println(list.subList(0,3).parallelStream().collect(Collectors.joining(",")));
+
     }
 
 

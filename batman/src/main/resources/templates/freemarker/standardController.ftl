@@ -125,6 +125,7 @@ public ResultWrapper deleteById(@PathVariable("id") String id){
 }
 
 <#list entity.methods as method>
+    <#if ((method.isInterface !?exists)||(method.isInterface ?exists &&method.isInterface ?boolean))>
 @ApiOperation(value = "${method.description}")
 @PostMapping("/${method.methodName}")
 @ResponseBody
@@ -136,6 +137,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
         return getFailureResultAndInfo(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper,e.getMessage());
     }
 }
+    </#if>
 </#list>
 
 

@@ -8,17 +8,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ${project.packageName}.standard.service.${entity.name}Service;
+import ${project.packageName}.standard.util.${entity.name}Util;
+<#--导入相关联service-->
+<#list entity.mainEntityRelationShips as relationShip>
+    <#if relationShip.otherEntity.name != entity.name>
+import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
+import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util;
+    </#if>
+</#list>
 <#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
 </#if>
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.*;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.Root;
 import javax.annotation.Resource;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
@@ -34,9 +40,17 @@ public Logger logger = LoggerFactory.getLogger(getClass());
 private ${entity.name}Repository ${entity.name ?uncap_first}Repository;
 @Autowired
 private EntityManager entityManager;
+@Autowired
+private ${entity.name}Service ${entity.name ?uncap_first}Service;
 @Resource
 private JdbcTemplate jdbcTemplate;
-
+<#--注入相关联service-->
+<#list entity.mainEntityRelationShips as relationShip>
+    <#if relationShip.otherEntity.name != entity.name>
+@Autowired
+private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name ?uncap_first}Service;
+    </#if>
+</#list>
     public List<${entity.name}> saveOrUpdate(List<${entity.name}> list){
         return ${entity.name ?uncap_first}Repository.save(list);
     }
@@ -163,6 +177,11 @@ private JdbcTemplate jdbcTemplate;
     }
 
     <#list entity.methods as method>
+    <#--赋值，如果不存在，给个默认值false-->
+    <#assign isReturnObject=method.isReturnObject !false>
+        <#--如果方法定义返回不是对象类型，返回为字段类型，则用JPQL查询-->
+    <#if isReturnObject==false>
+    //${method.description}
     public PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
         <#--定义分页包装结果-->
         PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper> pageModel = new PageModel();
@@ -293,135 +312,290 @@ private JdbcTemplate jdbcTemplate;
         pageModel.setResults(resultList);
         return pageModel;
     }
+    <#--如果返回为对象类型，也就是对主对象的过滤，则用specification方法查询，进入else条件-->
+    <#else>
+    //${method.description}
+    public Page<${entity.name}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+        if(null == ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage()||null == ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize()){
+            ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.setCurrentPage(0);
+            ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.setPageSize(1000);
+        }
+        return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
+        @Override
+        public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+        List<Predicate> list = new ArrayList<>();
+    <#--处理主对象条件都是安排实体分组-->
+        <#assign conditionMap=constructSearchMethodUtil.extractCondition(method.conditionList)>
+        <#assign resultMap = constructSearchMethodUtil.extractResult(method.searchResults)>
+    <#--处理连接条件-->
+        <#list conditionMap?keys as key>
+            <#if key != entity.id>
+                <#assign otherEntityName= searchDBUtil.getEntityName(key)>
+                <#assign relationShip = searchDBUtil.getRelationTypeByMainOtherEntityId(entity.id,key)>
+                <#if relationShip=="OneToMany" ||relationShip=="ManyToMany">
+        Join<${entity.name},${otherEntityName}> ${otherEntityName ?uncap_first}Join = root.join("${otherEntityName ?uncap_first}List", JoinType.INNER);
+                <#elseif relationShip=="ManyToOne" || relationShip=="OneToOne">
+        Join<${entity.name},${otherEntityName}> ${otherEntityName ?uncap_first}Join = root.join("${otherEntityName ?uncap_first}", JoinType.INNER);
+                </#if>
+            </#if>
+        </#list>
+    <#--获取到按优先级分组的map条件分组-->
+        <#assign conditionPriorityMap = constructSearchMethodUtil.groupConditionKeyStr(method.conditionList)>
+    <#--按优先级遍历-->
+        <#list conditionPriorityMap ?keys as priorityKey>
+        List<Predicate> subList${priorityKey} = new ArrayList<>();
+        <#--遍历同一个优先级下面的条件-->
+            <#list conditionPriorityMap[priorityKey] as condition>
+                <#assign conditionEntityId = condition.fieldName ?split("_")[0]>
+            <#--获取数据类型和属性名-->
+                <#if condition.field?exists>
+                    <#assign fieldType = condition.field.dataType>
+                    <#assign fieldName = condition.field.name>
+                <#else>
+                    <#assign fieldName = condition.fieldName ?split("_")[1]>
+                    <#if fieldName == "id">
+                        <#assign fieldType = "String">
+                    <#else>
+                        <#assign fieldType = "Date">
+                    </#if>
+                </#if>
+            <#--如果是主对象-->
+                <#if conditionEntityId == entity.id>
+                    <#if condition.operation =="Between">
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}BetweenValue()){
+            subList${priorityKey}.add(criteriaBuilder.${condition.operation ?uncap_first}(root.get("${fieldName}"),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}BetweenValue().getMin(),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}BetweenValue().getMax()));
+        }
+                    <#elseif condition.operation == "In" >
+        if(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}InList().size()>0){
+            CriteriaBuilder.In<${fieldType}> in = criteriaBuilder.in(root.get("${fieldName}"));
+            for(${fieldType} ${fieldName}:${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}InList()){
+                in.value(${fieldName});
+            }
+            subList${priorityKey}.add(in);
+        }
+                    <#elseif condition.operation == "Like">
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}()){
+            subList${priorityKey}.add(criteriaBuilder.${condition.operation ?uncap_first}(root.get("${fieldName}"),"%"+${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}()+"%"));
+        }
+                    <#elseif condition.operation == "IsNull">
+        subList${priorityKey}.add(criteriaBuilder.isNull(root.get("${fieldName}")));
+                    <#elseif condition.operation == "IsNotNull">
+        subList${priorityKey}.add(criteriaBuilder.isNotNull(root.get("${fieldName}")));
+                    <#else>
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}()){
+            subList${priorityKey}.add(criteriaBuilder.${condition.operation ?uncap_first}(root.get("${fieldName}"),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entity.name}${fieldName ?cap_first}()));
+        }
+                    </#if>
+
+                <#else><#--非主对象-->
+                    <#assign rootJoin = searchDBUtil.getEntityName(conditionEntityId)+"Join">
+                    <#assign otherEntityName2 = searchDBUtil.getEntityName(conditionEntityId)>
+                    <#if condition.operation =="Between">
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}BetweenValue()){
+            subList${priorityKey}.add(criteriaBuilder.${condition.operation ?uncap_first}(${rootJoin ?uncap_first}.get("${fieldName}"),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}BetweenValue().getMin(),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}BetweenValue().getMax()));
+        }
+                    <#elseif condition.operation == "In">
+        if(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}InList().size()>0){
+            CriteriaBuilder.In<${fieldType}> in = criteriaBuilder.in(root.get("${fieldName}"));
+            for(${fieldType} ${fieldName}:${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}InList()){
+                in.value(${fieldName});
+            }
+            subList${priorityKey}.add(in);
+        }
+                    <#elseif condition.operation == "Like">
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}()){
+            subList${priorityKey}.add(criteriaBuilder.${condition.operation ?uncap_first}(${rootJoin ?uncap_first}.get("${fieldName}"),"%"+${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}()+"%"));
+        }
+                    <#elseif condition.operation == "IsNull">
+        subList${priorityKey}.add(criteriaBuilder.isNull(${rootJoin ?uncap_first}.get("${fieldName}")));
+                    <#elseif condition.operation == "IsNotNull">
+        subList${priorityKey}.add(criteriaBuilder.isNotNull(${rootJoin ?uncap_first}.get("${fieldName}")));
+                    <#else>
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}()){
+            subList${priorityKey}.add(criteriaBuilder.${condition.operation ?uncap_first}(${rootJoin ?uncap_first}.get("${fieldName}"),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${otherEntityName2}${fieldName ?cap_first}()));
+        }
+                    </#if>
+                </#if>
+            </#list>
+            <#assign logicOperation = constructSearchMethodUtil.getLogicOperationFromCondition(conditionPriorityMap[priorityKey])>
+        Predicate[] predicate${priorityKey} = new Predicate[list.size()];
+        list.add(criteriaBuilder.${logicOperation}(subList${priorityKey}.toArray(predicate${priorityKey})));
+        </#list>
+    <#--设定查询字段-->
+        List<Selection<?>> selections = new ArrayList();
+    <#--对结果字段进行遍历，按实体类型遍历-->
+        <#list resultMap ?keys as key>
+        <#--对一个实体的结果进行遍历-->
+            <#list resultMap[key] as result>
+            <#--获取数据类型-->
+                <#if result.field?exists>
+                    <#assign fieldType = result.field.dataType>
+                    <#assign fieldName = result.field.name>
+                <#else>
+                    <#assign fieldName = result.fieldName ?split("_")[1]>
+                    <#if fieldName == "id">
+                        <#assign fieldType = "String">
+                    <#else>
+                        <#assign fieldType = "Date">
+                    </#if>
+                </#if>
+            <#--主对象-->
+                <#if key == entity.id>
+        selections.add(root.get("${fieldName}").alias("${entity.name ?uncap_first}${fieldName ?cap_first}"));
+                <#else>
+                    <#assign otherName = searchDBUtil.getEntityName(key)>
+        selections.add(${otherName ?uncap_first}Join.get("${fieldName}").alias("${otherName ?uncap_first}${fieldName ?cap_first}"));
+                </#if>
+            </#list>
+        </#list>
+        criteriaQuery.multiselect(selections);
+        criteriaQuery.distinct(true);
+        Predicate[] predicate2 = new Predicate[list.size()];
+        criteriaQuery.where(list.toArray(predicate2));
+    <#--criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sendTime")));-->
+        <#assign orderyResult =constructSearchMethodUtil.getOrderResult(method.searchResults)>
+        <#--criteriaQuery.orderBy(criteriaBuilder.desc(root.get("${orderyResult}")));-->
+        <#if (orderyResult ?size>0)>
+        List<Order> orderList = new ArrayList<>();
+        <#list orderyResult as result>
+        orderList.add(criteriaBuilder.${result.orderByType}(root.get("${result.fieldName ?split("_")[1]}")));
+        </#list>
+        criteriaQuery.orderBy(orderList);
+        </#if>
+        return criteriaQuery.getRestriction();
+        }
+        },new PageRequest(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage(),${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize()));
+    }
+    </#if>
     </#list>
+
     <#--处理实体之间的关系-->
     <#list entity.mainEntityRelationShips as relationShip>
     <#if relationShip.mainEntity.name == relationShip.otherEntity.name>
-
     <#else>
         <#if relationShip.relationType == "OneToMany">
-        //增加与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String add${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
-            if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
-                jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
-                logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
-                return "success";
-            } else {
-                for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
-                    jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+id+"'");
-                    logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+id+"'").toString());
-                }
-                return "success";
+    //增加与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String add${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
+        if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
+            jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
+            logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
+            return "success";
+        } else {
+            for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
+                jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+id+"'");
+                logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+id+"'").toString());
             }
+            return "success";
         }
-        //解除与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
-            if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
-                jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
-                logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
-                return "success";
-            } else {
-                for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
-                    jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+id+"'");
-                    logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+id+"'").toString());
-                }
-                return "success";
+    }
+    //解除与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
+        if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
+            jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
+            logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
+            return "success";
+        } else {
+            for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
+                jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+id+"'");
+                logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+id+"'").toString());
             }
+            return "success";
         }
-        <#elseif relationShip.relationType == "ManyToMany">
-        //增加与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String add${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
-            if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
-                List list = jdbcTemplate.queryForList("select * from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id ='"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
-                if(null!=list && list.size()>0){
+    }
+    <#elseif relationShip.relationType == "ManyToMany">
+    //增加与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String add${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
+        if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
+            List list = jdbcTemplate.queryForList("select * from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id ='"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
+            if(null!=list && list.size()>0){
+
+            }else{
+                jdbcTemplate.execute("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"')");
+                logger.info(new StringBuilder("执行本地SQL:").append("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
+            }
+            return "success";
+        }else{
+            for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
+            List list = jdbcTemplate.queryForList("select * from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id ='"+id+"'");
+            if(null!=list && list.size()>0){
 
                 }else{
-                    jdbcTemplate.execute("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"')");
-                    logger.info(new StringBuilder("执行本地SQL:").append("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
+                    jdbcTemplate.execute("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+id+"')");
+                    logger.info(new StringBuilder("执行本地SQL:").append("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+id+"')").toString());
                 }
-                return "success";
-            }else{
-                for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
-                List list = jdbcTemplate.queryForList("select * from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id ='"+id+"'");
-                if(null!=list && list.size()>0){
-
-                    }else{
-                        jdbcTemplate.execute("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+id+"')");
-                        logger.info(new StringBuilder("执行本地SQL:").append("insert into more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+id+"')").toString());
-                    }
-                }
-                return "success";
             }
-        }
-        //解除与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
-            if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
-                jdbcTemplate.execute("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
-                logger.info(new StringBuilder("执行本地SQL:").append("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
-                return "success";
-            }else{
-                for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
-                    jdbcTemplate.execute("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+id+"'");
-                    logger.info(new StringBuilder("执行本地SQL:").append("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+id+"'").toString());
-                }
-                return "success";
-            }
-        }
-        <#elseif relationShip.relationType == "ManyToOne">
-        //重新设置与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String set${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
-                jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'");
-                logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'").toString());
-                return "success";
-        }
-        //移除与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
-            jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'");
-            logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'").toString());
             return "success";
         }
-        <#elseif relationShip.relationType == "OneToOne">
-        //重新设置与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String set${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
-            List list = jdbcTemplate.queryForList("select * from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'");
-            if(list.size()>0){
-                jdbcTemplate.update("update one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'");
-                logger.info(new StringBuilder("执行本地SQL:").append("update one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+" where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'").toString());
-                return "success";
-            }else{
-                jdbcTemplate.execute("insert into one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Id2+"')");
-                logger.info(new StringBuilder("执行本地SQL:").append("insert into one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Id2+"')").toString());
-                return "success";
+    }
+    //解除与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids){
+        if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
+            jdbcTemplate.execute("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
+            logger.info(new StringBuilder("执行本地SQL:").append("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'").toString());
+            return "success";
+        }else{
+            for(String id:${relationShip.otherEntity.name ?uncap_first}Ids){
+                jdbcTemplate.execute("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+id+"'");
+                logger.info(new StringBuilder("执行本地SQL:").append("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+id+"'").toString());
             }
-        }
-        //移除与${relationShip.otherEntity.name}的关系
-        @Transactional
-        public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
-            jdbcTemplate.execute("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'");
-            logger.info(new StringBuilder("执行本地SQL:").append("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'").toString());
             return "success";
         }
+    }
+    <#elseif relationShip.relationType == "ManyToOne">
+    //重新设置与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String set${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
+            jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'");
+            logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'").toString());
+            return "success";
+    }
+    //移除与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
+        jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'");
+        logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'").toString());
+        return "success";
+    }
+    <#elseif relationShip.relationType == "OneToOne">
+    //重新设置与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String set${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
+        List list = jdbcTemplate.queryForList("select * from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'");
+        if(list.size()>0){
+            jdbcTemplate.update("update one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'");
+            logger.info(new StringBuilder("执行本地SQL:").append("update one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+" where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'").toString());
+            return "success";
+        }else{
+            jdbcTemplate.execute("insert into one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Id2+"')");
+            logger.info(new StringBuilder("执行本地SQL:").append("insert into one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} (${generatorStringUtil.humpToUnderline(entity.name)}_id,${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id) values ('"+${entity.name ?uncap_first}Id+"','"+${relationShip.otherEntity.name ?uncap_first}Id2+"')").toString());
+            return "success";
+        }
+    }
+    //移除与${relationShip.otherEntity.name}的关系
+    @Transactional
+    public String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2){
+        jdbcTemplate.execute("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'");
+        logger.info(new StringBuilder("执行本地SQL:").append("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'").toString());
+        return "success";
+    }
         </#if>
     </#if>
     </#list>
 
             <#--建立关系的辅助类，保存或更新前转换成持久化对象，保证子对象对父对象的引用都是持久化的-->
-            private  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_first}){
+    private  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_first}){
             <#--设置主对象结果，如果有id则查询出持久化对象作为基准结果，然后copy基本属性过去，如果没有id则查看对象属性里有没有需要转变成持久化的对象-->
-            ${entity.name} ${entity.name ?uncap_first}Result;
-                if(!StringUtil.isEmpty(${entity.name ?uncap_first}.getId())){
+        ${entity.name} ${entity.name ?uncap_first}Result;
+        if(!StringUtil.isEmpty(${entity.name ?uncap_first}.getId())){
             ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.findOne(${entity.name ?uncap_first}.getId());
             ${entity.name}Util.copySimplePropertyNotNullValue(${entity.name ?uncap_first}, ${entity.name ?uncap_first}Result);
-                }else{
+        }else{
             ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first};
-                }
+        }
             <#--处理对象关系，对象或list-->
             <#list entity.mainEntityRelationShips as relationShip>
             <#--如果是一对一，或多对一，在主对象中表现为一个对象-->
@@ -429,58 +603,57 @@ private JdbcTemplate jdbcTemplate;
                 <#--获取此对象-->
                 ${relationShip.otherEntity.name} ${relationShip.otherEntity.name ?uncap_first}1 = ${entity.name ?uncap_first}.get${relationShip.otherEntity.name}();
                 <#--如果此对象不为空-->
-                    if(null != ${relationShip.otherEntity.name ?uncap_first}1){
+        if(null != ${relationShip.otherEntity.name ?uncap_first}1){
                 <#--并且id不为空-->
-                    if(!StringUtil.isEmpty(${relationShip.otherEntity.name ?uncap_first}1.getId())){
+            if(!StringUtil.isEmpty(${relationShip.otherEntity.name ?uncap_first}1.getId())){
                 <#--id不为空，需要转换成持久化对象，从数据库中加载出来-->
                 ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ${relationShip.otherEntity.name ?uncap_first}Service.findOne(${relationShip.otherEntity.name ?uncap_first}1.getId());
                 <#--id,version都不为空，可能更新基本属性，进行copy-->
-                    if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){
+            if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){
                 ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}1,db${relationShip.otherEntity.name});
-                    }
+            }
                 <#--进行关系绑定-->
                 <#--如果是多对一，则反向是list，进行add-->
                     <#if relationShip.relationType == "ManyToOne">
-                        db${relationShip.otherEntity.name}.get${entity.name}List().add(${entity.name ?uncap_first}Result);
+            db${relationShip.otherEntity.name}.get${entity.name}List().add(${entity.name ?uncap_first}Result);
                     </#if>
                 <#--如果是一对一，则直接设置【2017-7-28】同多对多一样，一对一的配置双方都是主导者，所以并不需要人为配置关系，注释掉-->
                 <#--<#if relationShip.relationType == "OneToOne">-->
                 <#--db${relationShip.otherEntity.name}.set${entity.name}(${entity.name ?uncap_first}Result);-->
                 <#--</#if>-->
-                ${entity.name ?uncap_first}Result.set${relationShip.otherEntity.name}(db${relationShip.otherEntity.name});
-                    }else{
+            ${entity.name ?uncap_first}Result.set${relationShip.otherEntity.name}(db${relationShip.otherEntity.name});
+            }else{
                 <#--id为空，不需要加载持久化对象，只需要绑定关系-->
                 <#--如果是多对一，反向是list，进行add-->
                     <#if relationShip.relationType == "ManyToOne">
-                    ${relationShip.otherEntity.name ?uncap_first}1.get${entity.name}List().add(${entity.name ?uncap_first}Result);
+            ${relationShip.otherEntity.name ?uncap_first}1.get${entity.name}List().add(${entity.name ?uncap_first}Result);
                     </#if>
                 <#--如果是一对一，直接set 【2017-7-28】同多对多一样，一对一的配置双方都是主导者，所以并不需要人为配置关系，注释掉-->
                 <#--<#if relationShip.relationType == "OneToOne">-->
                 <#--${relationShip.otherEntity.name ?uncap_first}1.set${entity.name}(${entity.name ?uncap_first}Result);-->
                 <#--</#if>-->
                 <#--上面已经把对象关系绑定好了，现在设置到主对象里-->
-                ${entity.name ?uncap_first}Result.set${relationShip.otherEntity.name}(${relationShip.otherEntity.name ?uncap_first}1);
-                    }
-                    }
+            ${entity.name ?uncap_first}Result.set${relationShip.otherEntity.name}(${relationShip.otherEntity.name ?uncap_first}1);
+            }
+        }
                 </#if>
-
             <#--如果是一对多，或多对多，在主对象中表现为一个List，其中list中的每个对象都要同主对象作关系绑定-->
                 <#if relationShip.relationType == "OneToMany" || relationShip.relationType == "ManyToMany">
                 <#--获取到这个list-->
-                    List<${relationShip.otherEntity.name}> ${relationShip.otherEntity.name ?uncap_first}List = ${entity.name ?uncap_first}.get${relationShip.otherEntity.name}List();
+        List<${relationShip.otherEntity.name}> ${relationShip.otherEntity.name ?uncap_first}List = ${entity.name ?uncap_first}.get${relationShip.otherEntity.name}List();
                 <#--如果list不为空就会进行处理-->
-                    if(null != ${relationShip.otherEntity.name ?uncap_first}List && ${relationShip.otherEntity.name ?uncap_first}List.size() > 0){
+        if(null != ${relationShip.otherEntity.name ?uncap_first}List && ${relationShip.otherEntity.name ?uncap_first}List.size() > 0){
                 <#--作为新的结果list存放器-->
-                    List<${relationShip.otherEntity.name}> result${relationShip.otherEntity.name}List = new ArrayList();
-                    for(${relationShip.otherEntity.name} ${relationShip.otherEntity.name ?uncap_first}2:${relationShip.otherEntity.name ?uncap_first}List){
+            List<${relationShip.otherEntity.name}> result${relationShip.otherEntity.name}List = new ArrayList();
+            for(${relationShip.otherEntity.name} ${relationShip.otherEntity.name ?uncap_first}2:${relationShip.otherEntity.name ?uncap_first}List){
                 <#--如果id不为空，则需要从数据库中加载持久化对象出来-->
-                    if(null != ${relationShip.otherEntity.name ?uncap_first}2 && !StringUtil.isEmpty(${relationShip.otherEntity.name ?uncap_first}2.getId())){
+                if(null != ${relationShip.otherEntity.name ?uncap_first}2 && !StringUtil.isEmpty(${relationShip.otherEntity.name ?uncap_first}2.getId())){
                 <#--加载持久化对象-->
                 ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ${relationShip.otherEntity.name ?uncap_first}Service.findOne(${relationShip.otherEntity.name ?uncap_first}2.getId());
                 <#--id,version不为空，则是更新，copy基本属性过去-->
-                    if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){
-                ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}2,db${relationShip.otherEntity.name});
-                    }
+                if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){
+                    ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}2,db${relationShip.otherEntity.name});
+                }
                 <#--跟主对象绑定关系-->
                 <#--如果是多对多，表现为list增加,【2017-7-28】多对多配置，本身就是双方主导，因此不需要我们人为增加关系进去，否则会导致关系多插入一条，因此注释下面-->
                 <#--<#if relationShip.relationType == "ManyToMany">-->
@@ -488,11 +661,11 @@ private JdbcTemplate jdbcTemplate;
                 <#--</#if>-->
                 <#--如果是一对多，则反向是多对一，直接set-->
                     <#if relationShip.relationType == "OneToMany">
-                        db${relationShip.otherEntity.name}.set${entity.name}(${entity.name ?uncap_first}Result);
+                db${relationShip.otherEntity.name}.set${entity.name}(${entity.name ?uncap_first}Result);
                     </#if>
                 <#--一切绑定或更新基本属性后，把它放到结果list中-->
-                    result${relationShip.otherEntity.name}List.add(db${relationShip.otherEntity.name});
-                    }else{
+                result${relationShip.otherEntity.name}List.add(db${relationShip.otherEntity.name});
+                }else{
                 <#--如果id为空，则说明是新增的对象并直接关联,无需多数据库加载，直接绑定关系-->
                 <#--如果是多对多，说明是list，可以add 【2017-7-28】多对多配置，本身就是双方主导，因此不需要我们人为增加关系进去，否则会导致关系多插入一条，因此注释下面-->
                 <#--<#if relationShip.relationType == "ManyToMany">-->
@@ -500,20 +673,20 @@ private JdbcTemplate jdbcTemplate;
                 <#--</#if>-->
                 <#--如果是一对多，则直接set-->
                     <#if relationShip.relationType == "OneToMany">
-                    ${relationShip.otherEntity.name ?uncap_first}2.set${entity.name}(${entity.name ?uncap_first}Result);
+                ${relationShip.otherEntity.name ?uncap_first}2.set${entity.name}(${entity.name ?uncap_first}Result);
                     </#if>
                 <#--把处理结果增加到结果list中-->
-                    result${relationShip.otherEntity.name}List.add(${relationShip.otherEntity.name ?uncap_first}2);
-                    }
-                    }
+                result${relationShip.otherEntity.name}List.add(${relationShip.otherEntity.name ?uncap_first}2);
+                }
+                }
                 <#--清除原来的list，增加我们处理好的结果list-->
                 ${entity.name ?uncap_first}Result.get${relationShip.otherEntity.name}List().clear();
                 ${entity.name ?uncap_first}Result.get${relationShip.otherEntity.name}List().addAll(result${relationShip.otherEntity.name}List);
-                    }
+                }
                 </#if>
             </#list>
-                return ${entity.name ?uncap_first}Result;
-                }
+            return ${entity.name ?uncap_first}Result;
+        }
 }
 
 /**

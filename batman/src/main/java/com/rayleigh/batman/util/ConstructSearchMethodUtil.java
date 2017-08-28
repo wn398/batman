@@ -27,6 +27,16 @@ public class ConstructSearchMethodUtil {
         return map;
     }
 
+    //按优先级提取出condition类型map，在做条件处理时，按优先级处理,freemarker不支持数字作为key,转换成string
+    public static Map<String,List<SearchCondition>> groupConditionKeyStr(List<SearchCondition> conditions){
+        Map<Integer,List<SearchCondition>> map = conditions.parallelStream().collect(Collectors.groupingBy(condition->condition.getPriority()));
+        Map<String, List<SearchCondition>> resultMap = new HashMap<>();
+        for(Map.Entry<Integer,List<SearchCondition>> entry:map.entrySet()){
+            resultMap.put(entry.getKey()+"",entry.getValue());
+        }
+        return resultMap;
+    }
+
     //从一组条件里提取逻辑操作符
     public static LogicOperation getLogicOperationFromCondition(List<SearchCondition> conditions){
         Map<LogicOperation,List<SearchCondition>> map = conditions.parallelStream().collect(Collectors.groupingBy(condition->condition.getLogicOperation()));
@@ -36,6 +46,20 @@ public class ConstructSearchMethodUtil {
             return (LogicOperation) map.keySet().toArray()[0];
         }
 
+    }
+
+    //从一组结果里过滤并排序出排序结果，排序名越高，优先级越大，为0不参与排序
+    public static List<SearchResult> getOrderResult(List<SearchResult> results){
+        List<SearchResult> list = results.parallelStream().filter(searchResult -> searchResult.getOrderByNum()>0).sorted(new Comparator<SearchResult>() {
+            @Override
+            public int compare(SearchResult o1, SearchResult o2) {
+                return o2.getOrderByNum()-o1.getOrderByNum();
+            }
+        }).collect(Collectors.toList());
+        if(null !=list &&list.size()>3){
+            return list.subList(0,3);
+        }
+        return list;
     }
 
     //给定一个method，构造它的jpql

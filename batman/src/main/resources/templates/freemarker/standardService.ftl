@@ -53,8 +53,13 @@ public interface ${entity.name}Service extends BaseService{
     List<${entity.name}> findAll();
 
     <#list entity.methods as method>
+        <#if method.isReturnObject ?exists && method.isReturnObject>
+    //${method.description}
+    Page<${entity.name}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
+        <#else>
+    //${method.description}
     PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
-
+        </#if>
     </#list>
 
     <#--处理实体之间的关系-->

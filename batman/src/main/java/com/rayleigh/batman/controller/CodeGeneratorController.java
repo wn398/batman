@@ -505,10 +505,12 @@ public class CodeGeneratorController extends BaseController{
                         paramTemplate.process(map, writer);
                         writer.flush();
                     }
-
-                    try(Writer writer = new OutputStreamWriter(new FileOutputStream(resultFile),"utf-8");) {
-                        resultTemplate.process(map, writer);
-                        writer.flush();
+                    //如果方法返回类型选择了主对象类型，则不需要包装结果返回类型,默认返回包装类型
+                    if(null == method.getIsReturnObject()||(null != method.getIsReturnObject() && method.getIsReturnObject()== false)) {
+                        try (Writer writer = new OutputStreamWriter(new FileOutputStream(resultFile), "utf-8");) {
+                            resultTemplate.process(map, writer);
+                            writer.flush();
+                        }
                     }
                 }
             }

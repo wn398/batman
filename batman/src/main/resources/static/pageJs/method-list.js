@@ -22,7 +22,7 @@ $(document).ready(function () {
         "stateSave": false,//保存最后一次分页信息、排序信息，当页面刷新，或者重新进入这个页面，恢复上次的状态。这个状态的保存用了html5的本地储存和session储存，这样更加有效率。如果你的数据是异步获取的，你可以使用 stateSaveCallback和 stateLoadCallback选项.默认情况下，这个状态会保存2小时，如果你希望设置的时间更长，通过设置参数 stateDuration来初始化表格
         "processing": true,//加载数据时是否显示进度条
         "ordering": true,//排序操作在服务端进行，所以可以关了。
-        "order": [[ 3, "desc" ]],//默认首次展示时从按第4列倒序展示
+        "order": [[ 5, "desc" ]],//默认首次展示时从按第4列倒序展示
         "serverSide": false,//是否开启服务端
         "ajax": {
             url: getRootPath()+'/entitiesCtl/getEntityMethodData/'+entityId,
@@ -33,6 +33,8 @@ $(document).ready(function () {
         "columns": [
             {"data": "methodName"},
             {"data": "description"},
+            {"data": "isInterface"},
+            {"data": "isReturnObject"},
             {"data": "createDate"},
             {"data": "updateDate"},
             {"data": "version"},

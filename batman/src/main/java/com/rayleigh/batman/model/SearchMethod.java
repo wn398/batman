@@ -22,6 +22,14 @@ public class SearchMethod extends BaseModel{
     @NotEmpty
     private String description;
 
+    @FieldInfo("是否提供接口出去")
+    @Column
+    private Boolean isInterface = true;
+    //返回对象类型，就会过滤出主对象，否则就是返回选中的字段包装对象
+    @FieldInfo("是否返回对象类型")
+    @Column
+    private Boolean isReturnObject = false;
+
 
     @FieldInfo("所对应的查询条件")
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "searchMethod",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE},orphanRemoval = true)
@@ -83,5 +91,19 @@ public class SearchMethod extends BaseModel{
         this.searchResults = searchResults;
     }
 
+    public Boolean getIsInterface() {
+        return isInterface;
+    }
 
+    public void setIsInterface(Boolean anInterface) {
+        isInterface = anInterface;
+    }
+
+    public Boolean getIsReturnObject() {
+        return isReturnObject;
+    }
+
+    public void setIsReturnObject(Boolean returnObject) {
+        isReturnObject = returnObject;
+    }
 }
