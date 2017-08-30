@@ -6,6 +6,7 @@ import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
 import com.rayleigh.core.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import java.util.*;
 <#if (entity.methods ?size >0) >
@@ -23,6 +24,10 @@ public interface ${entity.name}Service extends BaseService{
     ${entity.name} saveOrUpdate(${entity.name} ${entity.name ?uncap_first});
 
     void deleteByIds(List<String> ids);
+
+    ${entity.name} update(${entity.name} ${entity.name ?uncap_first});
+
+    ${entity.name} save(${entity.name} ${entity.name ?uncap_first});
 
     void deleteById(String id);
 
@@ -50,8 +55,9 @@ public interface ${entity.name}Service extends BaseService{
 
     Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable);
 
-    List<${entity.name}> findAll();
+    List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
 
+    <#--页面配置生成的方法-->
     <#list entity.methods as method>
         <#if method.isReturnObject ?exists && method.isReturnObject>
     //${method.description}
@@ -62,7 +68,7 @@ public interface ${entity.name}Service extends BaseService{
         </#if>
     </#list>
 
-    <#--处理实体之间的关系-->
+    <#--处理实体之间的关系的方法-->
     <#list entity.mainEntityRelationShips as relationShip>
         <#if relationShip.mainEntity.name == relationShip.otherEntity.name>
         <#else>

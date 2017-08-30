@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -55,8 +56,19 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         return ${entity.name ?uncap_first}Repository.save(list);
     }
 
+    public ${entity.name} save(${entity.name} ${entity.name ?uncap_first}){
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
+    }
+
+    public ${entity.name} update(${entity.name} ${entity.name ?uncap_first}){
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
+    }
+
     public ${entity.name} saveOrUpdate(${entity.name} ${entity.name ?uncap_first}){
-        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first});
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
     }
     //保存人为分配id的实体
     public ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception{
@@ -166,6 +178,10 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
 
     public List<${entity.name}> findAll(Specification<${entity.name}> specification){
         return   ${entity.name ?uncap_first}Repository.findAll(specification);
+    }
+
+    public List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort){
+        return   ${entity.name ?uncap_first}Repository.findAll(specification,sort);
     }
 
     public Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable){
