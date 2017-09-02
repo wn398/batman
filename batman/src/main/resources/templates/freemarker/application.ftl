@@ -42,7 +42,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
 spring.jpa.open-in-view=true
 
 #日志配置
-logging.file=logs/${module.name}.log
+logging.file=../logs/${module.name}.log
 
 # Specify the DBMS
 #spring.jpa.database =
@@ -76,7 +76,7 @@ spring.datasource.testOnReturn=false
 spring.datasource.poolPreparedStatements=true
 spring.datasource.maxPoolPreparedStatementPerConnectionSize=20
 # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
-spring.datasource.filters=stat,wall,log4j
+spring.datasource.filters=stat,wall,slf4j
 # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
 spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 # 合并多个DruidDataSource的监控数据

@@ -37,7 +37,7 @@
     </appender>
     <!--logger单独文件示例-->
     <!--<appender name="testFile" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-    <!--<File>testController.log</File>-->
+    <!--<File>../logs/testController.log</File>-->
     <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
     <!--<FileNamePattern>test_%d{yyyy-MM-dd}.log</FileNamePattern>-->
     <!--</rollingPolicy>-->

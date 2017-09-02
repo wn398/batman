@@ -1,5 +1,6 @@
 package com.rayleigh.core.config;
 
+import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import java.util.Date;
 @ConditionalOnWebApplication
 @Configuration
 @EnableSwagger2
@@ -33,7 +35,7 @@ public class Swagger2 {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Spring Boot中使用Swagger2构建RESTful APIs")
-                .description("此处为swagger生成")
+                .description(new StringBuilder("此处为swagger生成").append("-").append(StringUtil.dateToString(new Date())).toString())
                 .termsOfServiceUrl("http://wn398.github.io/")
                 .contact("batman")
                 .version("2.0")
