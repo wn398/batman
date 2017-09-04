@@ -1,8 +1,6 @@
 package com.rayleigh.core.dynamicDataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.rayleigh.core.dynamicDataSource.DynamicDataSource;
-import com.rayleigh.core.dynamicDataSource.DynamicDataSourceContextHolder;
 import com.rayleigh.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +92,12 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
         String dsPrefixs = propertyResolver.getProperty("names");
         if(!StringUtil.isEmpty(dsPrefixs)){
             for (String dsPrefix : dsPrefixs.split(",")) {// 多个数据源
-                Map<String, Object> dsMap = propertyResolver.getSubProperties(dsPrefix + ".");
+                Map<String, Object> dsMap = new HashMap<>();
+                //dsMap = propertyResolver.getSubProperties(dsPrefix + ".");
+                dsMap.put("driverClassName", propertyResolver.getProperty(dsPrefix+".driverClassName"));
+                dsMap.put("url", propertyResolver.getProperty(dsPrefix+".url"));
+                dsMap.put("username", propertyResolver.getProperty(dsPrefix+".username"));
+                dsMap.put("password", propertyResolver.getProperty(dsPrefix+".password"));
                 dsMap.putAll(sourcePoolMap);
                 DataSource ds = buildDataSource(dsMap);
                 customDataSources.put(dsPrefix, ds);
