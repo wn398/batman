@@ -1,5 +1,6 @@
 package ${project.packageName};
 
+import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.rayleigh.core.DynamicDataSource.EnableDynamicDataSource;
@@ -34,5 +35,19 @@ public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter()
     ObjectMapper objectMapper = jsonConverter.getObjectMapper();
     objectMapper.registerModule(new Hibernate5Module());
     return jsonConverter;
+}
+
+@Bean
+public DruidStatInterceptor druidStatInterceptor(){
+    return new DruidStatInterceptor();
+}
+
+@Bean
+public BeanNameAutoProxyCreator beanNameAutoProxyCreator(){
+    BeanNameAutoProxyCreator beanNameAutoProxyCreator = new BeanNameAutoProxyCreator();
+    beanNameAutoProxyCreator.setProxyTargetClass(true);
+    beanNameAutoProxyCreator.setBeanNames("*Controller","*Schedule");
+    beanNameAutoProxyCreator.setInterceptorNames("druidStatInterceptor");
+    return beanNameAutoProxyCreator;
 }
 }
