@@ -5,6 +5,9 @@ swagger.basePackage=${project.packageName}
 
 #jwt 过期时间
 jwt.expire.millisecond=600000
+jwt.secret.key=TBlbena8h4EdhldhIefw+Q==
+jwt.noPermission.page.url=/
+
 #是否开启jwt
 jwt.enabled=false
 jwt.exclude.urls=swagger-ui.html,webjars/springfox-swagger-ui,api-docs,/druid/,swagger-resources

@@ -1,9 +1,11 @@
 package com.rayleigh.batman;
 
+import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.rayleigh.core.dynamicDataSource.EnableDynamicDataSource;
 import com.rayleigh.core.annotation.EnableCustomRepository;
+import org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -39,5 +41,18 @@ public class BatmanApplication  extends SpringBootServletInitializer{
 		//objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		//jsonConverter.setObjectMapper(objectMapper);
 		return jsonConverter;
+	}
+	@Bean
+	public DruidStatInterceptor druidStatInterceptor(){
+		return new DruidStatInterceptor();
+	}
+
+	@Bean
+	public BeanNameAutoProxyCreator beanNameAutoProxyCreator(){
+		BeanNameAutoProxyCreator beanNameAutoProxyCreator = new BeanNameAutoProxyCreator();
+		beanNameAutoProxyCreator.setProxyTargetClass(true);
+		beanNameAutoProxyCreator.setBeanNames("*Controller","*Schedule");
+		beanNameAutoProxyCreator.setInterceptorNames("druidStatInterceptor");
+		return beanNameAutoProxyCreator;
 	}
 }
