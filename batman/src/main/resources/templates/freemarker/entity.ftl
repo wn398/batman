@@ -4,6 +4,8 @@ import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.StringUtil;
 import com.rayleigh.core.annotation.FieldInfo;
 import org.hibernate.validator.constraints.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
@@ -18,6 +20,8 @@ import java.util.*;
 */
 @FieldInfo("${entity.description}")
 @Entity
+@DynamicInsert
+@DynamicUpdate
 @Table(name = "${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}",
     indexes = {
      @Index(name = "rk_${entity.name}_createDate", columnList = "createDate")
