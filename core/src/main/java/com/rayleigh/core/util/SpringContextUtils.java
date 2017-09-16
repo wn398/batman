@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SpringContextUtils implements ApplicationContextAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringContextUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpringContextUtils.class);
     //spring应用上下文
     private static ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext context) throws BeansException {
-        LOGGER.info("Set Spring上下文");
+        logger.info("Set Spring上下文");
         applicationContext = context;
     }
 
@@ -28,12 +28,25 @@ public class SpringContextUtils implements ApplicationContextAware {
     public static <T> T getBean(String name) throws BeansException {
         try {
             if (applicationContext == null || applicationContext.getBean(name) == null) {
-                LOGGER.error("获取bean: {} 失败", name);
+                logger.error("获取bean: {} 失败", name);
                 return null;
             }
             return (T) applicationContext.getBean(name);
         }catch (Exception e){
-            LOGGER.error("获取不到bean: {} 失败", name);
+            logger.error("获取不到bean: {} 失败", name);
+            return null;
+        }
+    }
+
+    public static <T> T getBean(Class clazz) throws BeansException{
+        try {
+            if (applicationContext == null || applicationContext.getBean(clazz) == null) {
+                logger.error("获取bean: {} 失败", clazz.getName());
+                return null;
+            }
+            return (T) applicationContext.getBean(clazz);
+        }catch (Exception e){
+            logger.error("获取不到bean: {} 失败", clazz.getName());
             return null;
         }
     }

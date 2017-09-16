@@ -33,7 +33,15 @@ public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> findByIds(List<String> ids);
 
+    List<${entity.name}> findByIds(List<String> ids,String ...propertyNames);
+
+    List<${entity.name}> findByIds(List<String> ids,List<String> propertyNames);
+
     ${entity.name} findOne(String id);
+
+    ${entity.name} findOne(String id,String ...propertyNames);
+
+    ${entity.name} findOne(String id,List<String> propertyNames);
     //获取带关系的实体
     ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
 
@@ -41,19 +49,53 @@ public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> findByProperties(Map<String,Object> map);
 
+    List<${entity.name}> findByProperties(Map<String,Object> map,String ...propertyNames);
+
+    List<${entity.name}> findByProperties(Map<String,Object> map,List<String> propertyNames);
+
     Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable);
+
+    Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,String ...propertyNames);
+
+    Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,List<String> propertyNames);
 
     List<${entity.name}> findByProperty(String name,Object value);
 
+    List<${entity.name}> findByProperty(String name,Object value,String ...propertyNames);
+
+    List<${entity.name}> findByProperty(String name,Object value,List<String> propertyNames);
+
     Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable);
+
+    Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable,String ...propertyNames);
+
+    Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable,List<String> propertyNames);
 
     Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable);
 
+    List<${entity.name}> findAll();
+
+    List<${entity.name}> findAll(String ...propertyNames);
+
+    List<${entity.name}> findAll(List<String> propertyNames);
+
     Page<${entity.name}> findAll(Pageable pageable);
+
+    Page<${entity.name}> findAll(Pageable pageable,String ...propertyNames);
+
+    Page<${entity.name}> findAll(Pageable pageable,List<String> propertyNames);
 
     List<${entity.name}> findAll(Specification<${entity.name}> specification);
 
+    List<${entity.name}> findAll(Specification<${entity.name}> specification, String ...propertyNames);
+
+    List<${entity.name}> findAll(Specification<${entity.name}> specification, List<String> propertyNames);
+
     Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable);
+
+    Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,String ...propertyNames);
+
+    Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,List<String> propertyNames);
 
     List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
 

@@ -2,6 +2,7 @@ package ${project.packageName}.standard.util;
 
 import com.rayleigh.core.util.SpringContextUtils;
 import com.rayleigh.core.util.StringUtil;
+
 import ${project.packageName}.standard.model.${entity.name};
 import ${project.packageName}.standard.service.${entity.name}Service;
 <#list entity.mainEntityRelationShips as relationShip>
@@ -10,6 +11,7 @@ import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
 import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
     </#if>
 </#list>
+import java.math.BigDecimal;
 import java.util.*;
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
@@ -188,6 +190,30 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     </#if>
 </#list>
     return ${entity.name ?uncap_first}Result;
+}
+
+//通过字段名和字段值设置实体，只设置实体的一部分属性
+public static ${entity.name} setPartProperties(Map<String,Object> propertyValueMap){
+    ${entity.name} ${entity.name ?uncap_first} = new ${entity.name}();
+    if(null !=propertyValueMap.get("id")){
+        ${entity.name ?uncap_first}.setId((String)propertyValueMap.get("id"));
+    }
+    if(null !=propertyValueMap.get("createDate")){
+        ${entity.name ?uncap_first}.setCreateDate((Date)propertyValueMap.get("createDate"));
+    }
+    if(null !=propertyValueMap.get("updateDate")){
+        ${entity.name ?uncap_first}.setUpdateDate((Date)propertyValueMap.get("updateDate"));
+    }
+    if(null !=propertyValueMap.get("version")){
+        ${entity.name ?uncap_first}.setVersion((Long)propertyValueMap.get("version"));
+    }
+
+    <#list entity.fields as field>
+    if(null != propertyValueMap.get("${field.name}")){
+        ${entity.name ?uncap_first}.set${field.name ?cap_first}((${field.dataType})propertyValueMap.get("${field.name}"));
+    }
+    </#list>
+    return ${entity.name ?uncap_first};
 }
 
 }

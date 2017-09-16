@@ -6,10 +6,7 @@ import ${project.packageName}.standard.repository.${entity.name}Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ${project.packageName}.standard.service.${entity.name}Service;
@@ -24,6 +21,8 @@ import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util
 <#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
 </#if>
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import javax.persistence.EntityManager;
 import javax.annotation.Resource;
@@ -89,8 +88,54 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         return  ${entity.name ?uncap_first}Repository.findAll(ids);
     }
 
+    public List<${entity.name}> findByIds(List<String> ids,List<String> propertyNames){
+         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+         CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
+         Root<${entity.name}> root = tupleCriteriaQuery.from(${entity.name}.class);
+         CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("id"));
+         for(String id:ids){ in.value(id);}
+         tupleCriteriaQuery.where(in);
+         List<Selection<?>> list = new ArrayList<>();
+         propertyNames.stream().forEach(name->list.add(root.get(name).alias(name)));
+         tupleCriteriaQuery.multiselect(list);
+         TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
+         List<Tuple> tupleList = tupleTypedQuery.getResultList();
+         List<${entity.name}> resultList = new ArrayList<>();
+         for(Tuple tuple:tupleList){
+            Map<String,Object> map = new HashMap<String,Object>();
+            propertyNames.stream().forEach(name->map.put(name,tuple.get(name)));
+            ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(map);
+            resultList.add(${entity.name ?uncap_first});
+         }
+        return resultList;
+    }
+
+    public List<${entity.name}> findByIds(List<String> ids,String ...propertyNames){
+        return findByIds(ids, Arrays.asList(propertyNames));
+    }
+
     public ${entity.name} findOne(String id){
         return   ${entity.name ?uncap_first}Repository.findOne(id);
+    }
+
+    public ${entity.name} findOne(String id,List<String> propertyNames){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
+        Root<${entity.name}> root = tupleCriteriaQuery.from(${entity.name}.class);
+        tupleCriteriaQuery.where(criteriaBuilder.equal(root.get("id"),id));
+        List<Selection<?>> list = new ArrayList<>();
+        propertyNames.stream().forEach(name->list.add(root.get(name).alias(name)));
+        tupleCriteriaQuery.multiselect(list);
+        TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
+        Tuple tuple = tupleTypedQuery.getSingleResult();
+        Map<String,Object> map = new HashMap<String,Object>();
+        propertyNames.stream().forEach(name->map.put(name,tuple.get(name)));
+        ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(map);
+        return ${entity.name ?uncap_first};
+    }
+
+    public ${entity.name} findOne(String id,String ...propertyNames){
+        return findOne(id,Arrays.asList(propertyNames));
     }
 
     public ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation){
@@ -136,6 +181,13 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
             });
     }
 
+    public List<${entity.name}> findByProperties(Map<String,Object> map,List<String> propertyNames){
+        return findByProperties(map,null,propertyNames).getContent();
+    }
+    public List<${entity.name}> findByProperties(Map<String,Object> map,String ...propertyNames){
+        return findByProperties(map,Arrays.asList(propertyNames));
+    }
+
     public List<${entity.name}> findByProperty(String name,Object value){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
             @Override
@@ -145,6 +197,14 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         });
     }
 
+    public List<${entity.name}> findByProperty(String name,Object value,List<String> propertyNames){
+        return findByProperties(Collections.singletonMap(name,value),propertyNames);
+    }
+
+    public List<${entity.name}> findByProperty(String name,Object value,String ...propertyNames){
+        return findByProperty(name,value,Arrays.asList(propertyNames));
+    }
+
     public Page<${entity.name}> findByProperty(String name,Object value,Pageable pageAble){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
             @Override
@@ -152,6 +212,14 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
                 return criteriaBuilder.equal(root.get(name),value);
             }
         },pageAble);
+    }
+
+    public Page<${entity.name}> findByProperty(String name,Object value,Pageable pageAble,List<String> propertyNames){
+        return findByProperties(Collections.singletonMap(name,value),pageAble,propertyNames);
+    }
+
+    public Page<${entity.name}> findByProperty(String name,Object value,Pageable pageAble,String ...propertyNames){
+        return findByProperty(name,value,pageAble,Arrays.asList(propertyNames));
     }
 
     public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable){
@@ -168,6 +236,54 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         },pageable);
     }
 
+    public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,List<String> propertyNames){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
+        Root<${entity.name}> root = tupleCriteriaQuery.from(${entity.name}.class);
+        List<Predicate> list = new ArrayList<>();
+        for(Map.Entry<String,Object> entry:map.entrySet()){
+            list.add(criteriaBuilder.equal(root.get(entry.getKey()),entry.getValue()));
+        }
+        Predicate[] predicates = new Predicate[list.size()];
+        tupleCriteriaQuery.where(list.toArray(predicates));
+
+        List<Selection<?>> selectionList = new ArrayList<>();
+        propertyNames.stream().forEach(name->selectionList.add(root.get(name).alias(name)));
+        tupleCriteriaQuery.multiselect(selectionList);
+        TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
+        if(null !=pageable){
+            tupleTypedQuery.setFirstResult(pageable.getOffset());
+            tupleTypedQuery.setMaxResults(pageable.getPageSize());
+        }
+        List<Tuple> tupleList = tupleTypedQuery.getResultList();
+        List<${entity.name}> resultList = new ArrayList<>();
+        for(Tuple tuple:tupleList){
+            Map<String,Object> filedMap = new HashMap<String,Object>();
+            propertyNames.stream().forEach(name->filedMap.put(name,tuple.get(name)));
+            resultList.add(${entity.name}Util.setPartProperties(filedMap));
+        }
+
+        if(null!=pageable){
+            CriteriaQuery<Long> criteriaQueryP = criteriaBuilder.createQuery(Long.class);
+            Root<${entity.name}> rootP = criteriaQueryP.from(${entity.name}.class);
+            List<Predicate> listP = new ArrayList<>();
+            for(Map.Entry<String,Object> entry:map.entrySet()){
+                listP.add(criteriaBuilder.equal(root.get(entry.getKey()),entry.getValue()));
+            }
+            Predicate[] predicates2 = new Predicate[list.size()];
+            criteriaQueryP.where(listP.toArray(predicates2));
+            criteriaQueryP.select(criteriaBuilder.count(rootP));
+            Long total = entityManager.createQuery(criteriaQueryP).getSingleResult();
+            return new PageImpl(resultList,pageable,total);
+        }else{
+            return new PageImpl(resultList);
+        }
+    }
+
+    public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,String ...propertyNames){
+        return findByProperties(map,pageable,Arrays.asList(propertyNames));
+    }
+
     public Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable){
         return  ${entity.name ?uncap_first}Repository.findByAuto(${entity.name ?uncap_first},pageable);
     }
@@ -176,10 +292,25 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         return   ${entity.name ?uncap_first}Repository.findAll(pageable);
     }
 
+    public Page<${entity.name}> findAll(Pageable pageable,List<String> propertyNames){
+        return findAll(null,pageable,propertyNames);
+    }
+
+    public Page<${entity.name}> findAll(Pageable pageable,String ...propertyNames){
+        return findAll(pageable,Arrays.asList(propertyNames));
+    }
+
     public List<${entity.name}> findAll(Specification<${entity.name}> specification){
         return   ${entity.name ?uncap_first}Repository.findAll(specification);
     }
 
+    public List<${entity.name}> findAll(Specification<${entity.name}> specification,List<String> propertyNames){
+        return findAll(specification,null,propertyNames).getContent();
+    }
+
+    public List<${entity.name}> findAll(Specification<${entity.name}> specification,String ...propertyNames){
+        return findAll(specification,Arrays.asList(propertyNames));
+    }
     public List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort){
         return   ${entity.name ?uncap_first}Repository.findAll(specification,sort);
     }
@@ -188,10 +319,58 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         return   ${entity.name ?uncap_first}Repository.findAll(specification,pageable);
     }
 
+    public Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,String ...propertyNames){
+        return  findAll(specification,pageable,Arrays.asList(propertyNames));
+    }
+
+    public Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,List<String> propertyNames){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
+        Root<${entity.name}> root = tupleCriteriaQuery.from(${entity.name}.class);
+        if(null !=specification) {
+            Predicate predicate = specification.toPredicate(root, tupleCriteriaQuery, criteriaBuilder);
+            tupleCriteriaQuery.where(predicate);
+        }
+        List<Selection<?>> list = new ArrayList<>();
+        propertyNames.stream().forEach(name->list.add(root.get(name).alias(name)));
+        tupleCriteriaQuery.multiselect(list);
+        TypedQuery<Tuple> typedQuery = entityManager.createQuery(tupleCriteriaQuery);
+        if(null !=pageable){
+            typedQuery.setFirstResult(pageable.getOffset());
+            typedQuery.setMaxResults(pageable.getPageSize());
+        }
+        List<Tuple> tupleList = typedQuery.getResultList();
+        List<${entity.name}> ResultList = new ArrayList<>();
+        for(Tuple tuple:tupleList){
+            Map<String,Object> map = new HashMap();
+            propertyNames.stream().forEach(name->map.put(name,tuple.get(name)));
+            ResultList.add(${entity.name}Util.setPartProperties(map));
+        }
+        if(null !=pageable){
+            CriteriaQuery<Long> criteriaQueryP = criteriaBuilder.createQuery(Long.class);
+            Root<${entity.name}> rootP = criteriaQueryP.from(${entity.name}.class);
+            if(null!=specification){
+                criteriaQueryP.where(specification.toPredicate(rootP,criteriaQueryP,criteriaBuilder));
+            }
+            criteriaQueryP.select(criteriaBuilder.count(rootP));
+            Long total = entityManager.createQuery(criteriaQueryP).getSingleResult();
+            return new PageImpl(ResultList,pageable,total);
+        }else{
+            return new PageImpl(ResultList);
+        }
+    }
+
     public List<${entity.name}> findAll(){
         return   ${entity.name ?uncap_first}Repository.findAll();
     }
 
+    public List<${entity.name}> findAll(List<String> propertyNames){
+        return findAll(null,null,propertyNames).getContent();
+    }
+
+    public List<${entity.name}> findAll(String ...propertyNames){
+        return findAll(Arrays.asList(propertyNames));
+    }
     <#list entity.methods as method>
     <#--赋值，如果不存在，给个默认值false-->
     <#assign isReturnObject=method.isReturnObject !false>
