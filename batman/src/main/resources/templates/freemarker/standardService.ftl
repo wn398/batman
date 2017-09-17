@@ -99,6 +99,32 @@ public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
 
+    Integer updateById(String id,String name,Object value);
+
+    Integer updateById(String id,Map<String,Object> updatedNameValues);
+
+    Integer updateByIds(List<String> ids,String name,Object value);
+
+    Integer updateByIds(List<String> ids,Map<String,Object> updatedNameValues);
+
+    Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues);
+
+    Integer updateAll(Specification<${entity.name}> specification,String name,Object value);
+    //根据前两个参数名值，更新所有符合条件的后两个
+    Integer updateByProperty(String fieldName,Object fieldValue,String name,Object value);
+
+    Integer updateByProperty(String fieldName,Object fieldValue,Map<String,Object> updatedNameValues);
+
+    Integer updateByProperties(Map<String,Object> conditionMap,String name,Object value);
+
+    Integer updateByProperties(Map<String,Object> conditionMap,Map<String,Object> updatedNameValues);
+
+    Integer deleteByProperty(String name,Object value);
+
+    Integer deleteByProperties(Map<String,Object> conditionMap);
+
+    Integer deleteAll(Specification<${entity.name}> specification);
+
     <#--页面配置生成的方法-->
     <#list entity.methods as method>
         <#if method.isReturnObject ?exists && method.isReturnObject>

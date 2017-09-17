@@ -371,6 +371,92 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
     public List<${entity.name}> findAll(String ...propertyNames){
         return findAll(Arrays.asList(propertyNames));
     }
+
+    public Integer updateById(String id,String name,Object value){
+        return updateById(id,Collections.singletonMap(name,value));
+    }
+
+    public Integer updateById(String id,Map<String,Object> updatedNameValues){
+        return updateByIds(Collections.singletonList(id),updatedNameValues);
+    }
+
+    public Integer updateByIds(List<String> ids,String name,Object value){
+        return updateByIds(ids,Collections.singletonMap(name,value));
+    }
+
+    public Integer updateByIds(List<String> ids,Map<String,Object> updatedNameValues){
+        return updateAll(new Specification<${entity.name}>() {
+            @Override
+            public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                if(null!=ids&&ids.size()==1){
+                    return criteriaBuilder.equal(root.get("id"),ids.get(0));
+                }else if(ids.size()>1){
+                    CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("id"));
+                    for(String id:ids){ in.value(id);}
+                    return  criteriaQuery.where(in).getRestriction();
+                }else{
+                    return null;
+                }
+            }
+        },updatedNameValues);
+    }
+
+    public Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues){
+        return ${entity.name ?uncap_first}Repository.updateAll(specification,updatedNameValues);
+    }
+
+    public Integer updateAll(Specification<${entity.name}> specification,String name,Object value){
+        return updateAll(specification,Collections.singletonMap(name,value));
+    }
+
+    public Integer updateByProperty(String fieldName,Object fieldValue,String name,Object value){
+        return updateByProperty(fieldName,fieldValue,Collections.singletonMap(name,value));
+    }
+
+    public Integer updateByProperty(String fieldName,Object fieldValue,Map<String,Object> updatedNameValues){
+        return updateByProperties(Collections.singletonMap(fieldName,fieldValue),updatedNameValues);
+    }
+
+    public Integer updateByProperties(Map<String,Object> conditionMap,String name,Object value){
+        return updateByProperties(conditionMap,Collections.singletonMap(name,value));
+    }
+
+    public Integer updateByProperties(Map<String,Object> conditionMap,Map<String,Object> updatedNameValues){
+        return updateAll(new Specification<${entity.name}>() {
+        @Override
+        public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            List<Predicate> list = new ArrayList<>();
+            for(Map.Entry<String,Object> entry:conditionMap.entrySet()){
+            list.add(criteriaBuilder.equal(root.get(entry.getKey()),entry.getValue()));
+            }
+            Predicate[] predicates = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(predicates));
+            }
+            },updatedNameValues);
+
+    }
+
+    public Integer deleteByProperty(String name,Object value){
+        return deleteByProperties(Collections.singletonMap(name,value));
+    }
+
+    public Integer deleteByProperties(Map<String,Object> conditionMap){
+        return deleteAll(new Specification<${entity.name}>() {
+        @Override
+        public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+        List<Predicate> list = new ArrayList<>();
+            for(Map.Entry<String,Object> entry:conditionMap.entrySet()){
+            list.add(criteriaBuilder.equal(root.get(entry.getKey()),entry.getValue()));
+            }
+            Predicate[] predicates = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(predicates));
+            }
+            });
+    }
+
+    public Integer deleteAll(Specification<${entity.name}> specification){
+        return ${entity.name ?uncap_first}Repository.deleteAll(specification);
+    }
     <#list entity.methods as method>
     <#--赋值，如果不存在，给个默认值false-->
     <#assign isReturnObject=method.isReturnObject !false>
