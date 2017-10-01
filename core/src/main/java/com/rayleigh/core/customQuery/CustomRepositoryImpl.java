@@ -71,4 +71,16 @@ public class CustomRepositoryImpl <T, ID extends Serializable>
 		return result;
 	}
 
+	@Override
+	public Long getCount(Specification<T> specification) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<T> root = criteriaQuery.from(this.getDomainClass());
+		if(null!=specification){
+			criteriaQuery.where(specification.toPredicate(root, criteriaQuery, criteriaBuilder));
+		}
+		criteriaQuery.select(criteriaBuilder.count(root));
+		return entityManager.createQuery(criteriaQuery).getSingleResult();
+	}
+
 }

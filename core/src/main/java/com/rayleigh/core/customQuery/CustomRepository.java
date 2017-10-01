@@ -20,4 +20,5 @@ public interface CustomRepository<T, ID extends Serializable>extends JpaReposito
     List<Object[]> listBySQL(String sql);
     Integer updateAll(Specification<T> specification, Map<String,Object> needUpdatedNameValue);
     Integer deleteAll(Specification<T> specification);
+    Long getCount(Specification<T> specification);
 }

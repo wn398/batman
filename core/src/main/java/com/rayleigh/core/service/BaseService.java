@@ -2,14 +2,18 @@ package com.rayleigh.core.service;
 
 import com.rayleigh.core.customQuery.CustomRepository;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.util.SpringContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -17,7 +21,6 @@ import java.util.List;
  */
 public interface BaseService<T extends BaseModel,R extends CustomRepository>{
     Logger logger = LoggerFactory.getLogger(BaseService.class);
-
 //     R getRepository();
 //
 //    default Collection<T> saveOrUpdate(Collection<T> list){
