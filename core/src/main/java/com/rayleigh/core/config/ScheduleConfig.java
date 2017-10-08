@@ -1,5 +1,7 @@
 package com.rayleigh.core.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,9 +15,10 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 public class ScheduleConfig implements SchedulingConfigurer {
-
+    private Logger logger = LoggerFactory.getLogger(ScheduleConfig.class);
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        logger.info("启动 schedule threadPool!");
         taskRegistrar.setScheduler(taskExecutor());
     }
 

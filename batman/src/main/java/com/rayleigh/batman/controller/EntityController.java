@@ -43,10 +43,16 @@ public class EntityController extends BaseController{
     @PostMapping(value = "/doAdd")
     @ResponseBody
     public ResultWrapper doAdd(@Valid @RequestBody Entities entities){
+        if(!StringUtil.isCapFirst(entities.getName())){
+            return getFailureResultAndInfo(null,"实体名称首字母不能小写!");
+        }
         //添加对字段名字和描述不能为空的验证
         for(Field field:entities.getFields()){
             if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){
                 return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!").toString());
+            }
+            if(!StringUtil.isUnCapFirst(field.getName())){
+                return getFailureResultAndInfo(field,new StringBuilder("字段名首字母不能大写:").append(field.getName()).toString());
             }
         }
         //检测字段名是否重复,是否包含id,createDate,updateDate,version
@@ -81,11 +87,18 @@ public class EntityController extends BaseController{
     @PostMapping(value = "/partUpdate")
     @ResponseBody
     public ResultWrapper partUpdate(@RequestBody Entities entities){
+        if(!StringUtil.isCapFirst(entities.getName())){
+            return getFailureResultAndInfo(null,"实体名称首字母不能小写!");
+        }
+
         if(null!=entities&& !StringUtil.isEmpty(entities.getId())) {
             //添加对字段名字和描述不能为空的验证
             for(Field field:entities.getFields()){
                 if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){
                     return getFailureResultAndInfo(field,new StringBuilder("字段名或描述不能为空!-").append(JSON.toJSON(field)).toString());
+                }
+                if(!StringUtil.isUnCapFirst(field.getName())){
+                    return getFailureResultAndInfo(field,new StringBuilder("字段名首字母不能大写:").append(field.getName()).toString());
                 }
             }
             //检测字段名是否重复,是否包含id,createDate,updateDate,version

@@ -26,9 +26,27 @@ public class StringUtil {
     public static String capFirst(String str){
         return new StringBuilder(str.substring(0,1).toUpperCase()).append(str.substring(1)).toString();
     }
+    //判断首字母是不是大写
+    public static boolean isCapFirst(String str){
+        String first = str.substring(0,1);
+        if(first.equals(first.toUpperCase())){
+            return true;
+        }else{
+            return false;
+        }
+    }
     //首字线小写
     public static String unCapFirst(String str){
         return new StringBuilder(str.substring(0,1).toLowerCase()).append(str.substring(1)).toString();
+    }
+    //判断首字母是不是小写
+    public static boolean isUnCapFirst(String str){
+        String first = str.substring(0,1);
+        if(first.equals(first.toLowerCase())){
+            return true;
+        }else{
+            return false;
+        }
     }
     //时间转化成字符串
     public static String dateToDbString(Date date){
@@ -58,6 +76,13 @@ public class StringUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(isCapFirst("test"));
+        System.out.println(isCapFirst("12EE"));
+        System.out.println(isCapFirst("Eest"));
     }
 
 }
