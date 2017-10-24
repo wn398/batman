@@ -273,6 +273,7 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
             Predicate[] predicates2 = new Predicate[list.size()];
             criteriaQueryP.where(listP.toArray(predicates2));
             criteriaQueryP.select(criteriaBuilder.count(rootP));
+            criteriaQueryP.orderBy(Collections.emptyList());
             Long total = entityManager.createQuery(criteriaQueryP).getSingleResult();
             return new PageImpl(resultList,pageable,total);
         }else{
@@ -353,6 +354,7 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
                 criteriaQueryP.where(specification.toPredicate(rootP,criteriaQueryP,criteriaBuilder));
             }
             criteriaQueryP.select(criteriaBuilder.count(rootP));
+            criteriaQueryP.orderBy(Collections.emptyList());
             Long total = entityManager.createQuery(criteriaQueryP).getSingleResult();
             return new PageImpl(ResultList,pageable,total);
         }else{

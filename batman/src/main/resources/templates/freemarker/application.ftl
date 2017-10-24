@@ -3,6 +3,11 @@ server.port=${project.port}
 server.context-path=/api
 swagger.basePackage=${project.packageName}
 
+#发送数据压缩
+server.compression.enabled=true
+server.compression.min-response-size=1024
+server.compression.mime-types=application/json,application/xml,text/html,text/xml,text/plain
+
 #jwt 过期时间
 jwt.expire.millisecond=600000
 jwt.secret.key=TBlbena8h4EdhldhIefw+Q==
