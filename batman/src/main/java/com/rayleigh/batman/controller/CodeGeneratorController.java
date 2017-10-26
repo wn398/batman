@@ -252,6 +252,10 @@ public class CodeGeneratorController extends BaseController{
 
             //生成根目录下application.property文件
             generateApplicationPropertyFile(resourceRootPath,project,module);
+            //生成根目录下applicationProProperty.property文件
+            generateApplicationProPropertyFile(resourceRootPath,project,module);
+            //生成根目录下的application-dev.property文件
+            generateApplicationDevPropertyFile(resourceRootPath,project,module);
             //生成日志配置文件
             generateLogbackConfigerationFile(resourceRootPath,project,module);
             //生成模块applicationJava文件,放在基础路径下
@@ -402,6 +406,48 @@ public class CodeGeneratorController extends BaseController{
     private void generateApplicationPropertyFile(File dir, Project project,Module module){
         try {
             Template template = configuration.getTemplate("application.ftl");
+            Map<String, Object> map = new HashMap<>();
+            String port = new Random().nextInt(9000)+8080+"";
+            //设置随机端口
+            project.setPort(port);
+            map.put("module",module);
+            map.put("project",project);
+            File applicationFile = new File(dir,"application.properties");
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取application模板失败");
+        }
+    }
+
+    //生成application-pro.properties文件
+    private void generateApplicationProPropertyFile(File dir, Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("application-pro.ftl");
+            Map<String, Object> map = new HashMap<>();
+            String port = new Random().nextInt(9000)+8080+"";
+            //设置随机端口
+            project.setPort(port);
+            map.put("module",module);
+            map.put("project",project);
+            File applicationFile = new File(dir,"application.properties");
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取application模板失败");
+        }
+    }
+
+    //生成application-dev文件
+    private void generateApplicationDevPropertyFile(File dir, Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("application-dev.ftl");
             Map<String, Object> map = new HashMap<>();
             String port = new Random().nextInt(9000)+8080+"";
             //设置随机端口
