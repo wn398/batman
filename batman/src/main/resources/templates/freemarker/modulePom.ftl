@@ -75,7 +75,15 @@
     </dependencies>
 
     <build>
-
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.4</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -85,7 +93,31 @@
                     <target>${r"${java.version}"}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <effort>default</effort>
+                    <failOnError>true</failOnError>
+                    <!--
+                    <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+                    <includeFilterFile>findbugs-include.xml</includeFilterFile>-->
+                    <!--跳过的类型-->
+                    <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors>
+                    <!--第三方jar检测-->
+                    <!--<pluginList>myDetectors.jar, yourDetectors.jar</pluginList>-->
 
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
