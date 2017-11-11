@@ -14,7 +14,6 @@ import ${project.packageName}.extend.service.${entity.name}ExtendService;
 */
 @Service
 public class ${entity.name}ExtendServiceImpl extends ${entity.name}ServiceImpl implements ${entity.name}ExtendService {
-public Logger logger = LoggerFactory.getLogger(getClass());
 @Autowired
 private ${entity.name}ExtendRepository ${entity.name ?uncap_first}ExtendRepository;
 

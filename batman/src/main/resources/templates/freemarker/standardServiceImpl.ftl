@@ -392,7 +392,7 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
             public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 if(null!=ids&&ids.size()==1){
                     return criteriaBuilder.equal(root.get("id"),ids.get(0));
-                }else if(ids.size()>1){
+                }else if(null!=ids&&ids.size()>1){
                     CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("id"));
                     for(String id:ids){ in.value(id);}
                     return  criteriaQuery.where(in).getRestriction();
