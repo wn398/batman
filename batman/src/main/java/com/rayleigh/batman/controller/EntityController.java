@@ -87,11 +87,12 @@ public class EntityController extends BaseController{
     @PostMapping(value = "/partUpdate")
     @ResponseBody
     public ResultWrapper partUpdate(@RequestBody Entities entities){
-        if(!StringUtil.isCapFirst(entities.getName())){
-            return getFailureResultAndInfo(null,"实体名称首字母不能小写!");
-        }
 
         if(null!=entities&& !StringUtil.isEmpty(entities.getId())) {
+
+            if(!StringUtil.isCapFirst(entities.getName())){
+                return getFailureResultAndInfo(null,"实体名称首字母不能小写!");
+            }
             //添加对字段名字和描述不能为空的验证
             for(Field field:entities.getFields()){
                 if(StringUtil.isEmpty(field.getName())||StringUtil.isEmpty(field.getDescription())){

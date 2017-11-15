@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
@@ -35,6 +36,17 @@ public class CustomRepositoryImpl <T, ID extends Serializable>
 	public List<Object[]> listBySQL(String sql) {
 		return entityManager.createNativeQuery(sql).getResultList();
 	}
+
+	@Override
+	public Query getBySQL(String sql) {
+		return entityManager.createNativeQuery(sql);
+	}
+
+	@Override
+	public Query getByHQL(String hql) {
+		return entityManager.createQuery(hql);
+	}
+
 	@Transactional
 	@Override
 	public Integer updateAll(Specification<T> specification, Map<String, Object> needUpdatedNameValue) {
@@ -82,5 +94,7 @@ public class CustomRepositoryImpl <T, ID extends Serializable>
 		criteriaQuery.select(criteriaBuilder.count(root));
 		return entityManager.createQuery(criteriaQuery).getSingleResult();
 	}
+
+
 
 }

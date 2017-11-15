@@ -127,11 +127,16 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         propertyNames.stream().forEach(name->list.add(root.get(name).alias(name)));
         tupleCriteriaQuery.multiselect(list);
         TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
-        Tuple tuple = tupleTypedQuery.getSingleResult();
-        Map<String,Object> map = new HashMap<String,Object>();
-        propertyNames.stream().forEach(name->map.put(name,tuple.get(name)));
-        ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(map);
-        return ${entity.name ?uncap_first};
+        List<Tuple> tupleList = tupleTypedQuery.getResultList();
+        if(null!=tupleList && tupleList.size()>0){
+            Tuple tuple = tupleList.get(0);
+            Map<String,Object> map = new HashMap<String,Object>();
+            propertyNames.stream().forEach(name->map.put(name,tuple.get(name)));
+            ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(map);
+            return ${entity.name ?uncap_first};
+        }else{
+            return null;
+        }
     }
 
     public ${entity.name} findOne(String id,String ...propertyNames){

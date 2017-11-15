@@ -20,7 +20,7 @@ import java.util.Map;
  * Created by wangn20 on 2017/6/29.
  */
 public interface BaseService<T extends BaseModel,R extends CustomRepository>{
-    Logger logger = LoggerFactory.getLogger(BaseService.class);
+ //   Logger logger = LoggerFactory.getLogger(BaseService.class);
 //     R getRepository();
 //
 //    default Collection<T> saveOrUpdate(Collection<T> list){

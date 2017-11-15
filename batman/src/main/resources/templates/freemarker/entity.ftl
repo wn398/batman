@@ -59,7 +59,7 @@ ${validMessage}
         <#if field.dataType == "Date">
 private ${field.dataType} ${field.name} = StringUtil.stringToDate("${field.defaultValue}");
         <#elseif field.dataType == "Boolean">
-private ${field.dataType} ${field.name} = new Boolean("${field.defaultValue}");
+private ${field.dataType} ${field.name} = Boolean.valueOf("${field.defaultValue}");
         <#elseif field.dataType == "BigDecimal">
 private ${field.dataType} ${field.name} = new BigDecimal("${field.defaultValue}");
         <#elseif field.dataType == "String">
