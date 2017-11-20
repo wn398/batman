@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EntityServiceImpl implements EntityService {
-    public Logger logger = LoggerFactory.getLogger(this.getClass());
+    //public Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private EntitiesRepository entityRepository;
     @Autowired
