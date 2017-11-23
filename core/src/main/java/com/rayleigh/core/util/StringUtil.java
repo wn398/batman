@@ -55,7 +55,7 @@ public class StringUtil {
     //时间转化成字符串
     public static String dateToDbString(Date date){
         //将时间格式化，可以放到数据库的字符串
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return simpleDateFormat.format(date);
     }
 
@@ -68,12 +68,12 @@ public class StringUtil {
     }
     //Date转化成字符串yyyy-MM-dd hh:mm:ss
     public static String dateToString(Date date){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return simpleDateFormat.format(date);
     }
     //字符串yyyy-MM-dd hh:mm:ss 转化成Date类型
     public static Date stringToDate(String dateString){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             return simpleDateFormat.parse(dateString);
         }catch (Exception e){
