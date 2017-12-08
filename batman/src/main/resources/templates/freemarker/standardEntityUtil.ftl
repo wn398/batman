@@ -174,7 +174,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
         </#if>
     <#--一切绑定或更新基本属性后，把它放到结果list中-->
             result${relationShip.otherEntity.name}List.add(db${relationShip.otherEntity.name});
-    }else{
+            }else if(null != ${relationShip.otherEntity.name ?uncap_first}2){
     <#--如果id为空，则说明是新增的对象并直接关联,无需多数据库加载，直接绑定关系-->
     <#--如果是多对多，说明是list，可以add 【2017-7-28】多对多配置，本身就是双方主导，因此不需要我们人为增加关系进去，否则会导致关系多插入一条，因此注释下面-->
     <#--<#if relationShip.relationType == "ManyToMany">-->
@@ -182,12 +182,12 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     <#--</#if>-->
     <#--如果是一对多，则直接set-->
         <#if relationShip.relationType == "OneToMany">
-    ${relationShip.otherEntity.name ?uncap_first}2.set${entity.name}(${entity.name ?uncap_first}Result);
+                ${relationShip.otherEntity.name ?uncap_first}2.set${entity.name}(${entity.name ?uncap_first}Result);
         </#if>
     <#--把处理结果增加到结果list中-->
-    result${relationShip.otherEntity.name}List.add(${relationShip.otherEntity.name ?uncap_first}2);
-        }
-    }
+                result${relationShip.otherEntity.name}List.add(${relationShip.otherEntity.name ?uncap_first}2);
+                }
+            }
     <#--清除原来的list，增加我们处理好的结果list-->
         ${entity.name ?uncap_first}Result.get${relationShip.otherEntity.name}List().clear();
         ${entity.name ?uncap_first}Result.get${relationShip.otherEntity.name}List().addAll(result${relationShip.otherEntity.name}List);
@@ -219,6 +219,29 @@ public static ${entity.name} setPartProperties(Map<String,Object> propertyValueM
     }
     </#list>
     return ${entity.name ?uncap_first};
+}
+
+//获取实体类的属性名和值对应的map
+public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.name ?uncap_first}){
+    Map<String,Object> map = new HashMap<String,Object>();
+    if(null != ${entity.name ?uncap_first}.getId()){
+        map.put("id",${entity.name ?uncap_first}.getId());
+    }
+    if(null != ${entity.name ?uncap_first}.getCreateDate()){
+        map.put("createDate",${entity.name ?uncap_first}.getCreateDate());
+    }
+    if(null != ${entity.name ?uncap_first}.getCreateDate()){
+        map.put("updateDate",${entity.name ?uncap_first}.getUpdateDate());
+    }
+    if(null != ${entity.name ?uncap_first}.getVersion()){
+        map.put("version",${entity.name ?uncap_first}.getVersion());
+    }
+    <#list entity.fields as field>
+    if(null != ${entity.name ?uncap_first}.get${field.name ?cap_first}()){
+        map.put("${field.name ?uncap_first}",${entity.name ?uncap_first}.get${field.name ?cap_first}());
+    }
+    </#list>
+    return map;
 }
 
 }
