@@ -30,7 +30,12 @@ import java.util.stream.Collectors;
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */
-
+<#--设置主键类型-->
+<#if entity.primaryKeyType=="String">
+    <#assign entityIdType="String">
+<#else>
+    <#assign entityIdType="Long">
+</#if>
 public class ${entity.name}Controller extends BaseController{
 
 @Autowired
@@ -78,7 +83,7 @@ public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation
 @PostMapping("/saveWithAssignedId")
 @ResponseBody
 public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
-    if(StringUtil.isEmpty(${entity.name ?uncap_first}.getId())){
+    if(null != ${entity.name ?uncap_first}.getId()){
         return getFailureResultAndInfo(${entity.name ?uncap_first},"id不能为空!");
     }
     if(null == ${entity.name ?uncap_first}.getCreateDate()){
@@ -100,7 +105,7 @@ public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.nam
 @ApiOperation(value = "根据id查找")
 @GetMapping("/findOne/{id}")
 @ResponseBody
-public ResultWrapper findOneById(@PathVariable("id") String id){
+public ResultWrapper findOneById(@PathVariable("id") ${entityIdType} id){
     try{
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.findOne(id);
         return getSuccessResult(${entity.name ?uncap_first}Result);
@@ -113,7 +118,7 @@ public ResultWrapper findOneById(@PathVariable("id") String id){
 @ApiOperation(value = "根据id删除")
 @DeleteMapping("/delete/{id}")
 @ResponseBody
-public ResultWrapper deleteById(@PathVariable("id") String id){
+public ResultWrapper deleteById(@PathVariable("id") ${entityIdType} id){
     try{
         ${entity.name ?uncap_first}Service.deleteById(id);
         return getSuccessResult("delete success!");

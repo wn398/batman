@@ -5,6 +5,11 @@ import com.rayleigh.core.model.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.*;
+<#if entity.primaryKeyType=="String">
+    <#assign entityIdType="String">
+<#else>
+    <#assign entityIdType="Long">
+</#if>
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */
@@ -29,7 +34,7 @@ private Integer currentPage;
         <#else>
             <#assign fieldName = condition.fieldName ?split("_")[1]>
             <#if fieldName == "id">
-                <#assign fieldType = "String">
+                <#assign fieldType = entityIdType>
             <#else>
                 <#assign fieldType = "Date">
             </#if>
@@ -88,7 +93,7 @@ public void setCurrentPage(Integer currentPage) {
         <#else>
             <#assign fieldName = condition.fieldName ?split("_")[1]>
             <#if fieldName == "id">
-                <#assign fieldType = "String">
+                <#assign fieldType = entityIdType>
             <#else>
                 <#assign fieldType = "Date">
             </#if>

@@ -114,12 +114,12 @@ public class EntityController extends BaseController{
                 return getFailureResultAndInfo(list2, new StringBuilder("属性名重复:").append(list2.parallelStream().collect(Collectors.joining(","))).toString());
             }
             entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
-            List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
+            List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).filter(message->!StringUtil.isEmpty(message)).collect(Collectors.toList());
             for(String validationMessage:validationMessages){
                 if(!StringUtil.isEmpty(validationMessage)) {
-                    String[] arrays = validationMessage.split("||");
+                    String[] arrays = validationMessage.split("[||]");
                     for (int i = 0; i < arrays.length; i++) {
-                        if (!arrays[i].contains("@")) {
+                        if (!StringUtil.isEmpty(arrays[i])&&!arrays[i].contains("@")) {
                             return getFailureResultAndInfo(null,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
                         }
                     }

@@ -2,10 +2,15 @@
 package ${project.packageName}.standard.modelRelation;
 
 import com.rayleigh.core.model.*;
-
+<#--设定主键类型-->
+<#if entity.primaryKeyType=="String">
+    <#assign entityIdType="String">
+<#else>
+    <#assign entityIdType="Long">
+</#if>
 
 public class ${entity.name}$Relation{
-    private String id;
+    private ${entityIdType} id;
     <#list entity.mainEntityRelationShips as relation>
         <#if relation.relationType == "OneToMany" || relation.relationType == "ManyToMany">
     private Boolean ${relation.otherEntity.name ?uncap_first}List = false;
@@ -14,10 +19,10 @@ public class ${entity.name}$Relation{
         </#if>
     </#list>
 
-    public String getId(){
+    public ${entityIdType} getId(){
         return id;
     }
-    public void setId(String id){
+    public void setId(${entityIdType} id){
         this.id = id;
     }
 

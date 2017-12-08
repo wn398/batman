@@ -11,6 +11,11 @@ import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
 import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
     </#if>
 </#list>
+<#if entity.primaryKeyType=="String">
+    <#assign entityIdType="String">
+<#else>
+    <#assign entityIdType="Long">
+</#if>
 import java.math.BigDecimal;
 import java.util.*;
 /**
@@ -93,7 +98,7 @@ public static ${entity.name} preventMutualRef(${entity.name} ${entity.name ?unca
 public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_first}){
 <#--设置主对象结果，如果有id则查询出持久化对象作为基准结果，然后copy基本属性过去，如果没有id则查看对象属性里有没有需要转变成持久化的对象-->
     ${entity.name} ${entity.name ?uncap_first}Result;
-    if(!StringUtil.isEmpty(${entity.name ?uncap_first}.getId())){
+    if(null != ${entity.name ?uncap_first}.getId()){
         ${entity.name ?uncap_first}Result = ((${entity.name}Service)SpringContextUtils.getBean("${entity.name ?uncap_first}ExtendServiceImpl")).findOne(${entity.name ?uncap_first}.getId());
         ${entity.name}Util.copySimplePropertyNotNullValue(${entity.name ?uncap_first}, ${entity.name ?uncap_first}Result);
     }else{
@@ -108,7 +113,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     <#--如果此对象不为空-->
     if(null != ${relationShip.otherEntity.name ?uncap_first}1){
     <#--并且id不为空-->
-        if(!StringUtil.isEmpty(${relationShip.otherEntity.name ?uncap_first}1.getId())){
+        if(null != ${relationShip.otherEntity.name ?uncap_first}1.getId()){
     <#--id不为空，需要转换成持久化对象，从数据库中加载出来-->
         ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtendServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}1.getId());
     <#--id,version都不为空，可能更新基本属性，进行copy-->
@@ -151,7 +156,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
         List<${relationShip.otherEntity.name}> result${relationShip.otherEntity.name}List = new ArrayList();
         for(${relationShip.otherEntity.name} ${relationShip.otherEntity.name ?uncap_first}2:${relationShip.otherEntity.name ?uncap_first}List){
     <#--如果id不为空，则需要从数据库中加载持久化对象出来-->
-            if(null != ${relationShip.otherEntity.name ?uncap_first}2 && !StringUtil.isEmpty(${relationShip.otherEntity.name ?uncap_first}2.getId())){
+            if(null != ${relationShip.otherEntity.name ?uncap_first}2 && null !=${relationShip.otherEntity.name ?uncap_first}2.getId()){
     <#--加载持久化对象-->
                 ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtendServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}2.getId());
     <#--id,version不为空，则是更新，copy基本属性过去-->
@@ -196,7 +201,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
 public static ${entity.name} setPartProperties(Map<String,Object> propertyValueMap){
     ${entity.name} ${entity.name ?uncap_first} = new ${entity.name}();
     if(null !=propertyValueMap.get("id")){
-        ${entity.name ?uncap_first}.setId((String)propertyValueMap.get("id"));
+        ${entity.name ?uncap_first}.setId((${entityIdType})propertyValueMap.get("id"));
     }
     if(null !=propertyValueMap.get("createDate")){
         ${entity.name ?uncap_first}.setCreateDate((Date)propertyValueMap.get("createDate"));

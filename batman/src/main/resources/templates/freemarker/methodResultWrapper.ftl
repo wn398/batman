@@ -3,6 +3,11 @@ package ${project.packageName}.standard.methodModel;
 import java.util.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+<#if entity.primaryKeyType=="String">
+    <#assign entityIdType="String">
+<#else>
+    <#assign entityIdType="Long">
+</#if>
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */
@@ -18,7 +23,7 @@ public class ${entity.name}$${method.methodName ?cap_first}ResultWrapper{
     <#else>
         <#assign fieldName = result.fieldName ?split("_")[1]>
         <#if fieldName == "id">
-            <#assign fieldType = "String">
+            <#assign fieldType = entityIdType>
         <#else>
             <#assign fieldType = "Date">
         </#if>
@@ -40,7 +45,7 @@ private ${fieldType} ${entityName ?uncap_first}${fieldName ?cap_first};
     <#else>
         <#assign fieldName = result.fieldName ?split("_")[1]>
         <#if fieldName == "id">
-            <#assign fieldType = "String">
+            <#assign fieldType = entityIdType>
         <#else>
             <#assign fieldType = "Date">
         </#if>

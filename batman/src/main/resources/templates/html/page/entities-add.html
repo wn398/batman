@@ -38,12 +38,15 @@
                                     <option th:each="module:${project.modules}" th:text="${module.name}" th:value="${module.id}"></option>
                                 </select>
                             </td>
-                            <!--<td>-->
-                            <!--<label  class="control-label">启动端口</label>-->
-                            <!--</td>-->
-                            <!--<td>-->
-                            <!--<input type="text" class="form-control" th:name="port"  th:value="8080" placeholder="数字">-->
-                            <!--</td>-->
+                            <td>
+                            <label  class="control-label">主键类型</label>
+                            </td>
+                            <td>
+                                <select class="form-control" name="primaryKeyType">
+                                    <option th:value="String" th:text="字符串"></option>
+                                    <option th:value="Long" th:text="整数类型"></option>
+                                </select>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

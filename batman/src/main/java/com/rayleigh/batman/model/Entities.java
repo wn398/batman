@@ -3,6 +3,7 @@ package com.rayleigh.batman.model;
 import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.core.annotation.FieldInfo;
+import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.SpringContextUtils;
 import com.rayleigh.core.util.StringUtil;
@@ -34,6 +35,11 @@ public class Entities extends BaseModel {
     @Column
     @NotEmpty(message = "实体名字不能空")
     private String description;
+
+    @FieldInfo("主键类型")
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PrimaryKeyType primaryKeyType;
     /**
      * 双向一对多，多对一
      */
@@ -72,6 +78,14 @@ public class Entities extends BaseModel {
         if(null!=project)
         project.getEntities().add(this);
         this.project = project;
+    }
+
+    public PrimaryKeyType getPrimaryKeyType() {
+        return primaryKeyType;
+    }
+
+    public void setPrimaryKeyType(PrimaryKeyType primaryKeyType) {
+        this.primaryKeyType = primaryKeyType;
     }
 
     public Module getModule() {

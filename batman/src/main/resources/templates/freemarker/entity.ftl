@@ -1,6 +1,7 @@
 package ${project.packageName}.standard.model;
 
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.model.BaseModel2;
 import com.rayleigh.core.util.StringUtil;
 import com.rayleigh.core.annotation.FieldInfo;
 import org.hibernate.validator.constraints.*;
@@ -33,7 +34,7 @@ import java.util.*;
     </#list>
 }
 )
-public class ${entity.name} extends BaseModel {
+public class ${entity.name} extends <#if (entity.primaryKeyType == "String")>BaseModel</#if><#if (entity.primaryKeyType == "Long")>BaseModel2</#if> {
 
 <#--生成普通属性-->
 <#list entity.fields as field>

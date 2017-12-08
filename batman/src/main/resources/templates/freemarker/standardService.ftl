@@ -12,6 +12,12 @@ import java.util.*;
 <#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
 </#if>
+<#--设置主键类型变量-->
+<#if entity.primaryKeyType=="String">
+    <#assign entityIdType="String">
+<#else>
+    <#assign entityIdType="Long">
+</#if>
 /**
 * Generated Code By BatMan on ${.now},@Author-->山猫
 */
@@ -23,25 +29,25 @@ public interface ${entity.name}Service extends BaseService{
 
     ${entity.name} saveOrUpdate(${entity.name} ${entity.name ?uncap_first});
 
-    void deleteByIds(List<String> ids);
+    void deleteByIds(List<${entityIdType}> ids);
 
     ${entity.name} update(${entity.name} ${entity.name ?uncap_first});
 
     ${entity.name} save(${entity.name} ${entity.name ?uncap_first});
 
-    void deleteById(String id);
+    void deleteById(${entityIdType} id);
 
-    List<${entity.name}> findByIds(List<String> ids);
+    List<${entity.name}> findByIds(List<${entityIdType}> ids);
 
-    List<${entity.name}> findByIds(List<String> ids,String ...propertyNames);
+    List<${entity.name}> findByIds(List<${entityIdType}> ids,String ...propertyNames);
 
-    List<${entity.name}> findByIds(List<String> ids,List<String> propertyNames);
+    List<${entity.name}> findByIds(List<${entityIdType}> ids,List<String> propertyNames);
 
-    ${entity.name} findOne(String id);
+    ${entity.name} findOne(${entityIdType} id);
 
-    ${entity.name} findOne(String id,String ...propertyNames);
+    ${entity.name} findOne(${entityIdType} id,String ...propertyNames);
 
-    ${entity.name} findOne(String id,List<String> propertyNames);
+    ${entity.name} findOne(${entityIdType} id,List<String> propertyNames);
     //获取带关系的实体
     ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
 
@@ -99,13 +105,13 @@ public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
 
-    Integer updateById(String id,String name,Object value);
+    Integer updateById(${entityIdType} id,String name,Object value);
 
-    Integer updateById(String id,Map<String,Object> updatedNameValues);
+    Integer updateById(${entityIdType} id,Map<String,Object> updatedNameValues);
 
-    Integer updateByIds(List<String> ids,String name,Object value);
+    Integer updateByIds(List<${entityIdType}> ids,String name,Object value);
 
-    Integer updateByIds(List<String> ids,Map<String,Object> updatedNameValues);
+    Integer updateByIds(List<${entityIdType}> ids,Map<String,Object> updatedNameValues);
 
     Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues);
 
@@ -138,17 +144,24 @@ public interface ${entity.name}Service extends BaseService{
 
     <#--处理实体之间的关系的方法-->
     <#list entity.mainEntityRelationShips as relationShip>
+        <#--设置另一个实体的主键类型-->
+        <#if (relationShip.otherEntity.primaryKeyType=="String")>
+            <#assign otherEntityIdType="String">
+        <#elseif (relationShip.otherEntity.primaryKeyType=="Long")>
+            <#assign otherEntityIdType="Long">
+        </#if>
+
         <#if relationShip.mainEntity.name == relationShip.otherEntity.name>
         <#else>
             <#if relationShip.relationType == "OneToMany" || relationShip.relationType == "ManyToMany">
      //增加与${relationShip.otherEntity.name}的关系
-    String add${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids);
+    String add${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids);
      //解除与${relationShip.otherEntity.name}的关系
-    String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,List<String> ${relationShip.otherEntity.name ?uncap_first}Ids);
+    String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids);
             <#elseif relationShip.relationType == "ManyToOne" ||relationShip.relationType == "OneToOne">
      //重新设置与${relationShip.otherEntity.name}的关系
-    String set${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2);
-    String remove${relationShip.otherEntity.name} (String ${entity.name ?uncap_first}Id,String ${relationShip.otherEntity.name ?uncap_first}Id2);
+    String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2);
+    String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2);
             </#if>
         </#if>
     </#list>

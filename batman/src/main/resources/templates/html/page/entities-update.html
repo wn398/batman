@@ -42,12 +42,18 @@
                                     <option th:each="module:${entities.project.modules}" th:text="${module.name}" th:value="${module.id}" th:unless="${module.id eq entities.module.id}"></option>
                                 </select>
                             </td>
-                            <!--<td>-->
-                            <!--<label  class="control-label">启动端口</label>-->
-                            <!--</td>-->
-                            <!--<td>-->
-                            <!--<input type="text" class="form-control" th:name="port"  th:value="8080" placeholder="数字">-->
-                            <!--</td>-->
+                            <td>
+                            <label  class="control-label">主键类型</label>
+                            </td>
+                            <td>
+                                <select class="form-control" name="primaryKeyType">
+                                    <option th:value="String" th:text="字符串" th:if="${entities.primaryKeyType.toString() eq 'String'}" th:selected="selected"></option>
+                                    <option th:value="Long" th:text="整数类型" th:if="${entities.primaryKeyType.toString() eq 'Long'}" th:selected="selected"></option>
+
+                                    <option th:value="String" th:text="字符串" th:unless="${entities.primaryKeyType.toString() eq 'String'}" ></option>
+                                    <option th:value="Long" th:text="整数类型" th:unless="${entities.primaryKeyType.toString() eq 'Long'}" ></option>
+                                </select>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
