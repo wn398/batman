@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import javax.persistence.Query;
 import java.util.*;
 <#if (entity.methods ?size >0) >
 import ${project.packageName}.standard.methodModel.*;
@@ -131,6 +132,12 @@ public interface ${entity.name}Service extends BaseService{
 
     Integer deleteAll(Specification<${entity.name}> specification);
 
+    Query getBySQL(String sql);
+
+    Query getByHQL(String hql);
+
+    Long getCount(Specification<${entity.name}> specification);
+
     <#--页面配置生成的方法-->
     <#list entity.methods as method>
         <#if method.isReturnObject ?exists && method.isReturnObject>
@@ -165,6 +172,7 @@ public interface ${entity.name}Service extends BaseService{
             </#if>
         </#if>
     </#list>
+
 }
 
 /*

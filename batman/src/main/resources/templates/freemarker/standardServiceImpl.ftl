@@ -470,6 +470,19 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
     public Integer deleteAll(Specification<${entity.name}> specification){
         return ${entity.name ?uncap_first}Repository.deleteAll(specification);
     }
+
+    public Query getBySQL(String sql){
+        return ${entity.name ?uncap_first}Repository.getBySQL(sql);
+    }
+
+    public Query getByHQL(String hql){
+        return ${entity.name ?uncap_first}Repository.getByHQL(hql);
+    }
+
+    public Long getCount(Specification<${entity.name}> specification){
+        return ${entity.name ?uncap_first}Repository.getCount(specification);
+    }
+
     <#list entity.methods as method>
     <#--赋值，如果不存在，给个默认值false-->
     <#assign isReturnObject=method.isReturnObject !false>
