@@ -115,4 +115,24 @@ public class GeneratorStringUtil {
     public static String upperFirstLetter(String name) {
         return new StringBuilder().append(name.substring(0,1).toUpperCase()).append(name.substring(1)).toString();
     }
+
+    public static String toLowerCase(String str){
+        if(null!=str){
+            return str.toLowerCase();
+        }else{
+            return null;
+        }
+    }
+
+    public static String toUpperCase(String str){
+        if(null!=str){
+            return str.toUpperCase();
+        }else {
+            return null;
+        }
+    }
+
+    public static String number2String(Integer arg){
+        return String.valueOf(arg);
+    }
 }

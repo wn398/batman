@@ -3,6 +3,7 @@ package com.rayleigh.batman.controller;
 import com.rayleigh.batman.model.SysUser;
 import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.core.controller.BaseController;
+import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,19 +24,29 @@ public class SysUserController extends BaseController {
     private SysUserService sysUserService;
 
     @PostMapping("/login")
-    public String login(SysUser sysUser, HttpServletRequest request){
+    public void login(SysUser sysUser, HttpServletRequest request,HttpServletResponse response)throws Exception{
         List<SysUser> list = sysUserService.findByNameAndPassword(sysUser.getName(),sysUser.getPassword());
 
         if(null !=list &&list.size()>0){
-            request.getSession().setAttribute("user",sysUser.getName());
-            return  "/batman/batmanIndex";
+            request.getSession().setAttribute("userId",list.get(0).getId());
+           // request.getRequestDispatcher("/").forward(request,response);
+            String root = request.getRequestURI().split("/")[1];
+            response.sendRedirect(new StringBuilder("/").append(root).toString());
         }else{
-            return "/login";
+            String root = request.getRequestURI().split("/")[1];
+            response.sendRedirect(new StringBuilder("/").append(root).append("/").append("login").toString());
         }
     }
 
     @RequestMapping("/register")
     public String register(SysUser sysUser, HttpServletRequest request, HttpServletResponse response){
+        if(StringUtil.isEmpty(sysUser.getName())||StringUtil.isEmpty(sysUser.getPassword())){
+            return "/register";
+        }
+        List<SysUser> sysUserList = sysUserService.findByName(sysUser.getName());
+        if(null!=sysUserList&&sysUserList.size()>0){
+            return "/register";
+        }
         SysUser sysUser1 = sysUserService.save(sysUser);
         if(null !=sysUser1.getId()){
             try {

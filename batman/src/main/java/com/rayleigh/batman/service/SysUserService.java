@@ -12,4 +12,8 @@ public interface SysUserService extends BaseService {
     List<SysUser> findByNameAndPassword(String name,String password);
 
     SysUser save(SysUser sysUser);
+
+    SysUser findOne(String id);
+
+    List<SysUser> findByName(String name);
 }

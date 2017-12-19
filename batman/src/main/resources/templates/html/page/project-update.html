@@ -48,6 +48,85 @@
                     </table>
                 </div>
             </section>
+
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="数据源添加" onclick="addTr('dataSourceTable','datasourceDemoTable')">点击为项目添加数据源</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="dataSourceTable">
+                        <thead>
+                        <tr>
+                            <th>数据库类型</th>
+                            <th>数据源名称</th>
+                            <th>备注</th>
+                            <th>用户名</th>
+                            <th>密码</th>
+                            <th>主数据源</th>
+                            <th>数据库ip地址</th>
+                            <th>端口号</th>
+                            <th>数据库名字</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="projectDataSource:${project.projectDataSources}">
+                            <td>
+                                <input type="hidden" class="form-control" name="projectDataSources[][id]"  th:value="${projectDataSource.id}">
+                                <input type="hidden" class="form-control" name="projectDataSources[][createDate]"  th:value="${projectDataSource.createDate}">
+                                <input type="hidden" class="form-control" name="projectDataSources[][version]"  th:value="${projectDataSource.version}">
+                                <select class="form-control" name="projectDataSources[][dataBaseType]">
+                                    <option th:value="PostgreSql" th:if="${projectDataSource.dataBaseType.toString() eq 'PostgreSql'}" th:selected="selected">PostgreSql</option>
+                                    <option th:value="MySQL" th:if="${projectDataSource.dataBaseType.toString() eq 'MySQL'}" th:selected="selected">MySQL</option>
+
+
+                                    <option th:value="PostgreSql" th:unless="${projectDataSource.dataBaseType.toString() eq 'PostgreSql'}" >PostgreSql</option>
+                                    <option th:value="MySQL" th:unless="${projectDataSource.dataBaseType.toString() eq 'MySQL'}" >MySQL</option>
+
+                                </select>
+
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="projectDataSources[][dataSourceNickName]" th:value="${projectDataSource.dataSourceNickName}" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="projectDataSources[][markup]" th:value="${projectDataSource.markup}" placeholder="汉字">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="projectDataSources[][username]" th:value="${projectDataSource.username}" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="projectDataSources[][password]" th:value="${projectDataSource.password}" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <select class="form-control" name="projectDataSources[][isMainDataSource]">
+                                    <option th:value="false" th:if="${projectDataSource.isMainDataSource.toString() eq 'false'}" th:selected="selected">否</option>
+                                    <option th:value="true"  th:if="${projectDataSource.isMainDataSource.toString() eq 'true'}" th:selected="selected" >是</option>
+
+                                    <option th:value="false" th:unless="${projectDataSource.isMainDataSource.toString() eq 'false'}" >否</option>
+                                    <option th:value="true"  th:unless="${projectDataSource.isMainDataSource.toString() eq 'true'}" >是</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="projectDataSources[][hostName]" th:value="${projectDataSource.hostName}"  placeholder="字母数字">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="projectDataSources[][port]"  th:value="${projectDataSource.port}"   placeholder="数字">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="projectDataSources[][dataBaseName]" th:value="${projectDataSource.dataBaseName}"  placeholder="字母数字">
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteProjectDataSourceTr(\''+${projectDataSource.id}+'\','+this+');'">删除</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section class="panel">
                 <header class="panel-heading">
                     <button class="btn btn-success" th:alt-title="项目模块部署" onclick="addTr('moduleTable','demoTr')">点击为项目添加模块</button>
@@ -106,6 +185,50 @@
     </table>
 </div>
 <!--</section>-->
+<div hidden="true" >
+    <table id="datasourceDemoTable">
+        <tbody>
+        <tr>
+            <td>
+                <select class="form-control" name="projectDataSources[][dataBaseType]">
+                    <option th:value="PostgreSql">PostgreSql</option>
+                    <option th:value="MySQL">MySQL</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="projectDataSources[][dataSourceNickName]"  placeholder="字母数字">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="projectDataSources[][markup]"  placeholder="汉字">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="projectDataSources[][username]"  placeholder="字母数字">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="projectDataSources[][password]"  placeholder="字母数字">
+            </td>
+            <td>
+                <select class="form-control" name="projectDataSources[][isMainDataSource]">
+                    <option th:value="false">否</option>
+                    <option th:value="true">是</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="projectDataSources[][hostName]"  placeholder="字母数字">
+            </td>
+            <td>
+                <input type="number" class="form-control" name="projectDataSources[][port]"  placeholder="数字">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="projectDataSources[][dataBaseName]"  placeholder="字母数字">
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 <script th:replace="fragment/script"></script>
 </body>

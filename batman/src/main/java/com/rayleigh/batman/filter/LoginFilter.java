@@ -17,25 +17,27 @@ public class LoginFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        //静态资源不拦截
-        if(uri.contains("/css")||uri.contains("/js")||uri.contains("/fonts")||uri.contains("/images")||uri.contains("/pageJs")){
+        logger.info("*****"+uri);
+        if(uri.contains("/css")||uri.contains("/js")||uri.contains("/fonts")||uri.contains("/images")||uri.contains("/pageJs")||uri.contains("codeGeneratorCtl")){
             filterChain.doFilter(request,response);
             return;
         }
-        //if(!uri.endsWith("/login")&&!uri.endsWith("/register")){
-        if(!uri.endsWith("/login")){//关闭注册功能
-            if(null ==request.getSession().getAttribute("user")){
-                //转发
-                request.getRequestDispatcher("/login").forward(request,response);
-                return;
-            }else{
+
+        String userId = (String)request.getSession().getAttribute("userId");
+        if(null == userId){
+            if(uri.endsWith("login")||uri.endsWith("register")||uri.endsWith("js")||uri.contains(".css")||uri.endsWith("ico")||uri.endsWith("jpg")||uri.endsWith("png")||uri.contains("/fonts/")){
                 filterChain.doFilter(request,response);
+                return;
+            }else {
+                //重定向
+                String root = request.getRequestURI().split("/")[1];
+                response.sendRedirect(new StringBuilder("/").append(root).append("/").append("login").toString());
+                //request.getRequestDispatcher("login").forward(request,response);
                 return;
             }
         }else{
             filterChain.doFilter(request,response);
             return;
         }
-
     }
 }

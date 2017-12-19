@@ -2,10 +2,7 @@ package com.rayleigh.batman.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.rayleigh.batman.model.Entities;
-import com.rayleigh.batman.model.Field;
-import com.rayleigh.batman.model.Project;
-import com.rayleigh.batman.model.SearchMethod;
+import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.batman.service.ProjectService;
@@ -123,6 +120,13 @@ public class EntityController extends BaseController{
                             return getFailureResultAndInfo(null,new StringBuilder("验证字段:").append(validationMessage).append("不符合验证规则!").toString());
                         }
                     }
+                }
+            }
+            //如果主键类型变了，要查看相关联的实体类型是否一致
+            Entities dbEntities = entityService.findOne(entities.getId());
+            if(dbEntities.getPrimaryKeyType()!=entities.getPrimaryKeyType()){
+                if(dbEntities.getMainEntityRelationShips().size()>0){
+                    return getFailureResultAndInfo(null,"不能修改主键类型，存在关联外键!");
                 }
             }
 

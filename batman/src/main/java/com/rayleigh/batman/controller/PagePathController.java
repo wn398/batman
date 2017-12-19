@@ -31,7 +31,7 @@ public class PagePathController {
     //返回到登陆页面
     @RequestMapping(value = "/goLogin")
     public String goLogin(HttpServletRequest request){
-        request.getSession().removeAttribute("user");
+        request.getSession().removeAttribute("userId");
         return "batman/login";
     }
 

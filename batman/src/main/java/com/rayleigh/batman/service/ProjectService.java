@@ -25,4 +25,6 @@ public interface ProjectService extends BaseService {
     void deleteOne(Project project);
 
     void testListSql();
+
+    List<Project> findByUserId(String userId);
 }

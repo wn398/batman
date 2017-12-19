@@ -27,7 +27,7 @@ import java.io.Writer;
 import java.util.*;
 
 @Controller
-@RequestMapping("/test")
+@RequestMapping("/testCtl")
 public class TestController extends BaseController{
     @Autowired
     private ProjectService projectService;

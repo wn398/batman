@@ -1,7 +1,10 @@
 package com.rayleigh.batman.controller;
 
 import com.rayleigh.batman.model.Project;
+import com.rayleigh.batman.model.ProjectDataSource;
+import com.rayleigh.batman.model.SysUser;
 import com.rayleigh.batman.service.ProjectService;
+import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.DataTablesPageModel;
@@ -28,6 +31,8 @@ import java.util.stream.Collectors;
 public class ProjectController extends BaseController{
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private SysUserService sysUserService;
 
     @GetMapping(value = "/goAllEntity/{projectId}")
     public String goAllEntity(@PathVariable("projectId") String projectId,Model model){
@@ -38,7 +43,7 @@ public class ProjectController extends BaseController{
 
     @PostMapping(value = "/doAdd")
     @ResponseBody
-    public ResultWrapper doAdd(@Valid @RequestBody Project project){
+    public ResultWrapper doAdd(@Valid @RequestBody Project project,HttpServletRequest request){
         //必须至少含有一个模块
         if(project.getModules().size()==0){
             return getFailureResultAndInfo(null,"请至少增加一个模块!");
@@ -59,6 +64,30 @@ public class ProjectController extends BaseController{
         if(modelNames.size() !=modelNameSet.size()){
             return getFailureResultAndInfo(null,"模块名不能重复");
         }
+
+        if(project.getProjectDataSources().size()==0){
+            return getFailureResultAndInfo(null,"请至少增加一个主数据源!");
+        }
+        List<ProjectDataSource> list = project.getProjectDataSources();
+        Set<String> dataSourceName = new HashSet<>();
+        for(ProjectDataSource pds:list){
+            if(StringUtil.isEmpty(pds.getDataBaseName())||StringUtil.isEmpty(pds.getDataSourceNickName())||null==pds.getPort()||StringUtil.isEmpty(pds.getHostName())||StringUtil.isEmpty(pds.getUsername())||StringUtil.isEmpty(pds.getPassword())){
+                return getFailureResultAndInfo(null,"数据源别名,数据库名称，端口号，机器名,用户名，密码不能为空!");
+            }
+            dataSourceName.add(pds.getDataSourceNickName());
+        }
+        if(list.size()!=dataSourceName.size()){
+            return getFailureResultAndInfo(null,"数据源别名不能重复!");
+        }
+
+        List<ProjectDataSource> mainProjectDataSource = list.parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
+        if(mainProjectDataSource.size()!=1){
+            return getFailureResultAndInfo(null,"至少设置一个主数据源，主数据源只有一个!");
+        }
+        String userId = (String)request.getSession().getAttribute("userId");
+        SysUser sysUser = sysUserService.findOne(userId);
+        project.setSysUser(sysUser);
+
         project = projectService.save(project);
         preventCirculation(project);
         return getSuccessResult(project);
@@ -96,7 +125,9 @@ public class ProjectController extends BaseController{
 
     @RequestMapping(value = "/showAllProjectNames")
     public String showAllProjectNames(Model model, HttpServletRequest request){
-        model.addAttribute("projects",projectService.getAll());
+        String userId = (String) request.getSession().getAttribute("userId");
+        SysUser sysUser = sysUserService.findOne(userId);
+        model.addAttribute("projects",sysUser.getProjects());
         return "/page/project-entities";
     }
 ////    到服务页面
@@ -108,15 +139,15 @@ public class ProjectController extends BaseController{
 
     @RequestMapping(value = "/getAll")
     @ResponseBody
-    public ResultWrapper getAll(){
-        List<Project> projects = projectService.getAll();
-        //projects.forEach(project -> System.out.println(project.getModules().size()));
+    public ResultWrapper getAll(HttpServletRequest request){
+        String userId = (String)request.getSession().getAttribute("userId");
+        List<Project> projects= projectService.findByUserId(userId);
         return getSuccessResult(projects);
     }
 
     @PostMapping(value = "/partUpdate")
     @ResponseBody
-    public ResultWrapper partUpdate(@Valid @RequestBody Project project){
+    public ResultWrapper partUpdate(@Valid @RequestBody Project project,HttpServletRequest request){
         if(null!=project&&!StringUtil.isEmpty(project.getId())){
             //必须至少含有一个模块
             if(project.getModules().size()==0){
@@ -138,6 +169,31 @@ public class ProjectController extends BaseController{
             if(modelNames.size() !=modelNameSet.size()){
                 return getFailureResultAndInfo(null,"模块名不能重复");
             }
+            //验证数据源
+            if(project.getProjectDataSources().size()==0){
+                return getFailureResultAndInfo(null,"请至少增加一个主数据源!");
+            }
+            List<ProjectDataSource> list = project.getProjectDataSources();
+            Set<String> dataSourceName = new HashSet<>();
+            for(ProjectDataSource pds:list){
+                if(StringUtil.isEmpty(pds.getDataBaseName())||StringUtil.isEmpty(pds.getDataSourceNickName())||null==pds.getPort()||StringUtil.isEmpty(pds.getHostName())||StringUtil.isEmpty(pds.getUsername())||StringUtil.isEmpty(pds.getPassword())){
+                    return getFailureResultAndInfo(null,"数据源别名,数据库名称，端口号，机器名不能为空,用户名,密码不能为空!");
+                }
+                dataSourceName.add(pds.getDataSourceNickName());
+            }
+            if(list.size()!=dataSourceName.size()){
+                return getFailureResultAndInfo(null,"数据源别名不能重复!");
+            }
+
+            List<ProjectDataSource> mainProjectDataSource = list.parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
+            if(mainProjectDataSource.size()!=1){
+                return getFailureResultAndInfo(null,"至少设置一个主数据源，主数据源只有一个!");
+            }
+
+            String userId = (String)request.getSession().getAttribute("userId");
+            SysUser sysUser = new SysUser();
+            sysUser.setId(userId);
+            project.setSysUser(sysUser);
 
             Project project1 =projectService.partUpdate(project);
             project1 = preventCirculation(project1);
@@ -199,6 +255,18 @@ public class ProjectController extends BaseController{
     public String goAddEntity(@PathVariable String id,Model model){
         if(!StringUtil.isEmpty(id)) {
             Project project2 = projectService.findOne(id);
+            List<ProjectDataSource> mainProjectDataSourceList = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
+            ProjectDataSource mainProjectDataSource = null;
+            if(null!=mainProjectDataSourceList&&mainProjectDataSourceList.size()>0){
+                mainProjectDataSource = mainProjectDataSourceList.get(0);
+                mainProjectDataSource.setDataSourceNickName(mainProjectDataSource.getDataSourceNickName()+"(主数据源)");
+            }
+            List<ProjectDataSource> otherProjectDataSource = null;
+            if(null!=project2.getProjectDataSources()&&project2.getProjectDataSources().size()>0){
+                otherProjectDataSource = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==false).collect(Collectors.toList());
+            }
+            model.addAttribute("mainDataSource",mainProjectDataSource);
+            model.addAttribute("otherDataSource",otherProjectDataSource);
             model.addAttribute("project", project2);
             return "/page/entities-add";
         }else{
@@ -208,11 +276,14 @@ public class ProjectController extends BaseController{
 
     //防止循环检测
     private Project preventCirculation( Project project) {
-        if(project.getModules().size()>0){
+        if(null != project.getModules()&&project.getModules().size()>0){
             project.getModules().parallelStream().forEach(module -> module.setProject(null));
         }
-        if(project.getEntities().size()>0){
+        if(null != project.getEntities()&&project.getEntities().size()>0){
             project.getEntities().parallelStream().forEach(entities -> entities.setProject(null));
+        }
+        if(null != project.getProjectDataSources()&&project.getProjectDataSources().size()>0){
+            project.getProjectDataSources().parallelStream().forEach(projectDataSource -> projectDataSource.setProject(null));
         }
         return project;
     }

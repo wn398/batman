@@ -75,5 +75,10 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.listBySQL("select * from batman_project");
     }
 
+    @Override
+    public List<Project> findByUserId(String userId) {
+        return projectRepository.findByUserId(userId);
+    }
+
 
 }

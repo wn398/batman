@@ -43,6 +43,10 @@ public class Project extends BaseModel {
     @OneToMany(mappedBy = "project",cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},fetch = FetchType.LAZY,orphanRemoval = true)
     private List<Module> modules=new ArrayList<>();
 
+    @Valid
+    @OneToMany(mappedBy = "project",cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},fetch = FetchType.LAZY,orphanRemoval = true)
+    private List<ProjectDataSource> projectDataSources=new ArrayList<>();
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sysuser_id")
@@ -114,5 +118,16 @@ public class Project extends BaseModel {
 
     public void setSysUser(SysUser sysUser) {
         this.sysUser = sysUser;
+    }
+
+    public List<ProjectDataSource> getProjectDataSources() {
+        return projectDataSources;
+    }
+
+    public void setProjectDataSources(List<ProjectDataSource> projectDataSources) {
+        if(null!=projectDataSources&&projectDataSources.size()>0){
+            projectDataSources.stream().forEach(projectDataSource -> projectDataSource.setProject(this));
+        }
+        this.projectDataSources = projectDataSources;
     }
 }

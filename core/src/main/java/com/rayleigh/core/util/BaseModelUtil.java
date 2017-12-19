@@ -159,7 +159,7 @@ public class BaseModelUtil {
                     invokeFiledSetMethod(target,field,sourceFieldValue);
                 }else if(sourceFieldValue instanceof BaseModel){
 
-                    if(((BaseModel) sourceFieldValue).getId().equals(((BaseModel)targetFieldValue).getId())) {
+                    if(null!=((BaseModel) sourceFieldValue).getId()&&null!=targetFieldValue&&((BaseModel) sourceFieldValue).getId().equals(((BaseModel)targetFieldValue).getId())) {
                         //如果二者的id相同，则去更新对应的简单属性
                         copyBasicProperty((BaseModel) sourceFieldValue, (BaseModel) targetFieldValue);
                     }else if((!StringUtil.isEmpty(((BaseModel) sourceFieldValue).getId())&&!((BaseModel) sourceFieldValue).getId().equals(((BaseModel)targetFieldValue).getId()))){

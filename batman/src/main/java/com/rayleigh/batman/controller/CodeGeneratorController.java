@@ -1,11 +1,9 @@
 package com.rayleigh.batman.controller;
 
-import com.rayleigh.batman.model.Entities;
-import com.rayleigh.batman.model.Module;
-import com.rayleigh.batman.model.Project;
-import com.rayleigh.batman.model.SearchMethod;
+import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.ProjectService;
+import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.batman.util.*;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.BaseModel;
@@ -19,16 +17,18 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.partitioningBy;
 
 @Controller
 @RequestMapping("/codeGeneratorCtl")
 public class CodeGeneratorController extends BaseController{
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private SysUserService sysUserService;
     @Autowired
     private EntityService entityService;
 //    @Value("${server.generator.path}")
@@ -40,8 +40,9 @@ public class CodeGeneratorController extends BaseController{
 
     @GetMapping("/goProjectCodeGenerator")
     public String goCodeGenerator(HttpServletRequest request){
-        List<Project> projects = projectService.getAll();
-        request.setAttribute("projects",projects);
+        String userId = (String)request.getSession().getAttribute("userId");
+        SysUser sysUser = sysUserService.findOne(userId);
+        request.setAttribute("projects",sysUser.getProjects());
         return "/page/project-list-for-code-generator";
     }
 
@@ -406,15 +407,15 @@ public class CodeGeneratorController extends BaseController{
     private void generateApplicationPropertyFile(File dir, Project project,Module module){
         try {
             Template template = configuration.getTemplate("application.ftl");
-            Map<String, Object> map = new HashMap<>();
-            String port = new Random().nextInt(9000)+8080+"";
-            //设置随机端口
-            project.setPort(port);
-            map.put("module",module);
-            map.put("project",project);
+//            Map<String, Object> map = new HashMap<>();
+//            String port = new Random().nextInt(9000)+8080+"";
+//            //设置随机端口
+//            project.setPort(port);
+//            map.put("module",module);
+//            map.put("project",project);
             File applicationFile = new File(dir,"application.properties");
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
-                template.process(map, writer);
+                template.process(null, writer);
                 writer.flush();
             }
         }catch (Exception e){
@@ -433,7 +434,25 @@ public class CodeGeneratorController extends BaseController{
             project.setPort(port);
             map.put("module",module);
             map.put("project",project);
-            File applicationFile = new File(dir,"application.properties");
+            List<ProjectDataSource> projectDataSources = project.getProjectDataSources();
+            ProjectDataSource mainDataSource = null;
+            List<ProjectDataSource> otherDataSourceList = null;
+            if(null!=projectDataSources && projectDataSources.size()>0){
+                Map<Boolean,List<ProjectDataSource>> map2 = projectDataSources.parallelStream().collect(partitioningBy(it -> it.getIsMainDataSource()));
+                List<ProjectDataSource> mainList = map2.get(true);
+                otherDataSourceList = map2.get(false);
+                if(null!=mainList && mainList.size()==1){
+                    mainDataSource = mainList.get(0);
+                }
+                if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
+                    String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
+                    map.put("otherDataSourceNames",otherDataSourceNickNames);
+                }
+
+            }
+            map.put("mainDataSource",mainDataSource);
+            map.put("otherDataSources",otherDataSourceList);
+            File applicationFile = new File(dir,"application-pro.properties");
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
                 template.process(map, writer);
                 writer.flush();
@@ -454,7 +473,26 @@ public class CodeGeneratorController extends BaseController{
             project.setPort(port);
             map.put("module",module);
             map.put("project",project);
-            File applicationFile = new File(dir,"application.properties");
+            map.put("GeneratorStringUtil",new GeneratorStringUtil());
+            List<ProjectDataSource> projectDataSources = project.getProjectDataSources();
+            ProjectDataSource mainDataSource = null;
+            List<ProjectDataSource> otherDataSourceList = null;
+            if(null!=projectDataSources && projectDataSources.size()>0){
+                Map<Boolean,List<ProjectDataSource>> map2 = projectDataSources.parallelStream().collect(partitioningBy(it -> it.getIsMainDataSource()));
+                List<ProjectDataSource> mainList = map2.get(true);
+                otherDataSourceList = map2.get(false);
+                if(null!=mainList && mainList.size()==1){
+                    mainDataSource = mainList.get(0);
+                }
+                if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
+                    String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
+                    map.put("otherDataSourceNames",otherDataSourceNickNames);
+                }
+
+            }
+            map.put("mainDataSource",mainDataSource);
+            map.put("otherDataSources",otherDataSourceList);
+            File applicationFile = new File(dir,"application-dev.properties");
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
                 template.process(map, writer);
                 writer.flush();

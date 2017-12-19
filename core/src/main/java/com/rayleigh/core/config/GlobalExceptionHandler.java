@@ -75,9 +75,9 @@ public class GlobalExceptionHandler {
     }
 
     //所有异常
-    @ExceptionHandler(value = {Exception.class,RuntimeException.class})
+    @ExceptionHandler(value = {Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResultWrapper runtimeExceptionHandler(RuntimeException e) {
+    public ResultWrapper runtimeExceptionHandler(Exception e) {
         e.printStackTrace();
         ResultWrapper resultWrapper = new ResultWrapper();
         //设置状态异常
@@ -89,6 +89,7 @@ public class GlobalExceptionHandler {
         resultWrapper.setExceptionMessage(sb.toString());
         return resultWrapper;
     }
+
 
 }
 

@@ -56,6 +56,13 @@ public class RelationShipController extends BaseController {
             return getFailureResultAndInfo(relationShipMap,"请传入数据！！！");
         }
         List<RelationShip> list = relationShipMap.get("relationShip");
+        for(RelationShip relationShip:list){
+            Entities mainEntity = entityService.findOne(relationShip.getMainEntity().getId());
+            Entities otherEntity = entityService.findOne(relationShip.getOtherEntity().getId());
+            if(!mainEntity.getPrimaryKeyType().equals(otherEntity.getPrimaryKeyType())){
+                return getFailureResultAndInfo(relationShipMap,relationShip.getMainEntity().getName()+"的主键类型与"+relationShip.getOtherEntity().getName()+"的主键类型不一样，不能建立外键关联!");
+            }
+        }
         boolean isRepeated = isOtherEntityRepeated(list);
         if(isRepeated){
             return getFailureResultAndInfo(relationShipMap,"所建立关系对象有重复，请检查!");
