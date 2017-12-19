@@ -1,6 +1,7 @@
 package com.rayleigh.batman;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -38,7 +39,6 @@ public class Test {
 
         InetAddress inetAddress = getLocalHostLANAddress();
         System.out.println(inetAddress.getHostAddress());
-
     }
 
 

@@ -31,6 +31,8 @@ public class CodeGeneratorController extends BaseController{
     private SysUserService sysUserService;
     @Autowired
     private EntityService entityService;
+
+    private Map<String, String> tempMap = new HashMap<>();
 //    @Value("${server.generator.path}")
 //    private String basePath;
     @Value("${springBoot.version}")
@@ -108,6 +110,8 @@ public class CodeGeneratorController extends BaseController{
     @RequestMapping("/generateProject/{projectId}")
     public void generatorByProject(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId) throws IOException {
         String realPath = request.getServletContext().getRealPath("/");
+        tempMap.put("port",request.getServerPort()+"");
+        tempMap.put("root",request.getRequestURI().split("/")[1]);
         //生成的每个项目根据时间生成对应目录
         String basePath = new StringBuilder("/").append(System.currentTimeMillis()).append("_").append(projectId).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
@@ -334,6 +338,8 @@ public class CodeGeneratorController extends BaseController{
         try {
             Template template = configuration.getTemplate("updateScript.ftl");
             Map<String, Object> map = new HashMap<>();
+            map.put("port",tempMap.get("port"));
+            map.put("root",tempMap.get("root"));
             map.put("project",project);
             map.put("ip", NetworkUtil.getLocalHostLANAddress().getHostAddress());
             File pomFile = new File(projectRootDir,"update.sh");

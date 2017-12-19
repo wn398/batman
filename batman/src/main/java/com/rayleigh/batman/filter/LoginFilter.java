@@ -17,7 +17,6 @@ public class LoginFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
-        logger.info("*****"+uri);
         if(uri.contains("/css")||uri.contains("/js")||uri.contains("/fonts")||uri.contains("/images")||uri.contains("/pageJs")||uri.contains("codeGeneratorCtl")){
             filterChain.doFilter(request,response);
             return;

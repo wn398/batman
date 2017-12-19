@@ -5,9 +5,9 @@ git fetch
 git merge
 
 projectId=${project.id}
-ip=${id}
-port=8080
-context=batman
+ip=${ip}
+port=${port}
+context=${root}
 
 #获取所有model名字
 allModelName=$(curl -s http://$ip:$port/$context/projectCtl/getModelNames/$projectId)
