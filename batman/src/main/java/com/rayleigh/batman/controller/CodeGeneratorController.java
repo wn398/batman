@@ -333,8 +333,9 @@ public class CodeGeneratorController extends BaseController{
     private void generatorUpdateFile(File projectRootDir, Project project) {
         try {
             Template template = configuration.getTemplate("updateScript.ftl");
-            Map<String, Project> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("project",project);
+            map.put("ip", NetworkUtil.getLocalHostLANAddress().getHostAddress());
             File pomFile = new File(projectRootDir,"update.sh");
 
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {

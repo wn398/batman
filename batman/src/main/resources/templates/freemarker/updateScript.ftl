@@ -5,7 +5,7 @@ git fetch
 git merge
 
 projectId=${project.id}
-ip=10.0.137.108
+ip=${id}
 port=8080
 context=batman
 
