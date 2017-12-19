@@ -23,20 +23,60 @@ jwt.exclude.urls=swagger-ui.html,webjars/springfox-swagger-ui,api-docs,/druid/,s
 -->
 #数据库配置#
 spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
-spring.datasource.name=main
+spring.datasource.name=mainDataSource
+<#if mainDataSource??>
+    <#assign databaseType = GeneratorStringUtil.toLowerCase(mainDataSource.dataBaseType)>
+    <#assign hostname = mainDataSource.hostName>
+    <#assign port = GeneratorStringUtil.number2String(mainDataSource.port)>
+    <#if databaseType == "postgresql">
+        <#assign dialect = "org.hibernate.dialect.PostgreSQL9Dialect">
+        <#assign driverclassname = "org.postgresql.Driver">
+    <#elseif databaseType == "mysql">
+        <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
+        <#assign driverclassname = "com.mysql.jdbc.Driver">
+    </#if>
+spring.datasource.url = jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8
+spring.datasource.username = ${mainDataSource.username}
+spring.datasource.password = ${mainDataSource.password}
+spring.datasource.driverClassName =${driverclassname}
+spring.jpa.properties.hibernate.dialect=${dialect}
+<#else>
 #Pgsql
 spring.datasource.url = jdbc:postgresql://localhost:5432/${module.name}
 spring.datasource.username = postgres
 spring.datasource.password = 541998
 spring.datasource.driverClassName =org.postgresql.Driver
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
+</#if>
 
+#设置其它数据源
+<#if otherDataSources??>
+custom.datasource.names=${otherDataSourceNames}
+    <#list otherDataSources as otherDataSource>
+        <#assign databaseType = GeneratorStringUtil.toLowerCase(otherDataSource.dataBaseType)>
+        <#assign hostname = otherDataSource.hostName>
+        <#assign otherDataSourceNickName =otherDataSource.dataSourceNickName >
+        <#assign port = GeneratorStringUtil.number2String(otherDataSource.port)>
+        <#if databaseType == "postgresql">
+            <#assign dialect = "org.hibernate.dialect.PostgreSQL9Dialect">
+            <#assign driverclassname = "org.postgresql.Driver">
+        <#elseif databaseType == "mysql">
+            <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
+            <#assign driverclassname = "com.mysql.jdbc.Driver">
+        </#if>
+custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8
+custom.datasource.${otherDataSourceNickName}.driverClassName =${driverclassname}
+custom.datasource.${otherDataSourceNickName}.username=${otherDataSource.username}
+custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password}
+    </#list>
+<#else>
 #其它数据源名字 ds1,ds2这样区分开配置，多数据源开启@EnableDynamicDataSource,在需要切换的方法上注解 @TargetDataSource("ds1")
 #custom.datasource.names=ds1
 #custom.datasource.ds1.driverClassName =org.postgresql.Driver
 #custom.datasource.ds1.url=jdbc:postgresql://localhost:5432/cources
 #custom.datasource.ds1.username=postgres
 #custom.datasource.ds1.password=541998
+</#if>
 
 #MYSQL
 #spring.jpa.database=mysql

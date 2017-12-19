@@ -494,11 +494,11 @@ public class CodeGeneratorController extends BaseController{
                 if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
                     String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
                     map.put("otherDataSourceNames",otherDataSourceNickNames);
+                    map.put("otherDataSources",otherDataSourceList);
                 }
 
             }
             map.put("mainDataSource",mainDataSource);
-            map.put("otherDataSources",otherDataSourceList);
             File applicationFile = new File(dir,"application-dev.properties");
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
                 template.process(map, writer);
