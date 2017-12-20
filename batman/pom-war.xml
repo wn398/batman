@@ -237,7 +237,7 @@
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <configuration>
                     <effort>default</effort>
-                    <failOnError>true</failOnError>
+                    <failOnError>false</failOnError>
                     <!--
                     <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
                     <includeFilterFile>findbugs-include.xml</includeFilterFile>-->

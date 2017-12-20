@@ -1,6 +1,7 @@
 package com.rayleigh.core.customQuery;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,7 @@ public class CustomRepositoryImpl <T, ID extends Serializable>
 			criteriaQuery.where(specification.toPredicate(root, criteriaQuery, criteriaBuilder));
 		}
 		criteriaQuery.select(criteriaBuilder.count(root));
+		criteriaQuery.orderBy(Collections.emptyList());
 		return entityManager.createQuery(criteriaQuery).getSingleResult();
 	}
 
