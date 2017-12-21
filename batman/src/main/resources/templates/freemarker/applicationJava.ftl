@@ -1,23 +1,11 @@
 package ${project.packageName};
 
-import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.rayleigh.core.dynamicDataSource.EnableDynamicDataSource;
-import com.rayleigh.core.annotation.EnableCustomRepository;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import com.rayleigh.core.application.BaseApplication;
 
 @SpringBootApplication(scanBasePackages = {"com.rayleigh","${project.packageName}"})
-@EnableCustomRepository
-@EnableDynamicDataSource
-public class ${module.name ?cap_first}Application extends SpringBootServletInitializer{
+public class ${module.name ?cap_first}Application extends BaseApplication{
 
 @Override
 protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -30,25 +18,4 @@ public static void main(String[] args) {
     .run(args);
 }
 
-@Bean
-public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-    MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
-    ObjectMapper objectMapper = jsonConverter.getObjectMapper();
-    objectMapper.registerModule(new Hibernate5Module());
-    return jsonConverter;
-}
-
-@Bean
-public DruidStatInterceptor druidStatInterceptor(){
-    return new DruidStatInterceptor();
-}
-
-@Bean
-public BeanNameAutoProxyCreator beanNameAutoProxyCreator(){
-    BeanNameAutoProxyCreator beanNameAutoProxyCreator = new BeanNameAutoProxyCreator();
-    beanNameAutoProxyCreator.setProxyTargetClass(true);
-    beanNameAutoProxyCreator.setBeanNames("*Controller","*Schedule");
-    beanNameAutoProxyCreator.setInterceptorNames("druidStatInterceptor");
-    return beanNameAutoProxyCreator;
-}
 }

@@ -441,6 +441,7 @@ public class CodeGeneratorController extends BaseController{
             project.setPort(port);
             map.put("module",module);
             map.put("project",project);
+            map.put("GeneratorStringUtil",new GeneratorStringUtil());
             List<ProjectDataSource> projectDataSources = project.getProjectDataSources();
             ProjectDataSource mainDataSource = null;
             List<ProjectDataSource> otherDataSourceList = null;
