@@ -26,8 +26,8 @@ import java.util.Locale;
 public class BaseModel implements Serializable {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "hibernate-uuid")
+    @GenericGenerator(name = "hibernate-uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @FieldInfo("主键")
     @Column(length = 48,nullable = false)
     @Size(max=48, min=1, message = "主键ID 长度必须大于等于1且小于等于48")
