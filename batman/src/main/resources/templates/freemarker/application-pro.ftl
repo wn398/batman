@@ -23,7 +23,7 @@ jwt.exclude.urls=swagger-ui.html,webjars/springfox-swagger-ui,api-docs,/druid/,s
 -->
 #数据库配置#
 spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
-spring.datasource.name=mainDataSource
+spring.datasource.name=main
 <#if mainDataSource??>
     <#assign databaseType = GeneratorStringUtil.toLowerCase(mainDataSource.dataBaseType)>
     <#assign hostname = mainDataSource.hostName>
@@ -35,7 +35,7 @@ spring.datasource.name=mainDataSource
         <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
         <#assign driverclassname = "com.mysql.jdbc.Driver">
     </#if>
-spring.datasource.url = jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8
+spring.datasource.url = jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
 spring.datasource.username = ${mainDataSource.username}
 spring.datasource.password = ${mainDataSource.password}
 spring.datasource.driverClassName =${driverclassname}
@@ -64,7 +64,7 @@ custom.datasource.names=${otherDataSourceNames}
             <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
             <#assign driverclassname = "com.mysql.jdbc.Driver">
         </#if>
-custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8
+custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
 custom.datasource.${otherDataSourceNickName}.driverClassName =${driverclassname}
 custom.datasource.${otherDataSourceNickName}.username=${otherDataSource.username}
 custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password}
@@ -77,15 +77,6 @@ custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password
 #custom.datasource.ds1.username=postgres
 #custom.datasource.ds1.password=541998
 </#if>
-
-#MYSQL
-#spring.jpa.database=mysql
-#spring.datasource.url = jdbc:mysql://localhost:3306/${module.name}?characterEncoding=UTF-8
-#spring.datasource.username=root
-#spring.datasource.password=root
-#spring.datasource.driverClassName=com.mysql.jdbc.Driver
-#spring.jpa.hibernate.naming-strategy = org.hibernate.cfg.ImprovedNamingStrategy
-#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
 
 spring.jpa.open-in-view=true
 

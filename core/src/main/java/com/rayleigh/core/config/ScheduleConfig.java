@@ -10,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 /**
- * 使用多线程的方式执行schedule任务，默认10个线程
+ * 使用多线程的方式执行schedule任务，默认16个线程
  */
 @Configuration
 @EnableScheduling
@@ -18,14 +18,14 @@ public class ScheduleConfig implements SchedulingConfigurer {
     private Logger logger = LoggerFactory.getLogger(ScheduleConfig.class);
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        logger.info("启动 schedule threadPool!");
+        logger.info("启动 task schedule threadPool!--default 16 threads");
         taskRegistrar.setScheduler(taskExecutor());
     }
 
     @Bean(destroyMethod="shutdown")
     public ThreadPoolTaskScheduler taskExecutor() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(10);
+        scheduler.setPoolSize(16);
         scheduler.setThreadNamePrefix("task-");
         scheduler.setAwaitTerminationSeconds(60);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);

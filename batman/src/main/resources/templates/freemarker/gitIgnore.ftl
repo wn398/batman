@@ -13,6 +13,7 @@
 hs_err_pid*
 *.iml
 .idea
+logging.**
 <#list project.modules as module>
 ${module.name}/src/main/java/${project.packageName ?replace(".","/")}/standard/**
 </#list>
