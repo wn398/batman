@@ -177,6 +177,42 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         return   ${entity.name ?uncap_first}Repository.listBySQL(sql);
     }
 
+    public ${entity.name} findOneByProperties(Map<String,Object> map){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<${entity.name}> criteriaQuery = criteriaBuilder.createQuery(${entity.name}.class);
+        Root<${entity.name}> root = criteriaQuery.from(${entity.name}.class);
+        List<Predicate> list = new ArrayList<>();
+        map.forEach((key,value)->list.add(criteriaBuilder.equal(root.get(key),value)));
+        Predicate[] predicates = new Predicate[list.size()];
+        criteriaQuery.where(list.toArray(predicates));
+        TypedQuery<${entity.name}> typedQuery = entityManager.createQuery(criteriaQuery);
+        return typedQuery.getSingleResult();
+    }
+
+    public ${entity.name} findOneByProperties(Map<String,Object> map,String ...propertyNames){
+        return findOneByProperties(map,Arrays.asList(propertyNames));
+    }
+
+
+    public ${entity.name} findOneByProperties(Map<String,Object> map,List<String> propertyNames){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
+        Root<${entity.name}> root = tupleCriteriaQuery.from(${entity.name}.class);
+        List<Predicate> list = new ArrayList<>();
+        map.forEach((key,value)->list.add(criteriaBuilder.equal(root.get(key),value)));
+        Predicate[] predicates = new Predicate[list.size()];
+        tupleCriteriaQuery.where(list.toArray(predicates));
+        List<Selection<?>> selectList = new ArrayList<>();
+        propertyNames.stream().forEach(name->selectList.add(root.get(name).alias(name)));
+        tupleCriteriaQuery.multiselect(selectList);
+        TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
+        Tuple tuple = tupleTypedQuery.getSingleResult();
+        Map<String,Object> fieldMap = new HashMap<String,Object>();
+        propertyNames.stream().forEach(name->fieldMap.put(name,tuple.get(name)));
+        ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(fieldMap);
+        return ${entity.name ?uncap_first};
+    }
+
 
     public List<${entity.name}> findByProperties(Map<String,Object> map){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
@@ -197,6 +233,18 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
     }
     public List<${entity.name}> findByProperties(Map<String,Object> map,String ...propertyNames){
         return findByProperties(map,Arrays.asList(propertyNames));
+    }
+
+    public ${entity.name} findOneByProperty(String name,Object value){
+        return findOneByProperties(Collections.singletonMap(name,value));
+    }
+
+    public ${entity.name} findOneByProperty(String name,Object value,List<String> propertyNames){
+        return findOneByProperties(Collections.singletonMap(name,value),propertyNames);
+    }
+
+    public ${entity.name} findOneByProperty(String name,Object value,String ...propertyNames){
+        return findOneByProperty(name,value,Arrays.asList(propertyNames));
     }
 
     public List<${entity.name}> findByProperty(String name,Object value){

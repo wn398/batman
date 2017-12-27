@@ -54,6 +54,12 @@ public interface ${entity.name}Service extends BaseService{
 
     List<Object[]> findBySQL(String sql);
 
+    ${entity.name} findOneByProperties(Map<String,Object> map);
+
+    ${entity.name} findOneByProperties(Map<String,Object> map,String ...propertyNames);
+
+    ${entity.name} findOneByProperties(Map<String,Object> map,List<String> propertyNames);
+
     List<${entity.name}> findByProperties(Map<String,Object> map);
 
     List<${entity.name}> findByProperties(Map<String,Object> map,String ...propertyNames);
@@ -65,6 +71,12 @@ public interface ${entity.name}Service extends BaseService{
     Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,String ...propertyNames);
 
     Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,List<String> propertyNames);
+
+    ${entity.name} findOneByProperty(String name,Object value);
+
+    ${entity.name} findOneByProperty(String name,Object value,String ...propertyNames);
+
+    ${entity.name} findOneByProperty(String name,Object value,List<String> propertyNames);
 
     List<${entity.name}> findByProperty(String name,Object value);
 
