@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar, EnvironmentAware {
-    private Logger logger = LoggerFactory.getLogger("DataSource");
+    private Logger logger = LoggerFactory.getLogger("DynamicDataSource");
     //如配置文件中未指定数据源类型，使用该默认值
     private static final Object DATASOURCE_TYPE_DEFAULT = "org.apache.tomcat.jdbc.pool.DataSource";
     private ConversionService conversionService = new DefaultConversionService();
@@ -42,7 +42,7 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
      */
     @Override
     public void setEnvironment(Environment environment) {
-        System.out.println("DynamicDataSourceRegister.setEnvironment()");
+        logger.info("DynamicDataSourceRegister.setEnvironment()");
         initDefaultDataSource(environment);
         initCustomDataSources(environment);
     }
@@ -206,7 +206,7 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        System.out.println("DynamicDataSourceRegister.registerBeanDefinitions()");
+        logger.info("DynamicDataSourceRegister.registerBeanDefinitions()");
         Map<Object, Object> targetDataSources = new HashMap<Object, Object>();
         // 将主数据源添加到更多数据源中
         targetDataSources.put("dataSource", defaultDataSource);
