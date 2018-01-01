@@ -78,7 +78,8 @@ custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password
 #custom.datasource.ds1.password=541998
 </#if>
 
-spring.jpa.open-in-view=true
+<!--设为true的话，因为session缓存的作用，会导致在一个请求方法里第二次切换数据源失败，因为缓存不会重新获取链接-->
+spring.jpa.open-in-view=false
 
 #日志配置
 logging.file=../logs/${module.name}.log
