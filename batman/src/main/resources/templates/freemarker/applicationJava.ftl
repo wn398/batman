@@ -3,8 +3,10 @@ package ${project.packageName};
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import com.rayleigh.core.application.BaseApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication(scanBasePackages = {"com.rayleigh","${project.packageName}"})
+@ServletComponentScan(basePackages = {"com.rayleigh","${project.packageName}"})
 public class ${module.name ?cap_first}Application extends BaseApplication{
 
     @Override

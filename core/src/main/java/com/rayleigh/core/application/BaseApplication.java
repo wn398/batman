@@ -5,16 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.rayleigh.core.annotation.BatmanApplication;
-import com.rayleigh.core.annotation.EnableCustomRepository;
-import com.rayleigh.core.dynamicDataSource.EnableDynamicDataSource;
 import org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 @BatmanApplication
-public class BaseApplication extends SpringBootServletInitializer {
+public abstract class BaseApplication extends SpringBootServletInitializer{
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
