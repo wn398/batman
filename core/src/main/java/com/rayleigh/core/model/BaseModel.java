@@ -39,7 +39,7 @@ public class BaseModel implements Serializable {
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
+    @Column
     public Date createDate;
 
     @FieldInfo("更新时间")

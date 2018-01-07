@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 <#--构建关联模型 传参：project,entity -->
 package ${project.packageName}.standard.modelRelation;
 

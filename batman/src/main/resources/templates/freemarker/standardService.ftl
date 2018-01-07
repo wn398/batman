@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.standard.service;
 
 import com.rayleigh.core.model.PageModel;
@@ -19,9 +20,7 @@ import ${project.packageName}.standard.methodModel.*;
 <#else>
     <#assign entityIdType="Long">
 </#if>
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/
+
 public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> saveOrUpdate(List<${entity.name}> list);
@@ -186,7 +185,3 @@ public interface ${entity.name}Service extends BaseService{
     </#list>
 
 }
-
-/*
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

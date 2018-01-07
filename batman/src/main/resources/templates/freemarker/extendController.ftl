@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.extend.controller;
 
 import ${project.packageName}.standard.model.*;
@@ -17,9 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 
-/**
-* Generated Code By BatMan,@Author-->山猫
-*/
 @Api(value = "${entity.name}ExtendController", description = "${entity.description}相关api")
 @RequestMapping("/${entity.name ?uncap_first}Ctl")
 @Controller
@@ -29,6 +27,3 @@ private ${entity.name}ExtendService ${entity.name ?uncap_first}ExtendService;
 
 
 }
-/**
-* Generated Code By BatMan,@Author-->山猫
-*/

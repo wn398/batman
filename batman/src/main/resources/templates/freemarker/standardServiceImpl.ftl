@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.standard.service.impl;
 <#--project,entity,constructSearchMethodUtil-->
 import ${project.packageName}.standard.model.*;
@@ -31,9 +32,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 import com.rayleigh.core.model.PageModel;
 import com.rayleigh.core.util.StringUtil;
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/
+
 public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 public Logger logger = LoggerFactory.getLogger(getClass());
 @Autowired
@@ -1049,7 +1048,3 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
             return ${entity.name ?uncap_first}Result;
         }
 }
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

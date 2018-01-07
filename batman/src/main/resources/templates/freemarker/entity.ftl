@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.standard.model;
 
 import com.rayleigh.core.model.BaseModel;
@@ -15,10 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.*;
 
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/
 @FieldInfo("${entity.description}")
 @Entity
 @DynamicInsert
@@ -155,7 +152,3 @@ public void set${mainR.otherEntity.name} (${mainR.otherEntity.name} ${mainR.othe
 
 
 }
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

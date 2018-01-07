@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.standard.util;
 
 import com.rayleigh.core.util.SpringContextUtils;
@@ -18,9 +19,6 @@ import ${project.packageName}.standard.service.${relationShip.otherEntity.name}S
 </#if>
 import java.math.BigDecimal;
 import java.util.*;
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/
 
 public class ${entity.name}Util {
 
@@ -245,7 +243,3 @@ public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.n
 }
 
 }
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName};
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;

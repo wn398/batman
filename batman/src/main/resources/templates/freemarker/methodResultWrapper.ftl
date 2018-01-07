@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 <#--<!--构建方法的结果模型  需要传入的参数 project, entity, method,searchDBUtil&ndash;&gt;-->
 package ${project.packageName}.standard.methodModel;
 import java.util.*;
@@ -73,7 +74,3 @@ public void set${entityName}${fieldName ?cap_first}(${fieldType} ${entityName ?u
 </#list>
 
 }
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 <#--构建方法的参数模型 传参：project,entity,method-->
 package ${project.packageName}.standard.methodModel;
 import com.rayleigh.core.enums.DataType;
@@ -10,9 +11,7 @@ import java.util.*;
 <#else>
     <#assign entityIdType="Long">
 </#if>
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/
+
 public class ${entity.name}$${method.methodName ?cap_first}ParamWrapper{
 
 <#--分页参数-->
@@ -152,8 +151,3 @@ public void set${entityName}${fieldName ?cap_first}(${fieldType} ${entityName ?u
 
 
 }
-
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.standard.controller;
 
 import ${project.packageName}.standard.model.${entity.name};
@@ -27,9 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/
+
 <#--设置主键类型-->
 <#if entity.primaryKeyType=="String">
     <#assign entityIdType="String">
@@ -114,7 +113,7 @@ public ResultWrapper findOneById(@PathVariable("id") ${entityIdType} id){
         return getFailureResultAndInfo(id,e.getMessage());
     }
 }
-
+<#--不展现到接口里
 @ApiOperation(value = "根据id删除")
 @DeleteMapping("/delete/{id}")
 @ResponseBody
@@ -127,6 +126,7 @@ public ResultWrapper deleteById(@PathVariable("id") ${entityIdType} id){
         return getFailureResultAndInfo(id,e.getMessage());
     }
 }
+-->
 
 <#--页面配置生成的方法-->
 <#list entity.methods as method>
@@ -189,8 +189,3 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
 </#list>
 
 }
-
-
-/**
-* Generated Code By BatMan on ${.now},@Author-->山猫
-*/

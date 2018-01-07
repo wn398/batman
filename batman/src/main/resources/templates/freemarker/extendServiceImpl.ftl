@@ -1,3 +1,4 @@
+<#include "CopyRight.ftl">
 package ${project.packageName}.extend.service.impl;
 
 import ${project.packageName}.standard.model.${entity.name};
@@ -9,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ${project.packageName}.standard.service.impl.${entity.name}ServiceImpl;
 import ${project.packageName}.extend.service.${entity.name}ExtendService;
-/**
-* Generated Code By BatMan,@Author-->山猫
-*/
+
 @Service
 public class ${entity.name}ExtendServiceImpl extends ${entity.name}ServiceImpl implements ${entity.name}ExtendService {
 @Autowired
@@ -20,7 +19,3 @@ private ${entity.name}ExtendRepository ${entity.name ?uncap_first}ExtendReposito
 
 
 }
-
-/**
-* Generated Code By BatMan,@Author-->山猫
-*/
