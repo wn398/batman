@@ -270,6 +270,8 @@ public class CodeGeneratorController extends BaseController{
             generatePOMFile(moduleRootPath,project,module);
             //生成模块pom-war.xml文件
             generatePOMWarFile(moduleRootPath,project,module);
+            //生成findbugs-include.xml文件
+            generateFindBugsIncludeFile(moduleRootPath,project,module);
             //生成entity文件
             generateModelFile(standardModelPath,project,module);
             //生成standRepository文件
@@ -369,6 +371,27 @@ public class CodeGeneratorController extends BaseController{
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取gitIgnore.ftl模板失败");
+        }
+    }
+    //生成模块findbugs-include文件
+    private void generateFindBugsIncludeFile(File dir,Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("findbugs-include.ftl");
+            Map<String, String> map = new HashMap<>();
+            String packageName = project.getPackageName();
+            StringBuilder stringBuilder = new StringBuilder("~");
+            stringBuilder.append(packageName.replaceAll("[/.]", "\\\\."));
+            stringBuilder.append("\\.extend\\..*");
+            map.put("path",stringBuilder.toString());
+            File pomFile = new File(dir,"findbugs-include.xml");
+
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取findbugs-include.ftl模板失败");
         }
     }
     //生成模块POM文件

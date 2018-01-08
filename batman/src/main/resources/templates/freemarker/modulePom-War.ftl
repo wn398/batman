@@ -104,6 +104,7 @@
                 <configuration>
                     <effort>default</effort>
                     <failOnError>true</failOnError>
+                    <includeFilterFile>findbugs-include.xml</includeFilterFile>
                     <!--
                     <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
                     <includeFilterFile>findbugs-include.xml</includeFilterFile>-->
