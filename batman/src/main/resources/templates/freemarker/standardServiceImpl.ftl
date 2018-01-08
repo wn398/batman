@@ -34,20 +34,20 @@ import com.rayleigh.core.model.PageModel;
 import com.rayleigh.core.util.StringUtil;
 
 public class ${entity.name}ServiceImpl implements ${entity.name}Service {
-public Logger logger = LoggerFactory.getLogger(getClass());
-@Autowired
-private ${entity.name}Repository ${entity.name ?uncap_first}Repository;
-@Autowired
-private EntityManager entityManager;
-@Autowired
-private ${entity.name}Service ${entity.name ?uncap_first}Service;
-@Resource
-private JdbcTemplate jdbcTemplate;
+    public Logger logger = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private ${entity.name}Repository ${entity.name ?uncap_first}Repository;
+    @Autowired
+    private EntityManager entityManager;
+    @Autowired
+    private ${entity.name}Service ${entity.name ?uncap_first}Service;
+    @Resource
+    private JdbcTemplate jdbcTemplate;
 <#--注入相关联service-->
 <#list entity.mainEntityRelationShips as relationShip>
     <#if relationShip.otherEntity.name != entity.name>
-@Autowired
-private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name ?uncap_first}Service;
+    @Autowired
+    private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name ?uncap_first}Service;
     </#if>
 </#list>
 <#--用一个变量设置主键类型-->
@@ -56,24 +56,31 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
 <#elseif entity.primaryKeyType=="Long">
     <#assign entityIdType="Long">
 </#if>
-    public List<${entity.name}> saveOrUpdate(List<${entity.name}> list){
-        return ${entity.name ?uncap_first}Repository.save(list);
+
+    public ${entity.name} saveWithRelated(${entity.name} ${entity.name ?uncap_first}){
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
     }
 
     public ${entity.name} save(${entity.name} ${entity.name ?uncap_first}){
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first});
+    }
+
+    public ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first}){
+        if(null==${entity.name ?uncap_first}.getId()||null==${entity.name ?uncap_first}.getVersion()){
+            throw new RuntimeException("更新实体id与version不能为空!");
+        }
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
     }
 
     public ${entity.name} update(${entity.name} ${entity.name ?uncap_first}){
-        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
-        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
+        if(null==${entity.name ?uncap_first}.getId()||null==${entity.name ?uncap_first}.getVersion()){
+            throw new RuntimeException("更新实体id与version不能为空!");
+        }
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first});
     }
 
-    public ${entity.name} saveOrUpdate(${entity.name} ${entity.name ?uncap_first}){
-        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
-        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
-    }
     //保存人为分配id的实体
     public ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception{
          jdbcTemplate.execute(${generatorStringUtil.constructInsertSql(project,entity)});
@@ -432,36 +439,22 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
         return findAll(Arrays.asList(propertyNames));
     }
 
-    public Integer updateById(${entityIdType} id,String name,Object value){
-        return updateById(id,Collections.singletonMap(name,value));
+    public Integer updateById(${entityIdType} id,Long version,String name,Object value){
+        Map<String,Object> conditionMap = new HashMap<>();
+        conditionMap.put("id",id);
+        conditionMap.put("version",version);
+        return updateByProperties(conditionMap,Collections.singletonMap(name,value));
     }
 
-    public Integer updateById(${entityIdType} id,Map<String,Object> updatedNameValues){
-        return updateByIds(Collections.singletonList(id),updatedNameValues);
-    }
-
-    public Integer updateByIds(List<${entityIdType}> ids,String name,Object value){
-        return updateByIds(ids,Collections.singletonMap(name,value));
-    }
-
-    public Integer updateByIds(List<${entityIdType}> ids,Map<String,Object> updatedNameValues){
-        return updateAll(new Specification<${entity.name}>() {
-            @Override
-            public Predicate toPredicate(Root<${entity.name}> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                if(null!=ids&&ids.size()==1){
-                    return criteriaBuilder.equal(root.get("id"),ids.get(0));
-                }else if(null!=ids&&ids.size()>1){
-                    CriteriaBuilder.In<${entityIdType}> in = criteriaBuilder.in(root.get("id"));
-                    for(${entityIdType} id:ids){ in.value(id);}
-                    return  criteriaQuery.where(in).getRestriction();
-                }else{
-                    return null;
-                }
-            }
-        },updatedNameValues);
+    public Integer updateById(${entityIdType} id,Long version,Map<String,Object> updatedNameValues){
+        Map<String,Object> conditionMap = new HashMap<>();
+        conditionMap.put("id",id);
+        conditionMap.put("version",version);
+        return updateByProperties(conditionMap,updatedNameValues);
     }
 
     public Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues){
+        updatedNameValues.put("updateDate",new Date());
         return ${entity.name ?uncap_first}Repository.updateAll(specification,updatedNameValues);
     }
 

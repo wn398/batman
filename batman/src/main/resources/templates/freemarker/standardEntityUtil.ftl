@@ -242,4 +242,16 @@ public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.n
     return map;
 }
 
+//获取实体类所有简单属性值列表
+public static List<String> getPropertyNames(){
+    List<String> list = new ArrayList();
+    list.add("id");
+    list.add("createDate");
+    list.add("updateDate");
+    <#list entity.fields as field>
+    list.add("${field.name ?uncap_first}");
+    </#list>
+    return list;
+}
+
 }

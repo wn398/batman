@@ -23,17 +23,17 @@ import ${project.packageName}.standard.methodModel.*;
 
 public interface ${entity.name}Service extends BaseService{
 
-    List<${entity.name}> saveOrUpdate(List<${entity.name}> list);
-
     ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception;
-
-    ${entity.name} saveOrUpdate(${entity.name} ${entity.name ?uncap_first});
 
     void deleteByIds(List<${entityIdType}> ids);
 
     ${entity.name} update(${entity.name} ${entity.name ?uncap_first});
 
+    ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first});
+
     ${entity.name} save(${entity.name} ${entity.name ?uncap_first});
+
+    ${entity.name} saveWithRelated(${entity.name} ${entity.name ?uncap_first});
 
     void deleteById(${entityIdType} id);
 
@@ -117,13 +117,9 @@ public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
 
-    Integer updateById(${entityIdType} id,String name,Object value);
+    Integer updateById(${entityIdType} id,Long version,String name,Object value);
 
-    Integer updateById(${entityIdType} id,Map<String,Object> updatedNameValues);
-
-    Integer updateByIds(List<${entityIdType}> ids,String name,Object value);
-
-    Integer updateByIds(List<${entityIdType}> ids,Map<String,Object> updatedNameValues);
+    Integer updateById(${entityIdType} id,Long version,Map<String,Object> updatedNameValues);
 
     Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues);
 

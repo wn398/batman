@@ -46,13 +46,56 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
     </#if>
 </#list>
 
-@ApiOperation(value = "保存或更新,包括建立关系,有id则更新,没id则保存")
-@PostMapping("/doSaveOrUpdate")
+@ApiOperation(value = "保存实体,不包括相关联实体")
+@PostMapping("/doSave")
 @ResponseBody
-public ResultWrapper saveOrUpdate(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
 
     try {
-        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.saveOrUpdate(${entity.name ?uncap_first});
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.save(${entity.name ?uncap_first});
+        return getSuccessResult(${entity.name ?uncap_first}Result);
+    }catch (Exception e){
+        e.printStackTrace();
+        return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
+    }
+}
+
+@ApiOperation(value = "更新实体,不包括相关联实体")
+@PostMapping("/doUpdate")
+@ResponseBody
+public ResultWrapper update(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+
+    try {
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.update(${entity.name ?uncap_first});
+        return getSuccessResult(${entity.name ?uncap_first}Result);
+    }catch (Exception e){
+        e.printStackTrace();
+        return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
+    }
+}
+
+@ApiOperation(value = "保存，包括相关关联实体")
+@PostMapping("/doSaveWithRelated")
+@ResponseBody
+public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+
+    try {
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.save(${entity.name ?uncap_first});
+        ${entity.name ?uncap_first}Result = ${entity.name}Util.preventMutualRef(${entity.name ?uncap_first}Result);
+        return getSuccessResult(${entity.name ?uncap_first}Result);
+    }catch (Exception e){
+        e.printStackTrace();
+        return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
+    }
+}
+
+@ApiOperation(value = "更新,包括相关联实体")
+@PostMapping("/doUpdateWithRelated")
+@ResponseBody
+public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+
+    try {
+        ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.save(${entity.name ?uncap_first});
         ${entity.name ?uncap_first}Result = ${entity.name}Util.preventMutualRef(${entity.name ?uncap_first}Result);
         return getSuccessResult(${entity.name ?uncap_first}Result);
     }catch (Exception e){

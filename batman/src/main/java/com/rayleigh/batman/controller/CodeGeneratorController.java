@@ -7,6 +7,7 @@ import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.batman.util.*;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.util.StringUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -436,9 +437,11 @@ public class CodeGeneratorController extends BaseController{
         try {
             Template template = configuration.getTemplate("application-pro.ftl");
             Map<String, Object> map = new HashMap<>();
-            String port = new Random().nextInt(9000)+8080+"";
-            //设置随机端口
-            project.setPort(port);
+            if(StringUtil.isEmpty(project.getPort())) {
+                String port = new Random().nextInt(9000) + 8080 + "";
+                //设置随机端口
+                project.setPort(port);
+            }
             map.put("module",module);
             map.put("project",project);
             map.put("GeneratorStringUtil",new GeneratorStringUtil());
@@ -467,7 +470,7 @@ public class CodeGeneratorController extends BaseController{
             }
         }catch (Exception e){
             e.printStackTrace();
-            logger.error("获取application模板失败");
+            logger.error("获取application-pro模板失败");
         }
     }
 
@@ -476,9 +479,11 @@ public class CodeGeneratorController extends BaseController{
         try {
             Template template = configuration.getTemplate("application-dev.ftl");
             Map<String, Object> map = new HashMap<>();
-            String port = new Random().nextInt(9000)+8080+"";
-            //设置随机端口
-            project.setPort(port);
+            if(StringUtil.isEmpty(project.getPort())) {
+                String port = new Random().nextInt(9000) + 8080 + "";
+                //设置随机端口
+                project.setPort(port);
+            }
             map.put("module",module);
             map.put("project",project);
             map.put("GeneratorStringUtil",new GeneratorStringUtil());
@@ -507,7 +512,7 @@ public class CodeGeneratorController extends BaseController{
             }
         }catch (Exception e){
             e.printStackTrace();
-            logger.error("获取application模板失败");
+            logger.error("获取application-dev模板失败");
         }
     }
 
