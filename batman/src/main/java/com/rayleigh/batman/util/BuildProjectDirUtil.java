@@ -41,6 +41,16 @@ public class BuildProjectDirUtil {
             return new StringBuilder(projectBasePath).append("/").append(moduleName).append("/src/main/java").append("/").append(relativePackagePath).toString();
         }
     }
+    //获取基础包下filter根路径
+    public static String getRelativeFilterPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
+        String projectBasePath = getProjectBasePath(generatorBasePath,projectName);
+        String relativePackagePath = basePackageName.replaceAll("[.]","/");
+        if(StringUtil.isEmpty(moduleName)){
+            return new StringBuilder(projectBasePath).append("/src/main/java").append("/").append(relativePackagePath).append("/filter").toString();
+        }else{
+            return new StringBuilder(projectBasePath).append("/").append(moduleName).append("/src/main/java").append("/").append(relativePackagePath).append("/filter").toString();
+        }
+    }
     //获取standard java根路径
     public static String getStandardJavaBasePackagePath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
         String projectBasePath = getProjectBasePath(generatorBasePath,projectName);

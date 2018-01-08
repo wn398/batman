@@ -10,16 +10,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
-
-@WebFilter(filterName = "jwtFilter", urlPatterns = "/*")
-public class JwtFilter implements Filter {
-    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+//已下放到具体的生成代码中
+//@WebFilter(filterName = "jwtFilter", urlPatterns = "/*")
+public class JwtFilterDemo implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilterDemo.class);
     //是否开启了jwt
     @Value("${jwt.enabled}")
     private boolean isEnable;

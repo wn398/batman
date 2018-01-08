@@ -251,6 +251,9 @@ public class CodeGeneratorController extends BaseController{
             File extendControllerPath = new File(BuildProjectDirUtil.getExtendControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //基本包路径 com.tim
             File relativePackagePath = new File(BuildProjectDirUtil.getRelativePackagePath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
+            //基本包下的filter路径
+            File filterPackagePath = new File(BuildProjectDirUtil.getRelativeFilterPath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
+            filterPackagePath.mkdirs();
             //standard serviceImpl路径
             File standardServiceImplPath = new File(BuildProjectDirUtil.getStandardServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //extend serviceImpl路径
@@ -262,6 +265,10 @@ public class CodeGeneratorController extends BaseController{
             generateApplicationProPropertyFile(resourceRootPath,project,module);
             //生成根目录下的application-dev.property文件
             generateApplicationDevPropertyFile(resourceRootPath,project,module);
+            //生成permission文件
+            generatePermissionPropertyFile(resourceRootPath);
+            //生成filter java文件
+            generateJwtFilterFile(filterPackagePath,project);
             //生成日志配置文件
             generateLogbackConfigerationFile(resourceRootPath,project,module);
             //生成模块applicationJava文件,放在基础路径下
@@ -538,6 +545,39 @@ public class CodeGeneratorController extends BaseController{
             logger.error("获取application-dev模板失败");
         }
     }
+
+    //生成permissionProperty.property文件
+    private void generatePermissionPropertyFile(File dir){
+        try {
+            Template template = configuration.getTemplate("jwt/permissionProperty.ftl");
+            Map<String, Object> map = new HashMap<>();
+            File applicationFile = new File(dir,"permission.properties");
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取permissionProperty模板失败");
+        }
+    }
+    //生成jwtFilter文件
+    private void generateJwtFilterFile(File dir,Project project){
+        try {
+            Template template = configuration.getTemplate("jwt/JwtFilter.ftl");
+            Map<String, Object> map = new HashMap<>();
+            map.put("basePackage",project.getPackageName());
+            File applicationFile = new File(dir,"JwtFilter.java");
+            try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
+                template.process(map, writer);
+                writer.flush();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取JwtFilter模板失败");
+        }
+    }
+
 
     private void generateLogbackConfigerationFile(File dir,Project project,Module module){
         try {
