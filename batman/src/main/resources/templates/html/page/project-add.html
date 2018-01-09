@@ -42,6 +42,17 @@
                                 <input type="number" class="form-control" th:name="port" placeholder="不填端口随机">
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否加密数据源</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isEncodeDataSource">
+                                    <option th:value="true">是</option>
+                                    <option th:value="false">否</option>
+                                </select>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

@@ -44,6 +44,20 @@
                                 <input type="number" class="form-control" th:name="port" id="inputPassword15" th:value="${project.port}" placeholder="不填端口随机">
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否加密数据源</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isEncodeDataSource">
+                                    <option th:value="true"  th:if="${project.isEncodeDataSource.toString() eq 'true'}" th:selected="selected" >是</option>
+                                    <option th:value="false" th:if="${project.isEncodeDataSource.toString() eq 'false'}" th:selected="selected">否</option>
+
+                                    <option th:value="true"  th:unless="${project.isEncodeDataSource.toString() eq 'true'}" >是</option>
+                                    <option th:value="false" th:unless="${project.isEncodeDataSource.toString() eq 'false'}" >否</option>
+                                </select>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

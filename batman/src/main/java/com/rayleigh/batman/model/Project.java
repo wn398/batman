@@ -39,6 +39,10 @@ public class Project extends BaseModel {
     @NotEmpty(message = "启动端口不能为空")
     private String port;
 
+    @FieldInfo("数据源加密")
+    @Column
+    private Boolean isEncodeDataSource;
+
     @Valid
     @OneToMany(mappedBy = "project",cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},fetch = FetchType.LAZY,orphanRemoval = true)
     private List<Module> modules=new ArrayList<>();
@@ -129,5 +133,13 @@ public class Project extends BaseModel {
             projectDataSources.stream().forEach(projectDataSource -> projectDataSource.setProject(this));
         }
         this.projectDataSources = projectDataSources;
+    }
+
+    public Boolean getIsEncodeDataSource() {
+        return isEncodeDataSource;
+    }
+
+    public void setIsEncodeDataSource(Boolean encodeDataSource) {
+        this.isEncodeDataSource = encodeDataSource;
     }
 }

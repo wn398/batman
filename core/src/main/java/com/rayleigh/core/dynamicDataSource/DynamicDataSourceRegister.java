@@ -1,6 +1,8 @@
 package com.rayleigh.core.dynamicDataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.rayleigh.core.util.AESEncoderUtil;
+import com.rayleigh.core.util.MD5Base64Util;
 import com.rayleigh.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +33,8 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
     private PropertyValues dataSourcePropertyValues;
 
     private static Map sourcePoolMap = new HashMap();
-
+    //数据源密钥
+    private String sourceRule = MD5Base64Util.getDeBase64("dmFua2VAd2FuZzIw");
     // 默认数据源
     private DataSource defaultDataSource;
 
@@ -42,7 +45,7 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
      */
     @Override
     public void setEnvironment(Environment environment) {
-        logger.info("DynamicDataSourceRegister.setEnvironment()");
+        logger.debug("DynamicDataSourceRegister.setEnvironment()");
         initDefaultDataSource(environment);
         initCustomDataSources(environment);
     }
@@ -52,15 +55,27 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
      * @param env
      */
     private void initDefaultDataSource(Environment env){
+        boolean isEncodeDatasource = false;
+        try {
+            RelaxedPropertyResolver propertyResolver2 = new RelaxedPropertyResolver(env, "batman.");
+            isEncodeDatasource = Boolean.parseBoolean(propertyResolver2.getProperty("encodeDataSource"));
+        }catch (Exception e){
+            logger.error("解析出错batmam.encodeDataSource出错!");
+            e.printStackTrace();
+        }
         // 读取主数据源
         RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "spring.datasource.");
         Map<String, Object> dsMap = new HashMap<String, Object>();
         dsMap.put("type", propertyResolver.getProperty("type"));
         dsMap.put("driverClassName", propertyResolver.getProperty("driverClassName"));
         dsMap.put("url", propertyResolver.getProperty("url"));
-        dsMap.put("username", propertyResolver.getProperty("username"));
-        dsMap.put("password", propertyResolver.getProperty("password"));
-
+        if(isEncodeDatasource){
+            dsMap.put("username", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty("username")));
+            dsMap.put("password", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty("password")));
+        }else {
+            dsMap.put("username", propertyResolver.getProperty("username"));
+            dsMap.put("password", propertyResolver.getProperty("password"));
+        }
         sourcePoolMap.put("initialSize",propertyResolver.getProperty("initialSize"));
         sourcePoolMap.put("minIdle",propertyResolver.getProperty("minIdle"));
         sourcePoolMap.put("maxActive",propertyResolver.getProperty("maxActive"));
@@ -87,6 +102,14 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
      * 初始化更多数据源
      */
     private void initCustomDataSources(Environment env) {
+        boolean isEncodeDatasource = false;
+        try {
+            RelaxedPropertyResolver propertyResolver2 = new RelaxedPropertyResolver(env, "batman.");
+            isEncodeDatasource = Boolean.parseBoolean(propertyResolver2.getProperty("encodeDataSource"));
+        }catch (Exception e){
+            logger.error("解析出错batmam.encodeDataSource出错!");
+            e.printStackTrace();
+        }
         // 读取配置文件获取更多数据源，也可以通过defaultDataSource读取数据库获取更多数据源
         RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "custom.datasource.");
         String dsPrefixs = propertyResolver.getProperty("names");
@@ -96,8 +119,13 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
                 //dsMap = propertyResolver.getSubProperties(dsPrefix + ".");
                 dsMap.put("driverClassName", propertyResolver.getProperty(dsPrefix+".driverClassName"));
                 dsMap.put("url", propertyResolver.getProperty(dsPrefix+".url"));
-                dsMap.put("username", propertyResolver.getProperty(dsPrefix+".username"));
-                dsMap.put("password", propertyResolver.getProperty(dsPrefix+".password"));
+                if(isEncodeDatasource){
+                    dsMap.put("username", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty(dsPrefix+".username")));
+                    dsMap.put("password", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty(dsPrefix+".password")));
+                }else {
+                    dsMap.put("username", propertyResolver.getProperty(dsPrefix+".username"));
+                    dsMap.put("password", propertyResolver.getProperty(dsPrefix+".password"));
+                }
                 dsMap.putAll(sourcePoolMap);
                 DataSource ds = buildDataSource(dsMap);
                 customDataSources.put(dsPrefix, ds);

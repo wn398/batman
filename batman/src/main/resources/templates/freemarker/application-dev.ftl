@@ -2,6 +2,7 @@ spring.application.name=${module.name}
 server.port=${project.port}
 server.context-path=/api
 swagger.basePackage=${project.packageName}
+batman.encodeDataSource=${project.isEncodeDataSource ?string('true','false')}
 
 #发送数据压缩
 server.compression.enabled=true

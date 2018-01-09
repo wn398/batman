@@ -7,6 +7,7 @@ import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.batman.util.*;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.util.AESEncoderUtil;
 import com.rayleigh.core.util.StringUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -32,6 +33,8 @@ public class CodeGeneratorController extends BaseController{
     private SysUserService sysUserService;
     @Autowired
     private EntityService entityService;
+    @Value("${batman.aesEncode.rule}")
+    private String aesEndoeRule;
 
     private Map<String, String> tempMap = new HashMap<>();
 //    @Value("${server.generator.path}")
@@ -526,10 +529,30 @@ public class CodeGeneratorController extends BaseController{
                 otherDataSourceList = map2.get(false);
                 if(null!=mainList && mainList.size()==1){
                     mainDataSource = mainList.get(0);
+                    if(project.getIsEncodeDataSource()){
+                        String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,mainDataSource.getUsername());
+                        String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,mainDataSource.getPassword());
+                        if(null==newUserName||null==newPassword){
+                            logger.info("加密数据源出错!");
+                        }else {
+                            mainDataSource.setUsername(newUserName);
+                            mainDataSource.setPassword(newPassword);
+                        }
+                    }
                 }
                 if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
                     String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
                     map.put("otherDataSourceNames",otherDataSourceNickNames);
+                    otherDataSourceList.parallelStream().forEach(datasource->{
+                        String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getUsername());
+                        String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getPassword());
+                        if(null==newUserName||null==newPassword){
+                            logger.info("加密数据源出错!");
+                        }else {
+                            datasource.setUsername(newUserName);
+                            datasource.setPassword(newPassword);
+                        }
+                    });
                     map.put("otherDataSources",otherDataSourceList);
                 }
 
