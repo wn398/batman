@@ -1,4 +1,4 @@
-${AnsiColor.BRIGHT_GREEN}  ${AnsiFoo.Bar}
+${AnsiColor.BRIGHT_GREEN}
 
 ██████╗  █████╗ ████████╗███╗   ███╗ █████╗ ███╗   ██╗
 ██╔══██╗██╔══██╗╚══██╔══╝████╗ ████║██╔══██╗████╗  ██║
@@ -7,4 +7,4 @@ ${AnsiColor.BRIGHT_GREEN}  ${AnsiFoo.Bar}
 ██████╔╝██║  ██║   ██║   ██║ ╚═╝ ██║██║  ██║██║ ╚████║
 ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
 
-${AnsiColor.BRIGHT_BLACK}
+${AnsiColor.BLACK}
