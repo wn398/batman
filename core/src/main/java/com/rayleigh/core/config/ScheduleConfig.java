@@ -18,7 +18,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
     private Logger logger = LoggerFactory.getLogger(ScheduleConfig.class);
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        logger.info("启动 task schedule threadPool!--default 16 threads");
+        logger.debug("启动 task schedule threadPool!--default 16 threads");
         taskRegistrar.setScheduler(taskExecutor());
     }
 
