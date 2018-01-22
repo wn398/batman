@@ -83,6 +83,14 @@ public class JwtFilter implements Filter {
 //        解决web访问的跨越问题
 //        httpResponse.setHeader("Access-Control-Allow-Origin", "*");
 //        httpResponse.setHeader("Access-Control-Allow-Headers", "Origin,X-Requested-With,Content-Type,Accept,headers,token,content-type");
+//        httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS, DELETE,PUT");
+//        if(httpRequest.getMethod().equalsIgnoreCase("OPTIONS")){
+//            httpResponse.setCharacterEncoding("UTF-8");
+//            httpResponse.setContentType("application/json; charset=utf-8");
+//            httpResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+//            httpResponse.getWriter().write("允许跨域");
+//            return;
+//        }
         if (isEnable) {
             String ip = getIpAddr(httpRequest);
             if (isExcludeUri(url)) {
