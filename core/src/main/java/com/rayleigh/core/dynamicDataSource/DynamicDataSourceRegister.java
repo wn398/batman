@@ -44,8 +44,7 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
      * 加载多数据源配置
      */
     @Override
-    public void setEnvironment(Environment environment) {
-        logger.debug("DynamicDataSourceRegister.setEnvironment()");
+    public void setEnvironment(Environment environment) { logger.debug("DynamicDataSourceRegister.setEnvironment()");
         initDefaultDataSource(environment);
         initCustomDataSources(environment);
     }

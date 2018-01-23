@@ -65,7 +65,7 @@ public class GlobalExceptionHandler {
         } else {
             //设置状态异常
             resultWrapper.setStatus(ResultStatus.EXCEPTION);
-            StringBuilder sb = new StringBuilder(e.getMessage());
+            StringBuilder sb = new StringBuilder();
             for(StackTraceElement element:e.getStackTrace()){
                 sb.append(element.toString()).append(" <br> ");
             }
@@ -82,8 +82,11 @@ public class GlobalExceptionHandler {
         ResultWrapper resultWrapper = new ResultWrapper();
         //设置状态异常
         resultWrapper.setStatus(ResultStatus.EXCEPTION);
-        StringBuilder sb = new StringBuilder(e.getMessage()).append(" <br> ");
-        for(StackTraceElement element:e.getStackTrace()){
+        StringBuilder sb = new StringBuilder();
+        if (null != e.getMessage()) {
+            sb.append(e.getMessage()).append(" <br> ");
+        }
+        for (StackTraceElement element : e.getStackTrace()) {
             sb.append(element.toString()).append(" <br> ");
         }
         resultWrapper.setExceptionMessage(sb.toString());

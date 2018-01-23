@@ -6,6 +6,7 @@ import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.batman.util.BuildProjectDirUtil;
 import com.rayleigh.batman.util.GeneratorStringUtil;
+import com.rayleigh.core.async.AsyncServiceUtil;
 import com.rayleigh.core.dynamicDataSource.TargetDataSource;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.ResultWrapper;
@@ -15,6 +16,7 @@ import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,8 @@ public class TestController extends BaseController{
     private Configuration configuration;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private AsyncServiceUtil asyncServiceUtil;
 
     @GetMapping("/testDynamicDataSource")
     @ResponseBody
@@ -206,6 +210,25 @@ public class TestController extends BaseController{
     public Project tess(){
         Project project = projectService.getAll().get(0);
         return project;
+    }
+
+    @GetMapping("/testAsyncService")
+    @ResponseBody
+    public String tess3(){
+        logger.info("开始testAsyncService开始");
+        asyncServiceUtil.doAsync(()->{
+            logger.info("开始异步处理任务");
+            try{
+                Thread.sleep(5000L);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            logger.info("结束异步处理任务!");
+            return new AsyncResult("返回结果");
+        });
+        logger.info("主线程处理testAsyncService结束");
+
+        return "success";
     }
 
 }

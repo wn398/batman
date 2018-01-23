@@ -5,16 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
-
 import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 @Service
 public class AsyncServiceUtil<T> {
     Logger logger = LoggerFactory.getLogger(AsyncServiceUtil.class);
 
     @Async
-    public Future<T> doAsync(AsyncService asyncService) {
-        return asyncService.doAsync();
+    public Future<T> doAsync(Supplier<Future<T>> supplier) {
+        return supplier.get();
     }
 
     private void demoTest() {
@@ -28,7 +28,13 @@ public class AsyncServiceUtil<T> {
             }
             logger.info("任务一完成");
             //return null;
-            return new AsyncResult<>("任务一完成");
+            return new AsyncResult("任务一完成");
         });
     }
+
+    public static void main(String[] args) {
+        AsyncServiceUtil asyncServiceUtil = new AsyncServiceUtil();
+        asyncServiceUtil.demoTest();
+    }
 }
+
