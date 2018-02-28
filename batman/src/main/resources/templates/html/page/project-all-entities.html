@@ -1,8 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/head"></head>
+<!--<head th:replace="fragment/head"></head>-->
+<style>
+    table {
+        border-collapse: collapse;
+    }
 
-<body style="background: #E3E4E8">
+    table, td, th {
+        border: 1px solid black;
+    }
+
+    .button {
+        background-color: white;
+        color: black;
+        font-size: 22px;
+        text-align: center;
+        text-decoration: none;
+    }
+</style>
+<body style="background: white">
 
 <!--<form class="panel-body" role="form" id="entities" onsubmit="return false;">&lt;!&ndash;class="form-horizontal"style="background: #E3E4E8"&ndash;&gt;-->
 <div class="wrapper">
@@ -12,13 +28,15 @@
                 <h3 class="panel-title" th:text="|${project.name}-${project.description}|"></h3>
             </header>
         </section>
-        <div class="panel" th:each="entities:${project.entities}">
+        <hr/>
+        <div class="panel" th:each="entities,entitieStat:${project.entities}">
             <header class="panel-heading">
-                <button class="btn btn-success" th:text="|${entities.name}-${entities.description}|"></button>
+                <button class="btn btn-success" th:text="|${entitieStat.index+1}>>${entities.description}表(${entities.name})|" class="button" disabled></button>
                 <span class="tools pull-right">
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                     </span>
             </header>
+            <br/>
             <div class="panel-body">
                 <table class="table  table-hover general-table" id="moduleTable">
                     <thead>
@@ -48,7 +66,8 @@
                     </tr>
                     </tbody>
                 </table>
-                <table class="table  table-hover general-table">
+                <br/>
+                <table class="table  table-hover general-table" th:if="${#lists.size(entities.mainEntityRelationShips)>0}">
                     <thead>
                     <tr>
                         <th>本实体</th>
@@ -64,6 +83,8 @@
                     </tr>
                     </tbody>
                 </table>
+                <br/>
+                <hr/>
             </div>
         </div>
     </div>
