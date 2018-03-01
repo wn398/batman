@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.partitioningBy;
+import static java.util.stream.Collectors.reducing;
 
 @Controller
 @RequestMapping("/codeGeneratorCtl")
@@ -264,7 +265,7 @@ public class CodeGeneratorController extends BaseController{
 
             //生成根目录下application.property文件
             generateApplicationPropertyFile(resourceRootPath,project,module);
-            //生成根目录下applicationProProperty.property文件
+            //生成根目录下application-pro.property文件
             generateApplicationProPropertyFile(resourceRootPath,project,module);
             //生成根目录下的application-dev.property文件
             generateApplicationDevPropertyFile(resourceRootPath,project,module);
@@ -484,18 +485,38 @@ public class CodeGeneratorController extends BaseController{
             if(null!=projectDataSources && projectDataSources.size()>0){
                 Map<Boolean,List<ProjectDataSource>> map2 = projectDataSources.parallelStream().collect(partitioningBy(it -> it.getIsMainDataSource()));
                 List<ProjectDataSource> mainList = map2.get(true);
-                otherDataSourceList = map2.get(false);
+                otherDataSourceList = map2.get(false).parallelStream().map(it->{return ProjectDataSourceUtil.getCopy(it);}).collect(Collectors.toList());
                 if(null!=mainList && mainList.size()==1){
-                    mainDataSource = mainList.get(0);
+                    mainDataSource = ProjectDataSourceUtil.getCopy(mainList.get(0));
+                    if(project.getIsEncodeDataSource()){
+                        String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,mainDataSource.getUsername());
+                        String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,mainDataSource.getPassword());
+                        if(null==newUserName||null==newPassword){
+                            logger.info("加密数据源出错!");
+                        }else {
+                            mainDataSource.setUsername(newUserName);
+                            mainDataSource.setPassword(newPassword);
+                        }
+                    }
                 }
                 if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
                     String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
                     map.put("otherDataSourceNames",otherDataSourceNickNames);
+                    otherDataSourceList.parallelStream().forEach(datasource->{
+                        String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getUsername());
+                        String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getPassword());
+                        if(null==newUserName||null==newPassword){
+                            logger.info("加密数据源出错!");
+                        }else {
+                            datasource.setUsername(newUserName);
+                            datasource.setPassword(newPassword);
+                        }
+                    });
+                    map.put("otherDataSources",otherDataSourceList);
                 }
 
             }
             map.put("mainDataSource",mainDataSource);
-            map.put("otherDataSources",otherDataSourceList);
             File applicationFile = new File(dir,"application-pro.properties");
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(applicationFile),"utf-8");) {
                 template.process(map, writer);
@@ -526,9 +547,9 @@ public class CodeGeneratorController extends BaseController{
             if(null!=projectDataSources && projectDataSources.size()>0){
                 Map<Boolean,List<ProjectDataSource>> map2 = projectDataSources.parallelStream().collect(partitioningBy(it -> it.getIsMainDataSource()));
                 List<ProjectDataSource> mainList = map2.get(true);
-                otherDataSourceList = map2.get(false);
+                otherDataSourceList = map2.get(false).parallelStream().map(it->{return ProjectDataSourceUtil.getCopy(it);}).collect(Collectors.toList());
                 if(null!=mainList && mainList.size()==1){
-                    mainDataSource = mainList.get(0);
+                    mainDataSource = ProjectDataSourceUtil.getCopy(mainList.get(0));
                     if(project.getIsEncodeDataSource()){
                         String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,mainDataSource.getUsername());
                         String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,mainDataSource.getPassword());
