@@ -28,11 +28,22 @@ public class LoginFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request,response);
                 return;
             }else {
-                //重定向
-                String root = request.getRequestURI().split("/")[1];
-                response.sendRedirect(new StringBuilder("/").append(root).append("/").append("login").toString());
-                //request.getRequestDispatcher("login").forward(request,response);
-                return;
+                String type = request.getHeader("X-Requested-With");
+                if ("XMLHttpRequest".equals(type)) {
+                    // ajax请求
+                    String root = request.getRequestURI().split("/")[1];
+                    response.setHeader("SESSIONSTATUS", "TIMEOUT");
+                    response.setHeader("CONTEXTPATH", new StringBuilder("/").append(root).append("/").append("login").toString());
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+
+                } else {
+                    //重定向
+                    String root = request.getRequestURI().split("/")[1];
+                    response.sendRedirect(new StringBuilder("/").append(root).append("/").append("login").toString());
+                    //request.getRequestDispatcher("login").forward(request,response);
+                    return;
+                }
             }
         }else{
             filterChain.doFilter(request,response);

@@ -34,14 +34,15 @@ public class GeneratorStringUtil {
         List<String> fieldValues = new ArrayList<>();
         String unCapEntityName = StringUtil.unCapFirst(entities.getName());
         //处理id,createDate,updateDate
-        dbFieldsNames.add("id");
-        fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".getId()").append("+").append("\"'").toString());
-        dbFieldsNames.add("create_date");
-        fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".getCreateDate()").append("+").append("\"'").toString());
-        dbFieldsNames.add("update_date");
-        fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".getUpdateDate()").append("+").append("\"'").toString());
-        dbFieldsNames.add("version");
-        fieldValues.add(new StringBuilder("\"").append("+").append(0).append("+").append("\"").toString());
+        //id ，createDate,updateDate放在field中所以去掉特殊处理
+//        dbFieldsNames.add("id");
+//        fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".getId()").append("+").append("\"'").toString());
+//        dbFieldsNames.add("create_date");
+//        fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".getCreateDate()").append("+").append("\"'").toString());
+//        dbFieldsNames.add("update_date");
+//        fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".getUpdateDate()").append("+").append("\"'").toString());
+//        dbFieldsNames.add("version");
+//        fieldValues.add(new StringBuilder("\"").append("+").append(0).append("+").append("\"").toString());
         //处理dbFieldName和value
         for(Field field:entities.getFields()){
             dbFieldsNames.add(humpToUnderline(field.getName()));

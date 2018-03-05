@@ -67,16 +67,16 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
 
     public ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first}){
-        if(null==${entity.name ?uncap_first}.getId()||null==${entity.name ?uncap_first}.getVersion()){
-            throw new RuntimeException("更新实体id与version不能为空!");
+        if(null==${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null==${entity.name ?uncap_first}.getVersion()</#if>){
+            throw new RuntimeException("更新实体id或version不能为空!");
         }
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
     }
 
     public ${entity.name} update(${entity.name} ${entity.name ?uncap_first}){
-        if(null==${entity.name ?uncap_first}.getId()||null==${entity.name ?uncap_first}.getVersion()){
-            throw new RuntimeException("更新实体id与version不能为空!");
+        if(null==${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null==${entity.name ?uncap_first}.getVersion()</#if>){
+            throw new RuntimeException("更新实体id或version不能为空!");
         }
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first});
     }
@@ -439,17 +439,17 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findAll(Arrays.asList(propertyNames));
     }
 
-    public Integer updateById(${entityIdType} id,Long version,String name,Object value){
+    public Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,String name,Object value){
         Map<String,Object> conditionMap = new HashMap<>();
         conditionMap.put("id",id);
-        conditionMap.put("version",version);
+        <#if isVersion == true>conditionMap.put("version",version);</#if>
         return updateByProperties(conditionMap,Collections.singletonMap(name,value));
     }
 
-    public Integer updateById(${entityIdType} id,Long version,Map<String,Object> updatedNameValues){
+    public Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,Map<String,Object> updatedNameValues){
         Map<String,Object> conditionMap = new HashMap<>();
         conditionMap.put("id",id);
-        conditionMap.put("version",version);
+        <#if isVersion == true>conditionMap.put("version",version);</#if>
         return updateByProperties(conditionMap,updatedNameValues);
     }
 
@@ -962,9 +962,9 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
                 <#--id不为空，需要转换成持久化对象，从数据库中加载出来-->
                 ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ${relationShip.otherEntity.name ?uncap_first}Service.findOne(${relationShip.otherEntity.name ?uncap_first}1.getId());
                 <#--id,version都不为空，可能更新基本属性，进行copy-->
-            if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){
+            <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){</#if>
                 ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}1,db${relationShip.otherEntity.name});
-            }
+            <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>}</#if>
                 <#--进行关系绑定-->
                 <#--如果是多对一，则反向是list，进行add-->
                     <#if relationShip.relationType == "ManyToOne">
@@ -1004,9 +1004,9 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
                 <#--加载持久化对象-->
                 ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ${relationShip.otherEntity.name ?uncap_first}Service.findOne(${relationShip.otherEntity.name ?uncap_first}2.getId());
                 <#--id,version不为空，则是更新，copy基本属性过去-->
-                if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){
+                <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){</#if>
                     ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}2,db${relationShip.otherEntity.name});
-                }
+                <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>}</#if>
                 <#--跟主对象绑定关系-->
                 <#--如果是多对多，表现为list增加,【2017-7-28】多对多配置，本身就是双方主导，因此不需要我们人为增加关系进去，否则会导致关系多插入一条，因此注释下面-->
                 <#--<#if relationShip.relationType == "ManyToMany">-->

@@ -1,8 +1,7 @@
 <#include "CopyRight.ftl">
 package ${project.packageName}.standard.model;
 
-import com.rayleigh.core.model.BaseModel;
-import com.rayleigh.core.model.BaseModel2;
+import com.rayleigh.core.model.BasicModel;
 import com.rayleigh.core.util.StringUtil;
 import com.rayleigh.core.annotation.FieldInfo;
 import org.hibernate.validator.constraints.*;
@@ -10,6 +9,10 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import javax.validation.Valid;
@@ -20,21 +23,56 @@ import java.util.*;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = "${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}",
+@Table(name = <#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.name)}"</#if>,
     indexes = {
-     @Index(name = "rk_${entity.name}_createDate", columnList = "createDate")
-    ,@Index(name = "rk_${entity.name}_updateDate", columnList = "updateDate")
+     @Index(name = "rk_${entity.name}_id", columnList = "id")
+<#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>
+<#if isUpdateDate == true>,@Index(name = "rk_${entity.name}_updateDate", columnList = "updateDate")</#if>
     <#list entity.fields as field>
-        <#if field.isIndex>
+        <#if field.isIndex && field.name !='id'>
     ,@Index(name = "rk_${entity.name}_${field.name}", columnList = "${field.name}")
         </#if>
     </#list>
 }
 )
-public class ${entity.name} extends <#if (entity.primaryKeyType == "String")>BaseModel</#if><#if (entity.primaryKeyType == "Long")>BaseModel2</#if> {
+public class ${entity.name} extends BasicModel{
 
 <#--生成普通属性-->
 <#list entity.fields as field>
+    <#assign fieldName = field.name>
+<#if fieldName == "id">
+<#--处理id,createDate,updateDate,version特殊字段开始-->
+@Id
+@GeneratedValue(generator = "hibernate-uuid")
+@GenericGenerator(name = "hibernate-uuid", strategy = "org.hibernate.id.UUIDGenerator")
+@FieldInfo("主键")
+@Column(length = 48,nullable = false)
+@Size(max=48, min=1, message = "主键ID 长度必须大于等于1且小于等于48")
+public String id;
+    <#elseif fieldName == "createDate">
+@FieldInfo("创建时间")
+@ApiModelProperty(hidden=true)
+@CreatedDate
+@JSONField(format="yyyy-MM-dd HH:mm:ss")
+@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+@Temporal(TemporalType.TIMESTAMP)
+@Column
+public Date createDate;
+    <#elseif fieldName == "updateDate">
+@FieldInfo("更新时间")
+@ApiModelProperty(hidden=true)
+@JSONField(format="yyyy-MM-dd HH:mm:ss")
+@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+@Temporal(TemporalType.TIMESTAMP)
+@LastModifiedDate
+@Column(nullable = false)
+public Date updateDate;
+    <#elseif fieldName == "version">
+@FieldInfo("版本号")
+@Version
+public Long version;
+    <#else>
+<#--处理id,createDate,updateDate,version特殊字段结束-->
 @FieldInfo("${field.description}")
     <#if field.dataType == "Date">
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
@@ -60,8 +98,8 @@ private ${field.dataType} ${field.name} = StringUtil.stringToDate("${field.defau
 private ${field.dataType} ${field.name} = Boolean.valueOf("${field.defaultValue}");
         <#elseif field.dataType == "BigDecimal">
 private ${field.dataType} ${field.name} = new BigDecimal("${field.defaultValue}");
-        <#elseif field.dataType == "String">
-private ${field.dataType} ${field.name} = "${field.defaultValue}";
+        <#elseif field.dataType == "String" || field.dataType == "Text">
+private String ${field.name} = "${field.defaultValue}";
         <#elseif field.dataType == "Long">
 private ${field.dataType} ${field.name} = "${field.defaultValue}L";
         <#else>
@@ -70,6 +108,7 @@ private ${field.dataType} ${field.name} = ${field.defaultValue};
     <#else>
 private ${field.dataType} ${field.name};
     </#if>
+</#if>
 </#list>
 
 <#--生成关联关系属性-->
@@ -109,7 +148,9 @@ public ${field.dataType} get${field.name ?cap_first}(){
 
 public void set${field.name ?cap_first}(${field.dataType} ${field.name}){
     <#if field.dataType=="Date">
-    this.${field.name} = (Date)${field.name}.clone();
+    if(null!=${field.name}) {
+        this.${field.name} = (Date)${field.name}.clone();
+    }
     <#else>
     this.${field.name} = ${field.name};
     </#if>

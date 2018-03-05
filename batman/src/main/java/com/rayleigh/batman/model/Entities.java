@@ -1,22 +1,15 @@
 package com.rayleigh.batman.model;
 
-import com.rayleigh.batman.service.ModuleService;
-import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.model.BaseModel;
-import com.rayleigh.core.util.SpringContextUtils;
-import com.rayleigh.core.util.StringUtil;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by wangn20 on 2017/6/13.
@@ -40,6 +33,10 @@ public class Entities extends BaseModel {
     @Column
     @Enumerated(EnumType.STRING)
     private PrimaryKeyType primaryKeyType;
+
+    @FieldInfo("是否启用表名前辍")
+    @Column
+    private Boolean addPrefix;
     /**
      * 双向一对多，多对一
      */
@@ -69,6 +66,12 @@ public class Entities extends BaseModel {
 
     @OneToMany(mappedBy = "otherEntity",fetch = FetchType.LAZY)
     private List<RelationShip> otherEntityRelationShips = new ArrayList<>();
+
+    @OneToMany(mappedBy = "mainEntity",fetch = FetchType.LAZY)
+    private List<FieldRelationShip> mainFieldRelationShips = new ArrayList<>();
+
+    @OneToMany(mappedBy = "otherEntity",fetch = FetchType.LAZY)
+    private List<FieldRelationShip> otherFieldRelationShips = new ArrayList<>();
 
     public Project getProject() {
         return project;
@@ -154,5 +157,35 @@ public class Entities extends BaseModel {
             methods.parallelStream().forEach(method ->method.setEntities(this));
         }
         this.methods = methods;
+    }
+
+    public List<FieldRelationShip> getMainFieldRelationShips() {
+        return mainFieldRelationShips;
+    }
+
+    public void setMainFieldRelationShips(List<FieldRelationShip> mainFieldRelationShips) {
+        if(null !=mainFieldRelationShips){
+            mainFieldRelationShips.parallelStream().forEach(fieldRelationShip -> fieldRelationShip.setMainEntity(this));
+        }
+        this.mainFieldRelationShips = mainFieldRelationShips;
+    }
+
+    public List<FieldRelationShip> getOtherFieldRelationShips() {
+        return otherFieldRelationShips;
+    }
+
+    public void setOtherFieldRelationShips(List<FieldRelationShip> otherFieldRelationShips) {
+        if(null!=otherFieldRelationShips){
+            otherFieldRelationShips.parallelStream().forEach(fieldRelationShip -> fieldRelationShip.setOtherEntity(this));
+        }
+        this.otherFieldRelationShips = otherFieldRelationShips;
+    }
+
+    public Boolean getAddPrefix() {
+        return addPrefix;
+    }
+
+    public void setAddPrefix(Boolean addPrefix) {
+        this.addPrefix = addPrefix;
     }
 }

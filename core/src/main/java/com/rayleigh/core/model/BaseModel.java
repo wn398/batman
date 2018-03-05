@@ -72,7 +72,9 @@ public class BaseModel implements Serializable {
     }
 
     public void setCreateDate(Date createDate) {
-        this.createDate = (Date)createDate.clone();
+        if(null!=createDate) {
+            this.createDate = (Date) createDate.clone();
+        }
     }
 
     public Date getUpdateDate() {
@@ -84,7 +86,9 @@ public class BaseModel implements Serializable {
     }
 
     public void setUpdateDate(Date updateDate) {
-        this.updateDate = (Date)updateDate.clone();
+        if(null!=updateDate) {
+            this.updateDate = (Date) updateDate.clone();
+        }
     }
 
     public Long getVersion() {

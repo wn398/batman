@@ -502,16 +502,18 @@ public class CodeGeneratorController extends BaseController{
                 if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
                     String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
                     map.put("otherDataSourceNames",otherDataSourceNickNames);
-                    otherDataSourceList.parallelStream().forEach(datasource->{
-                        String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getUsername());
-                        String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getPassword());
-                        if(null==newUserName||null==newPassword){
-                            logger.info("加密数据源出错!");
-                        }else {
-                            datasource.setUsername(newUserName);
-                            datasource.setPassword(newPassword);
-                        }
-                    });
+                    if(project.getIsEncodeDataSource()) {
+                        otherDataSourceList.parallelStream().forEach(datasource -> {
+                            String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule, datasource.getUsername());
+                            String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule, datasource.getPassword());
+                            if (null == newUserName || null == newPassword) {
+                                logger.info("加密数据源出错!");
+                            } else {
+                                datasource.setUsername(newUserName);
+                                datasource.setPassword(newPassword);
+                            }
+                        });
+                    }
                     map.put("otherDataSources",otherDataSourceList);
                 }
 
@@ -564,16 +566,18 @@ public class CodeGeneratorController extends BaseController{
                 if(null!=otherDataSourceList&&otherDataSourceList.size()>0){
                     String otherDataSourceNickNames = otherDataSourceList.parallelStream().map(it->it.getDataSourceNickName()).collect(Collectors.joining(","));
                     map.put("otherDataSourceNames",otherDataSourceNickNames);
-                    otherDataSourceList.parallelStream().forEach(datasource->{
-                        String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getUsername());
-                        String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule,datasource.getPassword());
-                        if(null==newUserName||null==newPassword){
-                            logger.info("加密数据源出错!");
-                        }else {
-                            datasource.setUsername(newUserName);
-                            datasource.setPassword(newPassword);
-                        }
-                    });
+                    if(project.getIsEncodeDataSource()) {
+                        otherDataSourceList.parallelStream().forEach(datasource -> {
+                            String newUserName = AESEncoderUtil.AESEncode(aesEndoeRule, datasource.getUsername());
+                            String newPassword = AESEncoderUtil.AESEncode(aesEndoeRule, datasource.getPassword());
+                            if (null == newUserName || null == newPassword) {
+                                logger.info("加密数据源出错!");
+                            } else {
+                                datasource.setUsername(newUserName);
+                                datasource.setPassword(newPassword);
+                            }
+                        });
+                    }
                     map.put("otherDataSources",otherDataSourceList);
                 }
 
@@ -649,6 +653,17 @@ public class CodeGeneratorController extends BaseController{
                 map.put("project",project);
                 map.put("entity",entity);
                 map.put("GeneratorStringUtil",new GeneratorStringUtil());
+                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                if(entityFieldNames.contains("createDate")){
+                    map.put("isCreateDate",true);
+                }else{
+                    map.put("isCreateDate",false);
+                }
+                if(entityFieldNames.contains("updateDate")){
+                    map.put("isUpdateDate",true);
+                }else{
+                    map.put("isUpdateDate",false);
+                }
                 File entityFile = new File(dir,entity.getName()+".java");
                 try(Writer writer = new OutputStreamWriter(new FileOutputStream(entityFile),"utf-8");) {
                     template.process(map, writer);
@@ -771,6 +786,12 @@ public class CodeGeneratorController extends BaseController{
                 map.put("searchDBUtil",new SearchDBUtil());
                 map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
                 map.put("generatorStringUtil",new GeneratorStringUtil());
+                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                if(entityFieldNames.contains("version")){
+                    map.put("isVersion",true);
+                }else{
+                    map.put("isVersion",false);
+                }
                 File serviceFile = new File(dir,entity.getName()+fileSuffix);
 
                 try(Writer writer = new OutputStreamWriter(new FileOutputStream(serviceFile),"utf-8");) {
@@ -811,9 +832,26 @@ public class CodeGeneratorController extends BaseController{
         try {
             Template template = configuration.getTemplate(templateName);
             for(Entities entity:module.getEntities()) {
-                Map<String,BaseModel> map = new HashMap();
+                Map<String,Object> map = new HashMap();
                 map.put("project", project);
                 map.put("entity", entity);
+                map.put("searchDBUtil", new SearchDBUtil());
+                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                if(entityFieldNames.contains("createDate")){
+                    map.put("isCreateDate",true);
+                }else{
+                    map.put("isCreateDate",false);
+                }
+                if(entityFieldNames.contains("updateDate")){
+                    map.put("isUpdateDate",true);
+                }else{
+                    map.put("isUpdateDate",false);
+                }
+                if(entityFieldNames.contains("version")){
+                    map.put("isVersion",true);
+                }else{
+                    map.put("isVersion",false);
+                }
                 File serviceFile = new File(dir,entity.getName()+fileSuffix);
 
                 try(Writer writer = new OutputStreamWriter(new FileOutputStream(serviceFile),"utf-8");) {

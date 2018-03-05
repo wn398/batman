@@ -34,7 +34,7 @@
                                 <label class="control-label">选择模块</label>
                             </td>
                             <td>
-                                <select name="module[id]" class="form-control">
+                                <select name="module[id]" class="form-control" >
                                     <option th:each="module:${project.modules}" th:text="${module.name}" th:value="${module.id}"></option>
                                 </select>
                             </td>
@@ -42,9 +42,20 @@
                             <label  class="control-label">主键类型</label>
                             </td>
                             <td>
-                                <select class="form-control" name="primaryKeyType">
+                                <select class="form-control" name="primaryKeyType" onchange="bindPriKeyType(this)">
                                     <option th:value="String" th:text="字符串"></option>
                                     <option th:value="Long" th:text="整数类型"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否启用表名前辍</label>
+                            </td>
+                            <td>
+                                <select name="addPrefix" class="form-control">
+                                    <option th:value="true">是</option>
+                                    <option th:value="false">否</option>
                                 </select>
                             </td>
                         </tr>
@@ -76,6 +87,134 @@
                         </tr>
                         </thead>
                         <tbody>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][name]" required="required"  th:value="id" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][description]" required="required"  th:value="主键id" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][dataType]" readonly th:value="String" id="idType">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="fields[][size]"  th:value="48" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][defaultValue]"  placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isNull]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isUnique]" th:value="true" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isIndex]" th:value="true" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][validMessage]"  placeholder="如@NotNull多个||分隔" readonly>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" disabled="disabled">主键</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][name]" required="required"  th:value="version" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][description]" required="required"  th:value="版本号" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][dataType]" th:value="Long" readonly>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="fields[][size]" readonly placeholder="长度" th:title="|不设置默认映射255,本长度设置只对字符串类型起作用,设成text类型需要大于65535|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][defaultValue]" readonly  placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isNull]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isUnique]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isIndex]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][validMessage]"  placeholder="如@NotNull多个||分隔" readonly>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][name]" required="required"  th:value="createDate" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][description]" required="required"  th:value="创建时间" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][dataType]" th:value="Date" readonly>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="fields[][size]" readonly  placeholder="长度" th:title="|不设置默认映射255,本长度设置只对字符串类型起作用,设成text类型需要大于65535|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][defaultValue]" readonly  placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isNull]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isUnique]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isIndex]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][validMessage]"  placeholder="如@NotNull多个||分隔" readonly>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][name]" required="required"  th:value="updateDate" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][description]" required="required"  th:value="更新时间" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][dataType]" th:value="Date" readonly>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="fields[][size]" readonly placeholder="长度" th:title="|不设置默认映射255,本长度设置只对字符串类型起作用,设成text类型需要大于65535|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][defaultValue]" readonly placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isNull]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isUnique]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isIndex]" th:value="false" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][validMessage]"  placeholder="如@NotNull多个||分隔" readonly>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -140,7 +279,12 @@
     </table>
 </div>
 <!--</section>-->
-
+<script>
+    function bindPriKeyType(obj) {
+        var value = $(obj).val();
+        $("#idType").val(value)
+    }
+</script>
 <script th:replace="fragment/script"></script>
 </body>
 </html>

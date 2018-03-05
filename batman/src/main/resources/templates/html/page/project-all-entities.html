@@ -84,6 +84,26 @@
                     </tbody>
                 </table>
                 <br/>
+                <table class="table  table-hover general-table" th:if="${#lists.size(entities.mainFieldRelationShips)>0}">
+                    <thead>
+                    <tr>
+                        <th>本实体</th>
+                        <th>字段名</th>
+                        <th>关联关系</th>
+                        <th>关联实体</th>
+                        <th>字段名</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="mainR:${entities.mainFieldRelationShips}">
+                        <td th:text="|${mainR.mainEntity.description}(${mainR.mainEntity.name})|"></td>
+                        <td th:text="|${mainR.mainField.description}(${mainR.mainField.name})|"></td>
+                        <td th:text="${mainR.relationType}"></td>
+                        <td th:text="|${mainR.otherEntity.description}(${mainR.otherEntity.name})|"></td>
+                        <td th:text="|${mainR.otherField.description}(${mainR.otherField.name})|"></td>
+                    </tr>
+                    </tbody>
+                </table>
                 <hr/>
             </div>
         </div>

@@ -1,10 +1,12 @@
 package com.rayleigh.batman.service;
 
+import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
 import com.rayleigh.batman.repository.FieldRepository;
-import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by wangn20 on 2017/6/13.
@@ -22,6 +24,11 @@ public class FieldServiceImpl implements FieldService {
     @Override
     public Field findOne(String id) {
         return fieldRepository.findOne(id);
+    }
+
+    @Override
+    public List<Field> getByEntities(String entityId) {
+        return fieldRepository.getByEntities(entityId);
     }
 
 }

@@ -46,12 +46,26 @@
                             <label  class="control-label">主键类型</label>
                             </td>
                             <td>
-                                <select class="form-control" name="primaryKeyType">
+                                <select class="form-control" name="primaryKeyType" onchange="bindPriKeyType(this)">
                                     <option th:value="String" th:text="字符串" th:if="${entities.primaryKeyType.toString() eq 'String'}" th:selected="selected"></option>
                                     <option th:value="Long" th:text="整数类型" th:if="${entities.primaryKeyType.toString() eq 'Long'}" th:selected="selected"></option>
 
                                     <option th:value="String" th:text="字符串" th:unless="${entities.primaryKeyType.toString() eq 'String'}" ></option>
                                     <option th:value="Long" th:text="整数类型" th:unless="${entities.primaryKeyType.toString() eq 'Long'}" ></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否启用表名前辍</label>
+                            </td>
+                            <td>
+                                <select name="prefix" class="form-control">
+                                    <option th:value="true" th:if="${entities.addPrefix == true}" th:selected="selected">是</option>
+                                    <option th:value="false" th:if="${entities.addPrefix == false}" th:selected="selected">否</option>
+
+                                    <option th:value="true" th:unless="${entities.addPrefix == true}" >是</option>
+                                    <option th:value="false" th:unless="${entities.addPrefix == false}" >否</option>
                                 </select>
                             </td>
                         </tr>
@@ -83,7 +97,43 @@
                         </tr>
                         </thead>
                         <tbody>
-                         <tr th:each="field:${entities.fields}">
+                            <tr th:each="field:${entities.fields}" th:if="${field.name eq 'id' || field.name eq 'createDate' || field.name eq 'updateDate' || field.name eq 'version'}">
+                            <td>
+                                <input type="hidden" class="form-control" name="fields[][id]" th:value="${field.id}" >
+                                <input type="hidden" class="form-control" name="fields[][version]" th:value="${field.version}" >
+                                <input type="text" class="form-control" name="fields[][name]" th:value="${field.name}"  placeholder="字母数字下划线" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][description]" th:value="${field.description}" placeholder="文字" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][dataType]" th:value="${field.dataType}" readonly th:if="${field.name eq 'id'}" id="idType">
+                                <input type="text" class="form-control" name="fields[][dataType]" th:value="${field.dataType}" readonly th:unless="${field.name eq 'id'}">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" name="fields[][size]" th:value="${field.size}" readonly placeholder="长度" th:title="|不设置默认映射255,本长度设置只对字符串类型起作用,设成text类型需要大于65535|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][defaultValue]" th:value="${field.defaultValue}" readonly placeholder="默认值" th:title="|Boolean类型用true和false,日期类型用yyyy-MM-dd hh:mm:ss|">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isNull]" th:value="${field.isNull}" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isUnique]" th:value="${field.isUnique}" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][isIndex]" th:value="${field.isIndex}" readonly>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="fields[][validMessage]" th:value="${field.validMessage}" placeholder="验证表达式" readonly>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" th:if="${field.name eq 'id'}" disabled>主键</button>
+                                <button class="btn btn-danger btn-large" th:unless="${field.name eq 'id'}" th:onclick="|deleteRemoteTr('${field.id}',this)|">删除</button>
+                            </td>
+                        </tr>
+                         <tr th:each="field:${entities.fields}" th:unless="${field.name eq 'id' || field.name eq 'createDate' || field.name eq 'updateDate' || field.name eq 'version'}">
                             <td>
                                 <input type="hidden" class="form-control" name="fields[][id]" th:value="${field.id}" >
                                 <input type="hidden" class="form-control" name="fields[][version]" th:value="${field.version}" >
@@ -215,7 +265,12 @@
     </table>
 </div>
 <!--</section>-->
-
+<script>
+    function bindPriKeyType(obj) {
+        var value = $(obj).val();
+        $("#idType").val(value)
+    }
+</script>
 <script th:replace="fragment/script"></script>
 <script type="text/javascript" th:src="@{/pageJs/entities-update.js}"/>
 </body>

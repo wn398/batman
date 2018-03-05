@@ -9,7 +9,7 @@
         <div class="row">
             <section class="panel">
                 <header class="panel-heading">
-                    <button class="btn btn-success" th:alt-title="添加关联关系" onclick="addTr('relationTable','demoTr')">添加关联关系</button>
+                    <button class="btn btn-success" th:alt-title="添加表关联关系" onclick="addTr('relationTable','demoTr')">添加表关联关系</button>
                     <span class="tools pull-right">
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                     </span>
@@ -84,6 +84,78 @@
                 </div>
             </section>
         </div>
+
+        <div class="row">
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="添加字段关联关系" onclick="addTr('fieldRelationTable','fieldDemoTr')">添加字段关联关系</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="fieldRelationTable">
+                        <thead>
+                        <tr>
+                            <th>左边实体</th>
+                            <th>左边字段</th>
+                            <th>映射关系</th>
+                            <th>右边实体</th>
+                            <th>右边字段</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="fieldRelationShip:${fieldRelationShipList}">
+                            <td>
+                                <input type="hidden" class="form-control" name="fieldRelationShip[][id]"  th:value="${fieldRelationShip.id}">
+                                <input type="hidden" class="form-control" name="fieldRelationShip[][createDate]"  th:value="${fieldRelationShip.createDate}">
+                                <input type="hidden" class="form-control" name="fieldRelationShip[][version]"  th:value="${fieldRelationShip.version}">
+                                <select class="form-control" name="fieldRelationShip[][mainEntity][id]" readonly="true">
+                                    <option th:value="${fieldRelationShip.mainEntity.id}" th:text="|${fieldRelationShip.mainEntity.description}(${fieldRelationShip.mainEntity.name})|"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" name="fieldRelationShip[][mainField]">
+                                    <option th:each="field:${fieldRelationShip.mainEntity.fields}" th:value="${field.id}" th:text="|${field.name}(${field.description})|" th:if="${fieldRelationShip.mainField.id eq field.id}" th:selected="selected"></option>
+                                    <option th:each="field:${fieldRelationShip.mainEntity.fields}" th:value="${field.id}" th:text="|${field.name}(${field.description})|" th:unless="${fieldRelationShip.mainField.id eq field.id}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" name="fieldRelationShip[][relationType]">
+                                    <option th:value="OneToMany" th:text="一对多" th:if="${fieldRelationShip.relationType.toString() eq 'OneToMany'}" th:selected="selected"></option>
+                                    <option th:value="OneToOne" th:text="一对一" th:if="${fieldRelationShip.relationType.toString() eq 'OneToOne'}" th:selected="selected"></option>
+                                    <option th:value="ManyToOne" th:text="多对一" th:if="${fieldRelationShip.relationType.toString() eq 'ManyToOne'}" th:selected="selected"></option>
+                                    <option th:value="ManyToMany" th:text="多对多" th:if="${fieldRelationShip.relationType.toString() eq 'ManyToMany'}" th:selected="selected"></option>
+
+                                    <option th:value="OneToMany" th:text="一对多" th:unless="${fieldRelationShip.relationType.toString() eq 'OneToMany'}" ></option>
+                                    <option th:value="OneToOne" th:text="一对一" th:unless="${fieldRelationShip.relationType.toString() eq 'OneToOne'}" ></option>
+                                    <option th:value="ManyToOne" th:text="多对一" th:unless="${fieldRelationShip.relationType.toString() eq 'ManyToOne'}" ></option>
+                                    <option th:value="ManyToMany" th:text="多对多" th:unless="${fieldRelationShip.relationType.toString() eq 'ManyToMany'}"></option>
+
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" name="fieldRelationShip[][otherEntity][id]" onchange="changeFields(this)">
+                                    <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="|${otherEntity.description}(${otherEntity.name})|" th:if="${fieldRelationShip.otherEntity.id eq otherEntity.id}" th:selected="selected"></option>
+                                    <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="|${otherEntity.description}(${otherEntity.name})|" th:unless="${fieldRelationShip.otherEntity.id eq otherEntity.id}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control" name="fieldRelationShip[][otherField][id]">
+                                    <option th:each="otherField:${fieldRelationShip.otherEntity.fields}" th:value="${otherField.id}" th:text="|${otherField.description}(${otherField.name})|" th:if="${fieldRelationShip.otherField.id eq otherField.id}" th:selected="selected"></option>
+                                    <option th:each="otherField:${fieldRelationShip.otherEntity.fields}" th:value="${otherField.id}" th:text="|${otherField.description}(${otherField.name})|" th:unless="${fieldRelationShip.otherField.id eq otherField.id}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" th:onclick="|javascript:deleteFieldRemoteTr('${fieldRelationShip.id}','${fieldRelationShip.mainEntity.id}','${fieldRelationShip.otherEntity.id}',this);|">删除</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
     </div>
 </form>
 
@@ -136,7 +208,48 @@
     </table>
 </div>
 <!--</section>-->
+<!--增加字段关联关系的demotr-->
+<div hidden="true" >
+    <table id="fieldDemoTr">
+        <tbody>
+        <tr>
+            <td>
+                <select class="form-control" name="fieldRelationShip[][mainEntity][id]" readonly="true">
+                    <option th:value="${mainEntites.id}" th:text="|${mainEntites.description}(${mainEntites.name})|" ></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fieldRelationShip[][mainField][id]">
+                    <option th:each="field:${mainEntites.fields}" th:value="${field.id}" th:text="|${field.name}(${field.description})|"></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fieldRelationShip[][relationType]">
+                    <option th:value="OneToMany" th:text="一对多"  ></option>
+                    <option th:value="OneToOne" th:text="一对一"  ></option>
+                    <option th:value="ManyToOne" th:text="多对一"  ></option>
+                    <option th:value="ManyToMany" th:text="多对多" ></option>
 
+                </select>
+            </td>
+            <td>
+                <select class="form-control otherEntity" name="fieldRelationShip[][otherEntity][id]" onchange="changeFields(this)">
+                    <option>请选择</option>
+                    <option th:each="otherEntity:${otherEntitesList}" th:value="${otherEntity.id}" th:text="|${otherEntity.description}(${otherEntity.name})|" ></option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" name="fieldRelationShip[][otherField][id]" >
+                    <option>请选择</option>
+                </select>
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <script th:replace="fragment/script"></script>
 </body>
 </html>

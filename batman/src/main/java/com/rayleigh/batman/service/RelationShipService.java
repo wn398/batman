@@ -1,6 +1,7 @@
 package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.Entities;
+import com.rayleigh.batman.model.FieldRelationShip;
 import com.rayleigh.batman.model.RelationShip;
 import com.rayleigh.core.service.BaseService;
 
@@ -17,4 +18,6 @@ public interface RelationShipService extends BaseService {
     void delete(String id);
 
     List<RelationShip> getByMainEntityAndOtherEntityIds(String otherEntityId, String mainEntityId);
+
+    void saveRelationShipListAndFieldRelationShip(List<RelationShip> relationShipList, List<FieldRelationShip> fieldRelationShipList);
 }

@@ -225,13 +225,13 @@ public class ConstructSearchMethodUtil {
             for(SearchCondition condition:entry.getValue()){
                 //操作类型
                 Operation operation = condition.getOperation();
-                String unCapEntityName = StringUtil.unCapFirst(SearchDBUtil.getEntityName(condition.getFieldName().split("_")[0]));;
+                String unCapEntityName = StringUtil.unCapFirst(SearchDBUtil.getEntityName(condition.getFieldName().split("_")[0]));
                 String fieldName;
-                if(null == condition.getField()){
-                    fieldName = condition.getFieldName().split("_")[1];
-                }else{
+//                if(null == condition.getField()){
+//                    fieldName = condition.getFieldName().split("_")[1];
+//                }else{
                     fieldName = condition.getField().getName();
-                }
+                //}
                 switch (operation) {
                     case Equal:
                         subCondition.add(new StringBuilder(unCapEntityName).append(".").append(fieldName).append("=").append(" :").append(unCapEntityName).append(StringUtil.capFirst(fieldName)).toString());

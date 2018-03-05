@@ -117,9 +117,9 @@ public interface ${entity.name}Service extends BaseService{
 
     List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
 
-    Integer updateById(${entityIdType} id,Long version,String name,Object value);
+    Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,String name,Object value);
 
-    Integer updateById(${entityIdType} id,Long version,Map<String,Object> updatedNameValues);
+    Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,Map<String,Object> updatedNameValues);
 
     Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues);
 

@@ -26,10 +26,6 @@ public static ${entity.name} copySimplePropertyIncludeNullValue(${entity.name} s
     <#list entity.fields as field>
     target.set${field.name ?cap_first}(source.get${field.name ?cap_first}());
     </#list>
-    target.setCreateDate(source.getCreateDate());
-    target.setUpdateDate(source.getUpdateDate());
-    target.setVersion(source.getVersion());
-    target.setId(source.getId());
     return target;
 }
 
@@ -39,18 +35,6 @@ public static ${entity.name} copySimplePropertyNotNullValue(${entity.name} sourc
         target.set${field.name ?cap_first}(source.get${field.name ?cap_first}());
     }
     </#list>
-    if(null != source.getCreateDate()){
-        target.setCreateDate(source.getCreateDate());
-    }
-    if(null != source.getVersion()){
-        target.setVersion(source.getVersion());
-    }
-    if(null != source.getUpdateDate()){
-        target.setUpdateDate(source.getUpdateDate());
-    }
-    if(null != source.getId()){
-        target.setId(source.getId());
-    }
     return target;
 }
 
@@ -115,9 +99,9 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     <#--id不为空，需要转换成持久化对象，从数据库中加载出来-->
         ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtendServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}1.getId());
     <#--id,version都不为空，可能更新基本属性，进行copy-->
-        //if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){
+        <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){</#if>
         ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}1,db${relationShip.otherEntity.name});
-        //}
+        <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>}</#if>
     <#--进行关系绑定-->
     <#--如果是多对一，则反向是list，进行add-->
         <#if relationShip.relationType == "ManyToOne">
@@ -158,9 +142,9 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     <#--加载持久化对象-->
                 ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtendServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}2.getId());
     <#--id,version不为空，则是更新，copy基本属性过去-->
-                if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){
+                <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){</#if>
                     ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}2,db${relationShip.otherEntity.name});
-                }
+                <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true> }</#if>
     <#--跟主对象绑定关系-->
     <#--如果是多对多，表现为list增加,【2017-7-28】多对多配置，本身就是双方主导，因此不需要我们人为增加关系进去，否则会导致关系多插入一条，因此注释下面-->
     <#--<#if relationShip.relationType == "ManyToMany">-->
@@ -198,19 +182,6 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
 //通过字段名和字段值设置实体，只设置实体的一部分属性
 public static ${entity.name} setPartProperties(Map<String,Object> propertyValueMap){
     ${entity.name} ${entity.name ?uncap_first} = new ${entity.name}();
-    if(null !=propertyValueMap.get("id")){
-        ${entity.name ?uncap_first}.setId((${entityIdType})propertyValueMap.get("id"));
-    }
-    if(null !=propertyValueMap.get("createDate")){
-        ${entity.name ?uncap_first}.setCreateDate((Date)propertyValueMap.get("createDate"));
-    }
-    if(null !=propertyValueMap.get("updateDate")){
-        ${entity.name ?uncap_first}.setUpdateDate((Date)propertyValueMap.get("updateDate"));
-    }
-    if(null !=propertyValueMap.get("version")){
-        ${entity.name ?uncap_first}.setVersion((Long)propertyValueMap.get("version"));
-    }
-
     <#list entity.fields as field>
     if(null != propertyValueMap.get("${field.name}")){
         ${entity.name ?uncap_first}.set${field.name ?cap_first}((${field.dataType})propertyValueMap.get("${field.name}"));
@@ -222,18 +193,6 @@ public static ${entity.name} setPartProperties(Map<String,Object> propertyValueM
 //获取实体类的属性名和值对应的map
 public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.name ?uncap_first}){
     Map<String,Object> map = new HashMap<String,Object>();
-    if(null != ${entity.name ?uncap_first}.getId()){
-        map.put("id",${entity.name ?uncap_first}.getId());
-    }
-    if(null != ${entity.name ?uncap_first}.getCreateDate()){
-        map.put("createDate",${entity.name ?uncap_first}.getCreateDate());
-    }
-    if(null != ${entity.name ?uncap_first}.getCreateDate()){
-        map.put("updateDate",${entity.name ?uncap_first}.getUpdateDate());
-    }
-    if(null != ${entity.name ?uncap_first}.getVersion()){
-        map.put("version",${entity.name ?uncap_first}.getVersion());
-    }
     <#list entity.fields as field>
     if(null != ${entity.name ?uncap_first}.get${field.name ?cap_first}()){
         map.put("${field.name ?uncap_first}",${entity.name ?uncap_first}.get${field.name ?cap_first}());
@@ -245,9 +204,6 @@ public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.n
 //获取实体类所有简单属性值列表
 public static List<String> getPropertyNames(){
     List<String> list = new ArrayList();
-    list.add("id");
-    list.add("createDate");
-    list.add("updateDate");
     <#list entity.fields as field>
     list.add("${field.name ?uncap_first}");
     </#list>

@@ -52,13 +52,7 @@ public class EntityController extends BaseController{
                 return getFailureResultAndInfo(field,new StringBuilder("字段名首字母不能大写:").append(field.getName()).toString());
             }
         }
-        //检测字段名是否重复,是否包含id,createDate,updateDate,version
-        Map<String,Long> map = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.groupingBy(it->it,Collectors.counting()));
-        if(map.entrySet().size()>0){
-            if(null !=map.get("id")||null !=map.get("createDate")||null !=map.get("updateDate")||null !=map.get("version")){
-                return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
-            }
-        }
+
         entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
         List<String> validationMessages = entities.getFields().parallelStream().map(field -> field.getValidMessage()).collect(Collectors.toList());
         for(String validationMessage:validationMessages){
@@ -99,13 +93,8 @@ public class EntityController extends BaseController{
                     return getFailureResultAndInfo(field,new StringBuilder("字段名首字母不能大写:").append(field.getName()).toString());
                 }
             }
-            //检测字段名是否重复,是否包含id,createDate,updateDate,version
+            //检测字段名是否重复
             Map<String,Long> map = entities.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.groupingBy(it->it,Collectors.counting()));
-            if(map.entrySet().size()>0){
-                if(null !=map.get("id")||null !=map.get("createDate")||null !=map.get("updateDate")||null !=map.get("version")){
-                    return getFailureResultAndInfo(null,"字段名字不能包含id,createDate,updateDate,version,系统已经包含这些字段");
-                }
-            }
             if(map.size() !=entities.getFields().size()){
                 List<String> list2 = map.entrySet().parallelStream().filter(it->it.getValue()>1).map(it->it.getKey()).collect(Collectors.toList());
                 return getFailureResultAndInfo(list2, new StringBuilder("属性名重复:").append(list2.parallelStream().collect(Collectors.joining(","))).toString());

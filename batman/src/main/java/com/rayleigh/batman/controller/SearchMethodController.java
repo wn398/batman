@@ -47,11 +47,11 @@ public class SearchMethodController extends BaseController {
             for (SearchCondition condition : conditionList) {
                 if (null != condition.getField()) {
                     if (!StringUtil.isEmpty(condition.getField().getId())) {
-                        if (!"mark".equals(condition.getField().getId())) {
+ //                       if (!"mark".equals(condition.getField().getId())) {
                             condition.setField(fieldService.findOne(condition.getField().getId()));
-                        } else {
-                            condition.setField(null);
-                        }
+//                        } else {
+//                            condition.setField(null);
+//                        }
                     }
                     realConditionList.add(condition);
                 }
@@ -59,11 +59,11 @@ public class SearchMethodController extends BaseController {
             for (SearchResult result : results) {
                 if (null != result.getField()) {
                     if (!StringUtil.isEmpty(result.getField().getId())) {
-                        if (!"mark".equals(result.getField().getId())) {
+ //                       if (!"mark".equals(result.getField().getId())) {
                             result.setField(fieldService.findOne(result.getField().getId()));
-                        } else {
-                            result.setField(null);
-                        }
+//                        } else {
+//                            result.setField(null);
+//                        }
                     }
                     realResultList.add(result);
                 }
@@ -112,9 +112,9 @@ public class SearchMethodController extends BaseController {
         //先设置主对象
         Map<String, SearchConditionResult> mainMap = new LinkedHashMap<>();
         //mainMap初始化
-        mainMap.put(entities.getId() + "_id", new SearchConditionResult(entities.getName(), "id", DataType.String, "mark"));
-        mainMap.put(entities.getId() + "_createDate", new SearchConditionResult(entities.getName(), "createDate", DataType.Date, "mark"));
-        mainMap.put(entities.getId() + "_updateDate", new SearchConditionResult(entities.getName(), "updateDate", DataType.Date, "mark"));
+//        mainMap.put(entities.getId() + "_id", new SearchConditionResult(entities.getName(), "id", DataType.String, "mark"));
+//        mainMap.put(entities.getId() + "_createDate", new SearchConditionResult(entities.getName(), "createDate", DataType.Date, "mark"));
+//        mainMap.put(entities.getId() + "_updateDate", new SearchConditionResult(entities.getName(), "updateDate", DataType.Date, "mark"));
         for (Field field : entities.getFields()) {
             mainMap.put(entities.getId() + "_" + field.getName(), new SearchConditionResult(entities.getName(), field.getName(), field.getDataType(), field.getId()));
         }
@@ -123,45 +123,45 @@ public class SearchMethodController extends BaseController {
         Map<String, SearchResult> searchMethodMap = new HashMap<>();
         results.parallelStream().forEach(searchResult -> searchMethodMap.put(searchResult.getFieldName(),searchResult));
         //先对特殊对象id,createDate,updateDate进行设置
-        String fieldId = entities.getId() + "_id";
-        String fieldCreateDate = entities.getId()+"_createDate";
-        String fieldUpdateDate = entities.getId()+"_updateDate";
+//        String fieldId = entities.getId() + "_id";
+//        String fieldCreateDate = entities.getId()+"_createDate";
+//        String fieldUpdateDate = entities.getId()+"_updateDate";
 
-        if(conditionMap.keySet().contains(fieldId)){
-            mainMap.get(fieldId).setSearchCondition(conditionMap.get(fieldId));
-        }else{
-            mainMap.get(fieldId).setSearchCondition(new SearchCondition());
-        }
-
-        if(conditionMap.keySet().contains(fieldCreateDate)){
-            mainMap.get(fieldCreateDate).setSearchCondition(conditionMap.get(fieldCreateDate));
-        }else{
-            mainMap.get(fieldCreateDate).setSearchCondition(new SearchCondition());
-        }
-
-        if(conditionMap.keySet().contains(fieldUpdateDate)){
-            mainMap.get(fieldUpdateDate).setSearchCondition(conditionMap.get(fieldUpdateDate));
-        }else{
-            mainMap.get(fieldUpdateDate).setSearchCondition(new SearchCondition());
-        }
-
-        if(searchMethodMap.keySet().contains(fieldId)){
-            mainMap.get(fieldId).setSearchResult(searchMethodMap.get(fieldId));
-        }else{
-            mainMap.get(fieldId).setSearchResult(new SearchResult());
-        }
-
-        if(searchMethodMap.keySet().contains(fieldCreateDate)){
-            mainMap.get(fieldCreateDate).setSearchResult(searchMethodMap.get(fieldCreateDate));
-        }else{
-            mainMap.get(fieldCreateDate).setSearchResult(new SearchResult());
-        }
-
-        if(searchMethodMap.keySet().contains(fieldUpdateDate)){
-            mainMap.get(fieldUpdateDate).setSearchResult(searchMethodMap.get(fieldUpdateDate));
-        }else{
-            mainMap.get(fieldUpdateDate).setSearchResult(new SearchResult());
-        }
+//        if(conditionMap.keySet().contains(fieldId)){
+//            mainMap.get(fieldId).setSearchCondition(conditionMap.get(fieldId));
+//        }else{
+//            mainMap.get(fieldId).setSearchCondition(new SearchCondition());
+//        }
+//
+//        if(conditionMap.keySet().contains(fieldCreateDate)){
+//            mainMap.get(fieldCreateDate).setSearchCondition(conditionMap.get(fieldCreateDate));
+//        }else{
+//            mainMap.get(fieldCreateDate).setSearchCondition(new SearchCondition());
+//        }
+//
+//        if(conditionMap.keySet().contains(fieldUpdateDate)){
+//            mainMap.get(fieldUpdateDate).setSearchCondition(conditionMap.get(fieldUpdateDate));
+//        }else{
+//            mainMap.get(fieldUpdateDate).setSearchCondition(new SearchCondition());
+//        }
+//
+//        if(searchMethodMap.keySet().contains(fieldId)){
+//            mainMap.get(fieldId).setSearchResult(searchMethodMap.get(fieldId));
+//        }else{
+//            mainMap.get(fieldId).setSearchResult(new SearchResult());
+//        }
+//
+//        if(searchMethodMap.keySet().contains(fieldCreateDate)){
+//            mainMap.get(fieldCreateDate).setSearchResult(searchMethodMap.get(fieldCreateDate));
+//        }else{
+//            mainMap.get(fieldCreateDate).setSearchResult(new SearchResult());
+//        }
+//
+//        if(searchMethodMap.keySet().contains(fieldUpdateDate)){
+//            mainMap.get(fieldUpdateDate).setSearchResult(searchMethodMap.get(fieldUpdateDate));
+//        }else{
+//            mainMap.get(fieldUpdateDate).setSearchResult(new SearchResult());
+//        }
 
         for (Field field : entities.getFields()) {
 
@@ -186,9 +186,9 @@ public class SearchMethodController extends BaseController {
             Map<String, SearchConditionResult> otherEntityMap = new LinkedHashMap<>();
             otherMap.put(otherEntity.getName(), otherEntityMap);
 
-            otherEntityMap.put(otherEntity.getId() + "_id", new SearchConditionResult(otherEntity.getName(), "id", DataType.String, "mark"));
-            otherEntityMap.put(otherEntity.getId() + "_createDate", new SearchConditionResult(otherEntity.getName(), "createDate", DataType.Date, "mark"));
-            otherEntityMap.put(otherEntity.getId() + "_updateDate", new SearchConditionResult(otherEntity.getName(), "updateDate", DataType.Date, "mark"));
+//            otherEntityMap.put(otherEntity.getId() + "_id", new SearchConditionResult(otherEntity.getName(), "id", DataType.String, "mark"));
+//            otherEntityMap.put(otherEntity.getId() + "_createDate", new SearchConditionResult(otherEntity.getName(), "createDate", DataType.Date, "mark"));
+//            otherEntityMap.put(otherEntity.getId() + "_updateDate", new SearchConditionResult(otherEntity.getName(), "updateDate", DataType.Date, "mark"));
             for (Field field : otherEntity.getFields()) {
                 String fieldName = otherEntity.getId() + "_" + field.getName();
                 otherEntityMap.put(fieldName, new SearchConditionResult(otherEntity.getName(), field.getName(), field.getDataType(), field.getId()));
@@ -199,45 +199,45 @@ public class SearchMethodController extends BaseController {
         for (RelationShip relationShip : entities.getMainEntityRelationShips()) {
             Entities otherEntity = relationShip.getOtherEntity();
             Map<String, SearchConditionResult> searchConditionResultMap = otherMap.get(otherEntity.getName());
-            String otherFieldId = otherEntity.getId()+"_id";
-            String otherFieldCreateDate = otherEntity.getId()+"_createDate";
-            String otherFieldUpdateDate = otherEntity.getId()+"_updateDate";
+//            String otherFieldId = otherEntity.getId()+"_id";
+//            String otherFieldCreateDate = otherEntity.getId()+"_createDate";
+//            String otherFieldUpdateDate = otherEntity.getId()+"_updateDate";
 
-            if(conditionMap.keySet().contains(otherFieldId)){
-                searchConditionResultMap.get(otherFieldId).setSearchCondition(conditionMap.get(otherFieldId));
-            }else{
-                searchConditionResultMap.get(otherFieldId).setSearchCondition(new SearchCondition());
-            }
-
-            if(conditionMap.keySet().contains(otherFieldCreateDate)){
-                searchConditionResultMap.get(otherFieldCreateDate).setSearchCondition(conditionMap.get(otherFieldCreateDate));
-            }else{
-                searchConditionResultMap.get(otherFieldCreateDate).setSearchCondition(new SearchCondition());
-            }
-
-            if(conditionMap.keySet().contains(otherFieldUpdateDate)){
-                searchConditionResultMap.get(otherFieldUpdateDate).setSearchCondition(conditionMap.get(otherFieldUpdateDate));
-            }else{
-                searchConditionResultMap.get(otherFieldUpdateDate).setSearchCondition(new SearchCondition());
-            }
-
-            if(searchMethodMap.keySet().contains(otherFieldId)){
-                searchConditionResultMap.get(otherFieldId).setSearchResult(searchMethodMap.get(otherFieldId));
-            }else{
-                searchConditionResultMap.get(otherFieldId).setSearchResult(new SearchResult());
-            }
-
-            if(searchMethodMap.keySet().contains(otherFieldCreateDate)){
-                searchConditionResultMap.get(otherFieldCreateDate).setSearchResult(searchMethodMap.get(otherFieldCreateDate));
-            }else{
-                searchConditionResultMap.get(otherFieldCreateDate).setSearchResult(new SearchResult());
-            }
-
-            if(searchMethodMap.keySet().contains(otherFieldUpdateDate)){
-                searchConditionResultMap.get(otherFieldUpdateDate).setSearchResult(searchMethodMap.get(otherFieldUpdateDate));
-            }else{
-                searchConditionResultMap.get(otherFieldUpdateDate).setSearchResult(new SearchResult());
-            }
+//            if(conditionMap.keySet().contains(otherFieldId)){
+//                searchConditionResultMap.get(otherFieldId).setSearchCondition(conditionMap.get(otherFieldId));
+//            }else{
+//                searchConditionResultMap.get(otherFieldId).setSearchCondition(new SearchCondition());
+//            }
+//
+//            if(conditionMap.keySet().contains(otherFieldCreateDate)){
+//                searchConditionResultMap.get(otherFieldCreateDate).setSearchCondition(conditionMap.get(otherFieldCreateDate));
+//            }else{
+//                searchConditionResultMap.get(otherFieldCreateDate).setSearchCondition(new SearchCondition());
+//            }
+//
+//            if(conditionMap.keySet().contains(otherFieldUpdateDate)){
+//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchCondition(conditionMap.get(otherFieldUpdateDate));
+//            }else{
+//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchCondition(new SearchCondition());
+//            }
+//
+//            if(searchMethodMap.keySet().contains(otherFieldId)){
+//                searchConditionResultMap.get(otherFieldId).setSearchResult(searchMethodMap.get(otherFieldId));
+//            }else{
+//                searchConditionResultMap.get(otherFieldId).setSearchResult(new SearchResult());
+//            }
+//
+//            if(searchMethodMap.keySet().contains(otherFieldCreateDate)){
+//                searchConditionResultMap.get(otherFieldCreateDate).setSearchResult(searchMethodMap.get(otherFieldCreateDate));
+//            }else{
+//                searchConditionResultMap.get(otherFieldCreateDate).setSearchResult(new SearchResult());
+//            }
+//
+//            if(searchMethodMap.keySet().contains(otherFieldUpdateDate)){
+//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchResult(searchMethodMap.get(otherFieldUpdateDate));
+//            }else{
+//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchResult(new SearchResult());
+//            }
 
             for (Field field : otherEntity.getFields()) {
                 String fieldName = otherEntity.getId() + "_" + field.getName();
@@ -277,11 +277,11 @@ public class SearchMethodController extends BaseController {
             for (SearchCondition condition : conditionList) {
                 if (null != condition.getField()) {
                     if (!StringUtil.isEmpty(condition.getField().getId())) {
-                        if (!"mark".equals(condition.getField().getId())) {
+                        //if (!"mark".equals(condition.getField().getId())) {
                             condition.setField(fieldService.findOne(condition.getField().getId()));
-                        } else {
-                            condition.setField(null);
-                        }
+//                        } else {
+//                            condition.setField(null);
+//                        }
                     }
                     realConditionList.add(condition);
                 }
@@ -289,11 +289,11 @@ public class SearchMethodController extends BaseController {
             for (SearchResult result : results) {
                 if (null != result.getField()) {
                     if (!StringUtil.isEmpty(result.getField().getId())) {
-                        if (!"mark".equals(result.getField().getId())) {
+                     //   if (!"mark".equals(result.getField().getId())) {
                             result.setField(fieldService.findOne(result.getField().getId()));
-                        } else {
-                            result.setField(null);
-                        }
+//                        } else {
+//                            result.setField(null);
+//                        }
                     }
                     realResultList.add(result);
                 }

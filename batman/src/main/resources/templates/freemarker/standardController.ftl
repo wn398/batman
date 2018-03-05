@@ -128,13 +128,16 @@ public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.nam
     if(null != ${entity.name ?uncap_first}.getId()){
         return getFailureResultAndInfo(${entity.name ?uncap_first},"id不能为空!");
     }
+    <#if isCreateDate == true>
     if(null == ${entity.name ?uncap_first}.getCreateDate()){
         ${entity.name ?uncap_first}.setCreateDate(new Date());
     }
-
+    </#if>
+    <#if isUpdateDate == true>
     if(null == ${entity.name ?uncap_first}.getUpdateDate()){
         ${entity.name ?uncap_first}.setUpdateDate(new Date());
     }
+    </#if>
     try{
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.saveWithAssignedId(${entity.name ?uncap_first});
         return getSuccessResult(${entity.name ?uncap_first}Result);
