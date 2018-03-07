@@ -69,20 +69,22 @@ public class ProjectController extends BaseController{
             return getFailureResultAndInfo(null,"请至少增加一个主数据源!");
         }
         List<ProjectDataSource> list = project.getProjectDataSources();
-        Set<String> dataSourceName = new HashSet<>();
-        for(ProjectDataSource pds:list){
-            if(StringUtil.isEmpty(pds.getDataBaseName())||StringUtil.isEmpty(pds.getDataSourceNickName())||null==pds.getPort()||StringUtil.isEmpty(pds.getHostName())||StringUtil.isEmpty(pds.getUsername())||StringUtil.isEmpty(pds.getPassword())){
-                return getFailureResultAndInfo(null,"数据源别名,数据库名称，端口号，机器名,用户名，密码不能为空!");
+        if(null!=list && list.size() >0) {
+            Set<String> dataSourceName = new HashSet<>();
+            for (ProjectDataSource pds : list) {
+                if (StringUtil.isEmpty(pds.getDataBaseName()) || StringUtil.isEmpty(pds.getDataSourceNickName()) || null == pds.getPort() || StringUtil.isEmpty(pds.getHostName()) || StringUtil.isEmpty(pds.getUsername())) {
+                    return getFailureResultAndInfo(null, "数据源别名,数据库名称，端口号，机器名,用户名不能为空!");
+                }
+                dataSourceName.add(pds.getDataSourceNickName());
             }
-            dataSourceName.add(pds.getDataSourceNickName());
-        }
-        if(list.size()!=dataSourceName.size()){
-            return getFailureResultAndInfo(null,"数据源别名不能重复!");
-        }
+            if (list.size() != dataSourceName.size()) {
+                return getFailureResultAndInfo(null, "数据源别名不能重复!");
+            }
 
-        List<ProjectDataSource> mainProjectDataSource = list.parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
-        if(mainProjectDataSource.size()!=1){
-            return getFailureResultAndInfo(null,"至少设置一个主数据源，主数据源只有一个!");
+            List<ProjectDataSource> mainProjectDataSource = list.parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource() == true).collect(Collectors.toList());
+            if (mainProjectDataSource.size() != 1) {
+                return getFailureResultAndInfo(null, "至少设置一个主数据源，主数据源只有一个!");
+            }
         }
         String userId = (String)request.getSession().getAttribute("userId");
         SysUser sysUser = sysUserService.findOne(userId);
@@ -169,25 +171,24 @@ public class ProjectController extends BaseController{
             if(modelNames.size() !=modelNameSet.size()){
                 return getFailureResultAndInfo(null,"模块名不能重复");
             }
-            //验证数据源
-            if(project.getProjectDataSources().size()==0){
-                return getFailureResultAndInfo(null,"请至少增加一个主数据源!");
-            }
-            List<ProjectDataSource> list = project.getProjectDataSources();
-            Set<String> dataSourceName = new HashSet<>();
-            for(ProjectDataSource pds:list){
-                if(StringUtil.isEmpty(pds.getDataBaseName())||StringUtil.isEmpty(pds.getDataSourceNickName())||null==pds.getPort()||StringUtil.isEmpty(pds.getHostName())||StringUtil.isEmpty(pds.getUsername())||StringUtil.isEmpty(pds.getPassword())){
-                    return getFailureResultAndInfo(null,"数据源别名,数据库名称，端口号，机器名不能为空,用户名,密码不能为空!");
-                }
-                dataSourceName.add(pds.getDataSourceNickName());
-            }
-            if(list.size()!=dataSourceName.size()){
-                return getFailureResultAndInfo(null,"数据源别名不能重复!");
-            }
 
-            List<ProjectDataSource> mainProjectDataSource = list.parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
-            if(mainProjectDataSource.size()!=1){
-                return getFailureResultAndInfo(null,"至少设置一个主数据源，主数据源只有一个!");
+            List<ProjectDataSource> list = project.getProjectDataSources();
+            if(list.size()>0) {
+                Set<String> dataSourceName = new HashSet<>();
+                for (ProjectDataSource pds : list) {
+                    if (StringUtil.isEmpty(pds.getDataBaseName()) || StringUtil.isEmpty(pds.getDataSourceNickName()) || null == pds.getPort() || StringUtil.isEmpty(pds.getHostName()) || StringUtil.isEmpty(pds.getUsername()) || StringUtil.isEmpty(pds.getPassword())) {
+                        return getFailureResultAndInfo(null, "数据源别名,数据库名称，端口号，机器名不能为空,用户名,密码不能为空!");
+                    }
+                    dataSourceName.add(pds.getDataSourceNickName());
+                }
+                if (list.size() != dataSourceName.size()) {
+                    return getFailureResultAndInfo(null, "数据源别名不能重复!");
+                }
+
+                List<ProjectDataSource> mainProjectDataSource = list.parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource() == true).collect(Collectors.toList());
+                if (mainProjectDataSource.size() != 1) {
+                    return getFailureResultAndInfo(null, "至少设置一个主数据源，主数据源只有一个!");
+                }
             }
 
             String userId = (String)request.getSession().getAttribute("userId");

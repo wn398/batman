@@ -409,11 +409,16 @@ public class CodeGeneratorController extends BaseController{
     private void generatePOMFile(File dir,Project project,Module module){
             try {
                 Template template = configuration.getTemplate("modulePom.ftl");
-                Map<String, String> map = new HashMap<>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("projectName",project.getName());
                 map.put("moduleName",module.getName());
                 map.put("basePackage",project.getPackageName());
                 map.put("springBootVersion",springBootVersion);
+                if(project.getProjectDataSources().size()>0) {
+                    map.put("isMemDatasource", false);
+                }else{
+                    map.put("isMemDatasource", true);
+                }
                 File pomFile = new File(dir,"pom.xml");
 
                 try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {
@@ -429,11 +434,16 @@ public class CodeGeneratorController extends BaseController{
     private void generatePOMWarFile(File dir,Project project,Module module){
         try {
             Template template = configuration.getTemplate("modulePom-War.ftl");
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("projectName",project.getName());
             map.put("moduleName",module.getName());
             map.put("basePackage",project.getPackageName());
             map.put("springBootVersion",springBootVersion);
+            if(project.getProjectDataSources().size()>0) {
+                map.put("isMemDatasource", false);
+            }else{
+                map.put("isMemDatasource", true);
+            }
             File pomFile = new File(dir,"pom-war.xml");
 
             try(Writer writer = new OutputStreamWriter(new FileOutputStream(pomFile),"utf-8");) {

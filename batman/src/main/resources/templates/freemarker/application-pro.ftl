@@ -25,6 +25,7 @@ jwt.exclude.urls=swagger-ui.html,webjars/springfox-swagger-ui,api-docs,/druid/,s
 <#--#数据库配置#-->
 spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
 spring.datasource.name=main
+<#--设置主数据源-->
 <#if mainDataSource??>
     <#assign databaseType = GeneratorStringUtil.toLowerCase(mainDataSource.dataBaseType)>
     <#assign hostname = mainDataSource.hostName>
@@ -41,44 +42,38 @@ spring.datasource.username = ${mainDataSource.username}
 spring.datasource.password = ${mainDataSource.password}
 spring.datasource.driverClassName =${driverclassname}
 spring.jpa.properties.hibernate.dialect=${dialect}
-<#else>
-#Pgsql
-spring.datasource.url = jdbc:postgresql://localhost:5432/${module.name}
-spring.datasource.username = postgres
-spring.datasource.password = 541998
-spring.datasource.driverClassName =org.postgresql.Driver
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
-</#if>
-
-<#--#设置其它数据源-->
-<#if otherDataSources??>
+<#--主数据源设置完成-->
+<#--设置其它数据源-->
+    <#if otherDataSources??>
 custom.datasource.names=${otherDataSourceNames}
-    <#list otherDataSources as otherDataSource>
-        <#assign databaseType = GeneratorStringUtil.toLowerCase(otherDataSource.dataBaseType)>
-        <#assign hostname = otherDataSource.hostName>
-        <#assign otherDataSourceNickName =otherDataSource.dataSourceNickName >
-        <#assign port = GeneratorStringUtil.number2String(otherDataSource.port)>
-        <#if databaseType == "postgresql">
-            <#assign dialect = "org.hibernate.dialect.PostgreSQL9Dialect">
-            <#assign driverclassname = "org.postgresql.Driver">
-        <#elseif databaseType == "mysql">
-            <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
-            <#assign driverclassname = "com.mysql.jdbc.Driver">
-        </#if>
+        <#list otherDataSources as otherDataSource>
+            <#assign databaseType = GeneratorStringUtil.toLowerCase(otherDataSource.dataBaseType)>
+            <#assign hostname = otherDataSource.hostName>
+            <#assign otherDataSourceNickName =otherDataSource.dataSourceNickName >
+            <#assign port = GeneratorStringUtil.number2String(otherDataSource.port)>
+            <#if databaseType == "postgresql">
+                <#assign dialect = "org.hibernate.dialect.PostgreSQL9Dialect">
+                <#assign driverclassname = "org.postgresql.Driver">
+            <#elseif databaseType == "mysql">
+                <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
+                <#assign driverclassname = "com.mysql.jdbc.Driver">
+            </#if>
 custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
 custom.datasource.${otherDataSourceNickName}.driverClassName =${driverclassname}
 custom.datasource.${otherDataSourceNickName}.username=${otherDataSource.username}
 custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password}
-    </#list>
+        </#list>
+    </#if>
+<#--其它数据源设置完成-->
 <#else>
-<#--#其它数据源名字 ds1,ds2这样区分开配置，多数据源开启@EnableDynamicDataSource,在需要切换的方法上注解 @TargetDataSource("ds1")-->
-#custom.datasource.names=ds1
-#custom.datasource.ds1.driverClassName =org.postgresql.Driver
-#custom.datasource.ds1.url=jdbc:postgresql://localhost:5432/cources
-#custom.datasource.ds1.username=postgres
-#custom.datasource.ds1.password=541998
+<#--如果没有主数据源设置h2内存数据库-->
+#H2
+spring.datasource.url = jdbc:h2:mem:${module.name}
+spring.datasource.username = <#if project.isEncodeDataSource==true>gJ+V4EY7dbp8jHpXkG6IyQ==</#if><#if project.isEncodeDataSource==false>root</#if>
+spring.datasource.password = <#if project.isEncodeDataSource==true>gJ+V4EY7dbp8jHpXkG6IyQ==</#if><#if project.isEncodeDataSource==false>root</#if>
+spring.datasource.driverClassName = org.h2.Driver
+spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.H2Dialect
 </#if>
-
 <#--设为true的话，因为session缓存的作用，会导致在一个请求方法里第二次切换数据源失败，因为缓存不会重新获取链接-->
 spring.jpa.open-in-view=false
 
@@ -117,7 +112,7 @@ spring.datasource.testOnReturn=false
 spring.datasource.poolPreparedStatements=true
 spring.datasource.maxPoolPreparedStatementPerConnectionSize=20
 <#--# 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙-->
-spring.datasource.filters=stat,wall,slf4j
+spring.datasource.filters=stat,slf4j
 <#--# 通过connectProperties属性来打开mergeSql功能；慢SQL记录-->
 spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 <#--# 合并多个DruidDataSource的监控数据-->

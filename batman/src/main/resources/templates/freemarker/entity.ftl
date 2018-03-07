@@ -25,7 +25,7 @@ import java.util.*;
 @DynamicUpdate
 @Table(name = <#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.name)}"</#if>,
     indexes = {
-     @Index(name = "rk_${entity.name}_id", columnList = "id")
+     @Index(name = "rk_${entity.name}_id", columnList = "id",unique=true)
 <#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>
 <#if isUpdateDate == true>,@Index(name = "rk_${entity.name}_updateDate", columnList = "updateDate")</#if>
     <#list entity.fields as field>
