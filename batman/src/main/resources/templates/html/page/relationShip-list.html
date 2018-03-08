@@ -116,9 +116,9 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="form-control" name="fieldRelationShip[][mainField]">
-                                    <option th:each="field:${fieldRelationShip.mainEntity.fields}" th:value="${field.id}" th:text="|${field.name}(${field.description})|" th:if="${fieldRelationShip.mainField.id eq field.id}" th:selected="selected"></option>
-                                    <option th:each="field:${fieldRelationShip.mainEntity.fields}" th:value="${field.id}" th:text="|${field.name}(${field.description})|" th:unless="${fieldRelationShip.mainField.id eq field.id}"></option>
+                                <select class="form-control" name="fieldRelationShip[][mainField][id]">
+                                    <option th:each="field:${fieldRelationShip.mainEntity.fields}" th:value="${field.id}" th:text="|${field.description}(${field.name})|" th:if="${fieldRelationShip.mainField.id eq field.id}" th:selected="selected"></option>
+                                    <option th:each="field:${fieldRelationShip.mainEntity.fields}" th:value="${field.id}" th:text="|${field.description}(${field.name})|" th:unless="${fieldRelationShip.mainField.id eq field.id}"></option>
                                 </select>
                             </td>
                             <td>
@@ -220,7 +220,7 @@
             </td>
             <td>
                 <select class="form-control" name="fieldRelationShip[][mainField][id]">
-                    <option th:each="field:${mainEntites.fields}" th:value="${field.id}" th:text="|${field.name}(${field.description})|"></option>
+                    <option th:each="field:${mainEntites.fields}" th:value="${field.id}" th:text="|${field.description}(${field.name})|"></option>
                 </select>
             </td>
             <td>

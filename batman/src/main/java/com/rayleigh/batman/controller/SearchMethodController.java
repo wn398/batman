@@ -186,9 +186,38 @@ public class SearchMethodController extends BaseController {
             Map<String, SearchConditionResult> otherEntityMap = new LinkedHashMap<>();
             otherMap.put(otherEntity.getName(), otherEntityMap);
 
-//            otherEntityMap.put(otherEntity.getId() + "_id", new SearchConditionResult(otherEntity.getName(), "id", DataType.String, "mark"));
-//            otherEntityMap.put(otherEntity.getId() + "_createDate", new SearchConditionResult(otherEntity.getName(), "createDate", DataType.Date, "mark"));
-//            otherEntityMap.put(otherEntity.getId() + "_updateDate", new SearchConditionResult(otherEntity.getName(), "updateDate", DataType.Date, "mark"));
+            for (Field field : otherEntity.getFields()) {
+                String fieldName = otherEntity.getId() + "_" + field.getName();
+                otherEntityMap.put(fieldName, new SearchConditionResult(otherEntity.getName(), field.getName(), field.getDataType(), field.getId()));
+            }
+        }
+        //进行设置
+        for (RelationShip relationShip : entities.getMainEntityRelationShips()) {
+            Entities otherEntity = relationShip.getOtherEntity();
+            Map<String, SearchConditionResult> searchConditionResultMap = otherMap.get(otherEntity.getName());
+            for (Field field : otherEntity.getFields()) {
+                String fieldName = otherEntity.getId() + "_" + field.getName();
+                if(conditionMap.keySet().contains(fieldName)){
+                    searchConditionResultMap.get(fieldName).setSearchCondition(conditionMap.get(fieldName));
+                }else{
+                    searchConditionResultMap.get(fieldName).setSearchCondition(new SearchCondition());
+                }
+
+                if(searchMethodMap.keySet().contains(fieldName)){
+                    searchConditionResultMap.get(fieldName).setSearchResult(searchMethodMap.get(fieldName));
+                }else{
+                    searchConditionResultMap.get(fieldName).setSearchResult(new SearchResult());
+                }
+            }
+        }
+//////////////////////////////////////////////////////////////////////////////////////////////
+        //初始化fieldMap
+        Map<String, Map<String, SearchConditionResult>> fieldMap = new LinkedHashMap<>();
+        for (FieldRelationShip relationShip : entities.getMainFieldRelationShips()) {
+            Entities otherEntity = relationShip.getOtherEntity();
+            Map<String, SearchConditionResult> otherEntityMap = new LinkedHashMap<>();
+            fieldMap.put(otherEntity.getName(), otherEntityMap);
+
             for (Field field : otherEntity.getFields()) {
                 String fieldName = otherEntity.getId() + "_" + field.getName();
                 otherEntityMap.put(fieldName, new SearchConditionResult(otherEntity.getName(), field.getName(), field.getDataType(), field.getId()));
@@ -196,48 +225,9 @@ public class SearchMethodController extends BaseController {
         }
 
         //进行设置
-        for (RelationShip relationShip : entities.getMainEntityRelationShips()) {
+        for (FieldRelationShip relationShip : entities.getMainFieldRelationShips()) {
             Entities otherEntity = relationShip.getOtherEntity();
-            Map<String, SearchConditionResult> searchConditionResultMap = otherMap.get(otherEntity.getName());
-//            String otherFieldId = otherEntity.getId()+"_id";
-//            String otherFieldCreateDate = otherEntity.getId()+"_createDate";
-//            String otherFieldUpdateDate = otherEntity.getId()+"_updateDate";
-
-//            if(conditionMap.keySet().contains(otherFieldId)){
-//                searchConditionResultMap.get(otherFieldId).setSearchCondition(conditionMap.get(otherFieldId));
-//            }else{
-//                searchConditionResultMap.get(otherFieldId).setSearchCondition(new SearchCondition());
-//            }
-//
-//            if(conditionMap.keySet().contains(otherFieldCreateDate)){
-//                searchConditionResultMap.get(otherFieldCreateDate).setSearchCondition(conditionMap.get(otherFieldCreateDate));
-//            }else{
-//                searchConditionResultMap.get(otherFieldCreateDate).setSearchCondition(new SearchCondition());
-//            }
-//
-//            if(conditionMap.keySet().contains(otherFieldUpdateDate)){
-//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchCondition(conditionMap.get(otherFieldUpdateDate));
-//            }else{
-//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchCondition(new SearchCondition());
-//            }
-//
-//            if(searchMethodMap.keySet().contains(otherFieldId)){
-//                searchConditionResultMap.get(otherFieldId).setSearchResult(searchMethodMap.get(otherFieldId));
-//            }else{
-//                searchConditionResultMap.get(otherFieldId).setSearchResult(new SearchResult());
-//            }
-//
-//            if(searchMethodMap.keySet().contains(otherFieldCreateDate)){
-//                searchConditionResultMap.get(otherFieldCreateDate).setSearchResult(searchMethodMap.get(otherFieldCreateDate));
-//            }else{
-//                searchConditionResultMap.get(otherFieldCreateDate).setSearchResult(new SearchResult());
-//            }
-//
-//            if(searchMethodMap.keySet().contains(otherFieldUpdateDate)){
-//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchResult(searchMethodMap.get(otherFieldUpdateDate));
-//            }else{
-//                searchConditionResultMap.get(otherFieldUpdateDate).setSearchResult(new SearchResult());
-//            }
+            Map<String, SearchConditionResult> searchConditionResultMap = fieldMap.get(otherEntity.getName());
 
             for (Field field : otherEntity.getFields()) {
                 String fieldName = otherEntity.getId() + "_" + field.getName();
@@ -254,7 +244,7 @@ public class SearchMethodController extends BaseController {
                 }
             }
         }
-
+        model.addAttribute("fieldMap",fieldMap);
         model.addAttribute("mainMap", mainMap);
         model.addAttribute("otherMap", otherMap);
 
