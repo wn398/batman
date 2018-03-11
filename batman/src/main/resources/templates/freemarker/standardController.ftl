@@ -2,6 +2,7 @@
 package ${project.packageName}.standard.controller;
 
 import ${project.packageName}.standard.model.${entity.name};
+import ${project.packageName}.standard.methodIntercept.${entity.name}MethodIntercept;
 <#list entity.mainEntityRelationShips as relationShip>
 import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
 import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
@@ -45,15 +46,19 @@ private ${entity.name}Service ${entity.name ?uncap_first}Service;
 private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name ?uncap_first}Service;
     </#if>
 </#list>
+@Autowired
+private ${entity.name}MethodIntercept ${entity.name ?uncap_first}MethodIntercept;
 
 @ApiOperation(value = "保存实体,不包括相关联实体")
 @PostMapping("/doSave")
 @ResponseBody
 public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
-
+    if(${entity.name ?uncap_first}MethodIntercept.saveBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.saveBefore(${entity.name ?uncap_first});
+    }
     try {
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.save(${entity.name ?uncap_first});
-        return getSuccessResult(${entity.name ?uncap_first}Result);
+        return ${entity.name ?uncap_first}MethodIntercept.saveAfter(getSuccessResult(${entity.name ?uncap_first}Result));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
@@ -64,25 +69,29 @@ public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first
 @PostMapping("/doUpdate")
 @ResponseBody
 public ResultWrapper update(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
-
+    if(${entity.name ?uncap_first}MethodIntercept.updateBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.updateBefore(${entity.name ?uncap_first});
+    }
     try {
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.update(${entity.name ?uncap_first});
-        return getSuccessResult(${entity.name ?uncap_first}Result);
+        return ${entity.name ?uncap_first}MethodIntercept.updateAfter(getSuccessResult(${entity.name ?uncap_first}Result));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
     }
 }
-
+<#if (entity.mainEntityRelationShips ?size >0)>
 @ApiOperation(value = "保存，包括相关关联实体")
 @PostMapping("/doSaveWithRelated")
 @ResponseBody
 public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
-
+    if(${entity.name ?uncap_first}MethodIntercept.saveWithRelatedBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.saveWithRelatedBefore(${entity.name ?uncap_first});
+    }
     try {
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.save(${entity.name ?uncap_first});
         ${entity.name ?uncap_first}Result = ${entity.name}Util.preventMutualRef(${entity.name ?uncap_first}Result);
-        return getSuccessResult(${entity.name ?uncap_first}Result);
+        return ${entity.name ?uncap_first}MethodIntercept.saveWithRelatedAfter(getSuccessResult(${entity.name ?uncap_first}Result));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
@@ -93,11 +102,13 @@ public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?
 @PostMapping("/doUpdateWithRelated")
 @ResponseBody
 public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
-
+    if(${entity.name ?uncap_first}MethodIntercept.updateWithRelatedBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.updateWithRelatedBefore(${entity.name ?uncap_first});
+    }
     try {
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.save(${entity.name ?uncap_first});
         ${entity.name ?uncap_first}Result = ${entity.name}Util.preventMutualRef(${entity.name ?uncap_first}Result);
-        return getSuccessResult(${entity.name ?uncap_first}Result);
+        return ${entity.name ?uncap_first}MethodIntercept.updateWithRelatedAfter(getSuccessResult(${entity.name ?uncap_first}Result));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
@@ -108,23 +119,26 @@ public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name
 @PostMapping("/findOneWithRelationObj")
 @ResponseBody
 public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation ${entity.name ?uncap_first}Relation){
+    if(${entity.name ?uncap_first}MethodIntercept.findOneWithRelationObjBefore(${entity.name ?uncap_first}Relation).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.findOneWithRelationObjBefore(${entity.name ?uncap_first}Relation);
+    }
     try {
         ${entity.name} ${entity.name ?uncap_first} = ${entity.name ?uncap_first}Service.findOneWithRelationObj(${entity.name ?uncap_first}Relation);
-        return getSuccessResult(${entity.name ?uncap_first});
+        return ${entity.name ?uncap_first}MethodIntercept.findOneWithRelationObjAfter(getSuccessResult(${entity.name ?uncap_first}));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first}Relation,e.getMessage());
     }
 }
-
-
-
-
+</#if>
 
 @ApiOperation(value = "保存自己分配id的实体,忽略关联实体")
 @PostMapping("/saveWithAssignedId")
 @ResponseBody
 public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+    if(${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdBefore(${entity.name ?uncap_first});
+    }
     if(null != ${entity.name ?uncap_first}.getId()){
         return getFailureResultAndInfo(${entity.name ?uncap_first},"id不能为空!");
     }
@@ -140,7 +154,7 @@ public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.nam
     </#if>
     try{
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.saveWithAssignedId(${entity.name ?uncap_first});
-        return getSuccessResult(${entity.name ?uncap_first}Result);
+        return ${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdAfter(getSuccessResult(${entity.name ?uncap_first}Result));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first},e.getMessage());
@@ -181,8 +195,11 @@ public ResultWrapper deleteById(@PathVariable("id") ${entityIdType} id){
 @PostMapping("/${method.methodName}")
 @ResponseBody
 public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+    if(${entity.name ?uncap_first}MethodIntercept.${method.methodName}Before(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper).getStatus()!=ResultStatus.SUCCESS){
+        return ${entity.name ?uncap_first}MethodIntercept.${method.methodName}Before(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
+    }
     try{
-        return getSuccessResult(${entity.name ?uncap_first}Service.${method.methodName}(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper));
+        return ${entity.name ?uncap_first}MethodIntercept.${method.methodName}After(getSuccessResult(${entity.name ?uncap_first}Service.${method.methodName}(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper)));
     }catch (Exception e){
         e.printStackTrace();
         return getFailureResultAndInfo(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper,e.getMessage());

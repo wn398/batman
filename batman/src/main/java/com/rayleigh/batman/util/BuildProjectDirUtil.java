@@ -67,6 +67,11 @@ public class BuildProjectDirUtil {
         String standardJavaBasePackagePath = getStandardJavaBasePackagePath(generatorBasePath,projectName,moduleName,basePackageName);
         return new StringBuilder(standardJavaBasePackagePath).append("/controller").toString();
     }
+    //获取standard methodIntercept路径
+    public static String getStandardMethodInterceptPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
+        String standardJavaBasePackagePath = getStandardJavaBasePackagePath(generatorBasePath,projectName,moduleName,basePackageName);
+        return new StringBuilder(standardJavaBasePackagePath).append("/methodIntercept").toString();
+    }
     //获取standard repository路径
     public static String getStandardRepositoryPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
         String standardJavaBasePackagePath = getStandardJavaBasePackagePath(generatorBasePath,projectName,moduleName,basePackageName);
@@ -121,6 +126,11 @@ public class BuildProjectDirUtil {
     public static String getExtendControllerPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
         String extendJavaBasePackagePath = getExtendJavaBasePackagePath(generatorBasePath,projectName,moduleName,basePackageName);
         return new StringBuilder(extendJavaBasePackagePath).append("/controller").toString();
+    }
+    //获取extend methodInterceptImpl路径
+    public static String getExtendMethodInterceptImplPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
+        String extendJavaBasePackagePath = getExtendJavaBasePackagePath(generatorBasePath,projectName,moduleName,basePackageName);
+        return new StringBuilder(extendJavaBasePackagePath).append("/methodInterceptImpl").toString();
     }
     //获取 extend repository路径
     public static String getExtendRepositoryPath(String generatorBasePath,String projectName,String moduleName,String basePackageName){
@@ -180,7 +190,7 @@ public class BuildProjectDirUtil {
             File moduleUtil = new File(moduleJavaBasePackage,"util");
             File moduleMethodModel = new File(moduleJavaBasePackage,"methodModel");
             File moduleRelation = new File(moduleJavaBasePackage,"modelRelation");
-
+            File moduleMethodIntercept = new File(moduleJavaBasePackage,"methodIntercept");
             boolean moduleControllerDir = moduleController.mkdirs();
             if(!moduleControllerDir){
                 logger.error(new StringBuilder("创建目录:").append(moduleController.getAbsolutePath()).append(" 失败").toString());
@@ -214,6 +224,10 @@ public class BuildProjectDirUtil {
             if(!moduleRelationDir){
                 logger.error(new StringBuilder("创建目录:").append(moduleRelation.getAbsolutePath()).append(" 失败").toString());
             }
+            boolean moduleMethodInterceptDir = moduleMethodIntercept.mkdirs();
+            if(!moduleMethodInterceptDir){
+                logger.error(new StringBuilder("创建目录:").append(moduleMethodIntercept.getAbsolutePath()).append(" 失败").toString());
+            }
 
             File testModuleJava = new File(moduleDir,"src/test/java");
             //test基本根路径
@@ -232,7 +246,7 @@ public class BuildProjectDirUtil {
             File extendModuleServiceImpl = new File(extendJavaBasePackage,"service/impl");
             File extendModuleRepository = new File(extendJavaBasePackage,"repository");
             File extendModuleUtil = new File(extendJavaBasePackage,"util");
-
+            File extendMethodIntercept = new File(extendJavaBasePackage,"methodInterceptImpl");
             boolean extendModuleControllerDir = extendModuleController.mkdirs();
             if(!extendModuleControllerDir){
                 logger.error(new StringBuilder("创建目录:").append(extendModuleController.getAbsolutePath()).append(" 失败").toString());
@@ -252,6 +266,10 @@ public class BuildProjectDirUtil {
             boolean extendModuleUtilDir = extendModuleUtil.mkdirs();
             if(!extendModuleUtilDir){
                 logger.error(new StringBuilder("创建目录:").append(extendModuleUtil.getAbsolutePath()).append(" 失败").toString());
+            }
+            boolean extendMethodInterceptDir = extendMethodIntercept.mkdirs();
+            if(!extendMethodInterceptDir){
+                logger.error(new StringBuilder("创建目录:").append(extendMethodIntercept.getAbsolutePath()).append(" 失败").toString() );
             }
 
         }

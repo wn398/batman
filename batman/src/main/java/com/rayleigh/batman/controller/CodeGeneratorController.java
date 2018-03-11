@@ -158,6 +158,8 @@ public class CodeGeneratorController extends BaseController{
             File standardServicePath = new File(BuildProjectDirUtil.getStandardServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //standard Controller根路径
             File standardControllerPath = new File(BuildProjectDirUtil.getStandardControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //standard MethodIntercept根路径
+            File standardMethodInterceptPath = new File(BuildProjectDirUtil.getStandardMethodInterceptPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //standard资源根路径
             File resourceRootPath = new File(BuildProjectDirUtil.getStandardModuleResourcePath(generatorBasePath, project.getName(), module.getName()));
             //standard util路径
@@ -183,6 +185,8 @@ public class CodeGeneratorController extends BaseController{
             generateServiceImplFile(standardServiceImplPath,project,module,false);
             //生成standController文件
             generateControllerFile(standardControllerPath,project,module,false);
+            //生成standMethodIntercept文件
+            generateMethodInterceptFile(standardMethodInterceptPath,project,module);
             //生成standardEntityUtil文件
             generateStandardUtilFile(standardEntityUtil,project,module,false);
         }
@@ -199,6 +203,8 @@ public class CodeGeneratorController extends BaseController{
             File extendServicePath = new File(BuildProjectDirUtil.getExtendServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //extend controller根路径
             File extendControllerPath = new File(BuildProjectDirUtil.getExtendControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //extend methodInterceptImpl根路径
+            File extendMethodInterceptImplPath = new File(BuildProjectDirUtil.getExtendMethodInterceptImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //extend serviceImpl路径
             File extendServiceImplPath = new File(BuildProjectDirUtil.getExtendServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
 
@@ -210,6 +216,8 @@ public class CodeGeneratorController extends BaseController{
             generateServiceImplFile(extendServiceImplPath,project,module,true);
             //生成extendController文件
             generateControllerFile(extendControllerPath,project,module,true);
+            //生成extendMethodInterceptImpl文件
+            generateMethodInterceptImplFile(extendMethodInterceptImplPath,project,module);
         }
     }
     //生成项目全部
@@ -237,6 +245,8 @@ public class CodeGeneratorController extends BaseController{
             File standardServicePath = new File(BuildProjectDirUtil.getStandardServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //standard Controller根路径
             File standardControllerPath = new File(BuildProjectDirUtil.getStandardControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //standard MethodIntercept根路径
+            File standardMethodInterceptPath = new File(BuildProjectDirUtil.getStandardMethodInterceptPath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
             //standard资源根路径
             File resourceRootPath = new File(BuildProjectDirUtil.getStandardModuleResourcePath(generatorBasePath, project.getName(), module.getName()));
             //standard util路径
@@ -253,6 +263,8 @@ public class CodeGeneratorController extends BaseController{
             File extendServicePath = new File(BuildProjectDirUtil.getExtendServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //extend controller根路径
             File extendControllerPath = new File(BuildProjectDirUtil.getExtendControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+            //extend methodInterceptImp根路径
+            File extendMethodInterceptImplPath = new File(BuildProjectDirUtil.getExtendMethodInterceptImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
             //基本包路径 com.tim
             File relativePackagePath = new File(BuildProjectDirUtil.getRelativePackagePath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
             //基本包下的filter路径
@@ -295,6 +307,8 @@ public class CodeGeneratorController extends BaseController{
             generateMethodWrapperFile(standardMethodModelPath,project,module);
             //生成modelRelation文件
             generateModuleRelationFile(standardModelRelation,project,module);
+            //生成stand methodIntercept文件
+            generateMethodInterceptFile(standardMethodInterceptPath,project,module);
             //生成extendService文件
             generateServiceFile(extendServicePath,project,module,true);
             //生成standServiceImpl文件
@@ -307,6 +321,8 @@ public class CodeGeneratorController extends BaseController{
             generateControllerFile(extendControllerPath,project,module,true);
             //生成standardEntityUtil文件
             generateStandardUtilFile(standardEntityUtil,project,module,false);
+            //生成extend methodInterceptImpl文件
+            generateMethodInterceptImplFile(extendMethodInterceptImplPath,project,module);
         }
     }
 
@@ -773,6 +789,49 @@ public class CodeGeneratorController extends BaseController{
         }catch (Exception e){
             e.printStackTrace();
             logger.error(e.getMessage());
+        }
+    }
+    //生成methodIntercept文件
+    private void generateMethodInterceptFile(File dir,Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("methodIntercept.ftl");
+            for(Entities entity:module.getEntities()) {
+                Map<String,Object> map = new HashMap();
+                map.put("project", project);
+                map.put("entity", entity);
+                //List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                File methodInterceptFile = new File(dir,entity.getName()+"MethodIntercept.java");
+                //methodInterceptFile.mkdirs();
+                try(Writer writer = new OutputStreamWriter(new FileOutputStream(methodInterceptFile),"utf-8");) {
+                    template.process(map, writer);
+                    writer.flush();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取"+" methodIntercept.ftl "+"模板失败");
+        }
+    }
+
+    //生成methodIntercept文件
+    private void generateMethodInterceptImplFile(File dir,Project project,Module module){
+        try {
+            Template template = configuration.getTemplate("methodInterceptImpl.ftl");
+            for(Entities entity:module.getEntities()) {
+                Map<String,Object> map = new HashMap();
+                map.put("project", project);
+                map.put("entity", entity);
+                //List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                File methodInterceptFile = new File(dir,entity.getName()+"MethodInterceptImpl.java");
+                //methodInterceptFile.mkdirs();
+                try(Writer writer = new OutputStreamWriter(new FileOutputStream(methodInterceptFile),"utf-8");) {
+                    template.process(map, writer);
+                    writer.flush();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("获取"+" methodInterceptImpl.ftl "+"模板失败");
         }
     }
 
