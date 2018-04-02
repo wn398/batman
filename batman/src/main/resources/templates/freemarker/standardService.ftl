@@ -29,11 +29,16 @@ public interface ${entity.name}Service extends BaseService{
 
     ${entity.name} update(${entity.name} ${entity.name ?uncap_first});
 
-    ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first});
-
     ${entity.name} save(${entity.name} ${entity.name ?uncap_first});
 
+<#if (entity.mainEntityRelationShips ?size >0)>
+    ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first});
+
     ${entity.name} saveWithRelated(${entity.name} ${entity.name ?uncap_first});
+
+    //获取带关系的实体
+    ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
+</#if>
 
     void deleteById(${entityIdType} id);
 
@@ -48,8 +53,6 @@ public interface ${entity.name}Service extends BaseService{
     ${entity.name} findOne(${entityIdType} id,String ...propertyNames);
 
     ${entity.name} findOne(${entityIdType} id,List<String> propertyNames);
-    //获取带关系的实体
-    ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
 
     List<Object[]> findBySQL(String sql);
 
@@ -149,7 +152,7 @@ public interface ${entity.name}Service extends BaseService{
     <#list entity.methods as method>
         <#if method.isReturnObject ?exists && method.isReturnObject>
     //${method.description}
-    Page<${entity.name}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
+    PageModel<${entity.name}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
         <#else>
     //${method.description}
     PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);

@@ -1,8 +1,10 @@
 package com.rayleigh.batman.model;
 
+import com.rayleigh.batman.util.SearchDBUtil;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.OrderBy;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.model.SearchMethodResultModel;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -25,7 +27,7 @@ public class SearchResult extends BaseModel{
     @Column
     private OrderBy orderByType;
 
-    @FieldInfo("存放除了id,createDate,updateDate的fieldId")
+    @FieldInfo("存放字段")
     @ManyToOne
     @JoinColumn(name = "field_id")
     private Field field;
@@ -73,5 +75,14 @@ public class SearchResult extends BaseModel{
 
     public void setOrderByType(OrderBy orderByType) {
         this.orderByType = orderByType;
+    }
+
+    public static SearchMethodResultModel toResultModel(SearchResult searchResult){
+        SearchMethodResultModel searchMethodResultModel = new SearchMethodResultModel();
+        searchMethodResultModel.setEntityName(SearchDBUtil.getEntityName(searchResult.getFieldName().split("_")[0]));
+        searchMethodResultModel.setFieldName(searchResult.getFieldName().split("_")[1]);
+        searchMethodResultModel.setOrderByNum(searchResult.getOrderByNum());
+        searchMethodResultModel.setOrderByType(searchResult.getOrderByType());
+        return searchMethodResultModel;
     }
 }

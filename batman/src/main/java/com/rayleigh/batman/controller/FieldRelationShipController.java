@@ -1,9 +1,6 @@
 package com.rayleigh.batman.controller;
 
-import com.rayleigh.batman.model.Entities;
-import com.rayleigh.batman.model.FieldRelationShip;
-import com.rayleigh.batman.model.Module;
-import com.rayleigh.batman.model.RelationShip;
+import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.FieldRelationShipService;
 import com.rayleigh.batman.service.ModuleService;
@@ -24,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by wangn20 on 2017/6/14.
@@ -33,6 +31,8 @@ import java.util.*;
 public class FieldRelationShipController extends BaseController {
     @Autowired
     private FieldRelationShipService fieldRelationShipService;
+    @Autowired
+    private EntityService entityService;
 
     @DeleteMapping("/delById")
     @ResponseBody
@@ -40,6 +40,35 @@ public class FieldRelationShipController extends BaseController {
         String id = request.getParameter("id");
         String mainEntityId = request.getParameter("mainEntityId");
         String otherEntityId = request.getParameter("otherEntityId");
+        List<String> entityIdList = new ArrayList<>();
+        entityIdList.add(mainEntityId);
+        entityIdList.add(otherEntityId);
+        //查询有没有方法关联着这两个实体
+        List<SearchMethod> list = entityService.findOne(mainEntityId).getMethods();
+        for(SearchMethod searchMethod: list){
+            List<SearchResult> searchResultList = searchMethod.getSearchResults();
+            if(null!=searchResultList && searchResultList.size()>0 && searchResultList.parallelStream().map(searchResult -> searchResult.getField().getEntities().getId()).collect(Collectors.toSet()).containsAll(entityIdList)){
+                return getFailureResultAndInfo(null,new StringBuilder("实体 ").append(entityService.findOne(mainEntityId).getName()).append("的方法 ").append(searchMethod.getMethodName()).append("结果引用了此关系，请先删除此方法!").toString());
+            }
+            List<SearchCondition> searchConditionList = searchMethod.getConditionList();
+            if(null!=searchConditionList && searchConditionList.size()>0 && searchConditionList.parallelStream().map(condition -> condition.getField().getEntities().getId()).collect(Collectors.toSet()).containsAll(entityIdList)){
+                return getFailureResultAndInfo(null,new StringBuilder("实体 ").append(entityService.findOne(mainEntityId).getName()).append("的方法 ").append(searchMethod.getMethodName()).append("条件引用了此关系，请先删除此方法!").toString());
+            }
+
+        }
+
+        List<SearchMethod> otherList = entityService.findOne(otherEntityId).getMethods();
+        for(SearchMethod searchMethod: otherList){
+            List<SearchResult> searchResultList = searchMethod.getSearchResults();
+            if(null!=searchResultList && searchResultList.size()>0 && searchResultList.parallelStream().map(searchResult -> searchResult.getField().getEntities().getId()).collect(Collectors.toSet()).containsAll(entityIdList)){
+                return getFailureResultAndInfo(null,new StringBuilder("实体 ").append(entityService.findOne(mainEntityId).getName()).append("的方法 ").append(searchMethod.getMethodName()).append("结果引用了此关系，请先删除此方法!").toString());
+            }
+            List<SearchCondition> searchConditionList = searchMethod.getConditionList();
+            if(null !=searchConditionList && searchConditionList.size()>0 && searchConditionList.parallelStream().map(condition -> condition.getField().getEntities().getId()).collect(Collectors.toSet()).containsAll(entityIdList)){
+                return getFailureResultAndInfo(null,new StringBuilder("实体 ").append(entityService.findOne(mainEntityId).getName()).append("的方法 ").append(searchMethod.getMethodName()).append("条件引用了此关系，请先删除此方法!").toString());
+            }
+
+        }
 
         if(!StringUtil.isEmpty(id)&&!StringUtil.isEmpty(mainEntityId)&&!StringUtil.isEmpty(otherEntityId)){
             //获取另一方的关系删除

@@ -1,9 +1,12 @@
 package com.rayleigh.batman.model;
 
+import com.rayleigh.batman.util.SearchDBUtil;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.LogicOperation;
 import com.rayleigh.core.enums.Operation;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.model.SearchMethodConditionModel;
+import com.rayleigh.core.util.StringUtil;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -30,7 +33,7 @@ public class SearchCondition extends BaseModel{
     private Field field;
 
     //因为id,createDate,updateDate都是通过继承得到的，在属性里拿不到，所以要用此字段来表示，当然此时属性id就不存在，结果用（实体id_createDate类似表示）
-    @FieldInfo("属性名字,此属性只适用于id,createDate,updateDate")
+    @FieldInfo("属性名字,此属性只适用于id,createDate,updateDate,现在全部属性放在数据库了，保留字段")
     @Column
     @NotEmpty
     private String fieldName;
@@ -91,5 +94,24 @@ public class SearchCondition extends BaseModel{
 
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
+    }
+
+    //转化成conditionModel
+    public static SearchMethodConditionModel toConditionModel(SearchCondition condition){
+        SearchMethodConditionModel conditionModel = new SearchMethodConditionModel();
+        conditionModel.setPriority(condition.getPriority());
+        conditionModel.setFieldName(condition.getFieldName().split("_")[1]);
+        conditionModel.setEntityName(SearchDBUtil.getEntityName(condition.getFieldName().split("_")[0]));
+        conditionModel.setLogicOperation(condition.getLogicOperation());
+        conditionModel.setOperation(condition.getOperation());
+        if(condition.getOperation()==Operation.Between){
+            conditionModel.setConditionName(new StringBuilder(StringUtil.unCapFirst(conditionModel.getEntityName())).append(StringUtil.capFirst(conditionModel.getFieldName())).append("BetweenValue").toString());
+        }else if(condition.getOperation() == Operation.In){
+            conditionModel.setConditionName(new StringBuilder(StringUtil.unCapFirst(conditionModel.getEntityName())).append(StringUtil.capFirst(conditionModel.getFieldName())).append("InList").toString());
+        }else{
+            conditionModel.setConditionName(new StringBuilder(StringUtil.unCapFirst(conditionModel.getEntityName())).append(StringUtil.capFirst(conditionModel.getFieldName())).toString());
+        }
+        conditionModel.setFieldDataType(condition.getField().getDataType());
+        return conditionModel;
     }
 }

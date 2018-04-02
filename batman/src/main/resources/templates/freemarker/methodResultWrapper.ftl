@@ -1,6 +1,7 @@
 <#include "CopyRight.ftl">
 <#--<!--构建方法的结果模型  需要传入的参数 project, entity, method,searchDBUtil&ndash;&gt;-->
 package ${project.packageName}.standard.methodModel;
+import java.math.BigDecimal;
 import java.util.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -17,13 +17,24 @@ function deleteRemoteTr(id,mainEntityId,otherEntityId,obj) {
                 dataType: "json",
                 success: function (data) {
                     // alert(JSON.stringify($("#projectTable").DataTable().row($(obj).parents("tr")).data()));
-                    deleteTr(obj);
-                    //$(obj).parents("tr").remove();
-                    layer.close(index);
-                    layer.msg('删除成功', {
-                        icon:1,
-                        time: 2000, //2s后自动关闭
-                    });
+                    if(data.status=="SUCCESS") {
+                        deleteTr(obj);
+                        //$(obj).parents("tr").remove();
+                        layer.close(index);
+                        layer.msg('删除成功', {
+                            icon:1,
+                            time: 2000, //2s后自动关闭
+                        });
+                    }else if(data.status=="FAILURE"){
+                        layerFailMsg(data.info);
+                    }else if(data.status=="NOT_VALID"){
+                        var message = data.validMessage;
+                        var result='';
+                        for(var key in message)
+                            result=result+message[key]+"&nbsp;";
+                        showInfo(result)
+                    }
+
                 },
                 error: function (msg) {
                     showInfo(msg)
@@ -51,14 +62,24 @@ function deleteFieldRemoteTr(id,mainEntityId,otherEntityId,obj) {
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (data) {
-                    // alert(JSON.stringify($("#projectTable").DataTable().row($(obj).parents("tr")).data()));
-                    deleteTr(obj);
-                    //$(obj).parents("tr").remove();
-                    layer.close(index);
-                    layer.msg('删除成功', {
-                        icon:1,
-                        time: 2000, //2s后自动关闭
-                    });
+                    if(data.status=="SUCCESS") {
+                        // alert(JSON.stringify($("#projectTable").DataTable().row($(obj).parents("tr")).data()));
+                        deleteTr(obj);
+                        //$(obj).parents("tr").remove();
+                        layer.close(index);
+                        layer.msg('删除成功', {
+                            icon:1,
+                            time: 2000, //2s后自动关闭
+                        });
+                    }else if(data.status=="FAILURE"){
+                        layerFailMsg(data.info);
+                    }else if(data.status=="NOT_VALID"){
+                        var message = data.validMessage;
+                        var result='';
+                        for(var key in message)
+                            result=result+message[key]+"&nbsp;";
+                        showInfo(result)
+                    }
                 },
                 error: function (msg) {
                     showInfo(msg)

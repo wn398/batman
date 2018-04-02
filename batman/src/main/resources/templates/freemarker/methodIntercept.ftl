@@ -34,7 +34,7 @@ public interface ${entity.name}MethodIntercept {
 <#list entity.methods as method>
     <#if ((method.isInterface !?exists)||(method.isInterface ?exists &&method.isInterface ?boolean))>
      ResultWrapper ${method.methodName}Before(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
-     ResultWrapper ${method.methodName}after(ResultWrapper resultWrapper);
+     ResultWrapper ${method.methodName}After(ResultWrapper resultWrapper);
     </#if>
 </#list>
 }

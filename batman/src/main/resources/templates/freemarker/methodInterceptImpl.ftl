@@ -76,7 +76,7 @@ public class ${entity.name}MethodInterceptImpl implements ${entity.name}MethodIn
         //do something of validation
         return getSuccessResultWrapper(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
      }
-     public ResultWrapper ${method.methodName}after(ResultWrapper resultWrapper){
+     public ResultWrapper ${method.methodName}After(ResultWrapper resultWrapper){
         //do something of result operation
         return resultWrapper;
      }

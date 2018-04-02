@@ -148,6 +148,51 @@ public void set${entityName}${fieldName ?cap_first}(${fieldType} ${entityName ?u
 
         </#if>
     </#list>
+//获取非空的参数名称
+public static List<String> getNotNullParamNames(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+     List<String> result = new ArrayList();
+     <#list method.conditionList as condition>
+     <#--获取结果字段所在的实体类-->
+         <#assign entityName=searchDBUtil.getEntityName(condition.fieldName ?split("_")[0])>
+     <#--获取数据类型-->
+         <#if condition.field?exists>
+             <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
+                 <#assign fieldType = "Boolean">
+                 <#assign fieldName = condition.field.name+condition.operation>
+             <#else>
+                 <#assign fieldType = condition.field.dataType>
+                 <#assign fieldName = condition.field.name>
+             </#if>
+         <#else>
+             <#assign fieldName = condition.fieldName ?split("_")[1]>
+             <#if fieldName == "id">
+                 <#assign fieldType = entityIdType>
+             <#else>
+                 <#assign fieldType = "Date">
+             </#if>
+         </#if>
 
 
+         <#if condition.operation =="Between">
+             <#if fieldType =="Date">
+    if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
+        result.add("${entityName ?uncap_first}${fieldName ?cap_first}BetweenValue");
+    }
+             <#else>
+    if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
+        result.add("${entityName ?uncap_first}${fieldName ?cap_first}BetweenValue");
+    }
+             </#if>
+         <#elseif condition.operation == "In">
+    if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList.size() >0){
+        result.add("${entityName ?uncap_first}${fieldName ?cap_first}InList");
+    }
+         <#else>
+    if(null !=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()){
+        result.add("${entityName ?uncap_first}${fieldName ?cap_first}");
+    }
+         </#if>
+     </#list>
+    return result;
+    }
 }
