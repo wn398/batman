@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Service
@@ -15,6 +16,11 @@ public class AsyncServiceUtil<T> {
     @Async
     public Future<T> doAsync(Supplier<Future<T>> supplier) {
         return supplier.get();
+    }
+
+    @Async
+    public void doAsync(T t,Consumer<T> consumer){
+        consumer.accept(t);
     }
 
     private void demoTest() {

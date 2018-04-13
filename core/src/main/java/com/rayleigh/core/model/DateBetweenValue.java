@@ -26,7 +26,7 @@ public class DateBetweenValue {
     }
 
     public Date getMax() {
-        if(null !=null){
+        if(null !=max){
             return (Date)max.clone();
         }else{
             return null;

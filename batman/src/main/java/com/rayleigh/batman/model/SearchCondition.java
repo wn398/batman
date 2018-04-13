@@ -100,7 +100,8 @@ public class SearchCondition extends BaseModel{
     public static SearchMethodConditionModel toConditionModel(SearchCondition condition){
         SearchMethodConditionModel conditionModel = new SearchMethodConditionModel();
         conditionModel.setPriority(condition.getPriority());
-        conditionModel.setFieldName(condition.getFieldName().split("_")[1]);
+        //获取字段名称
+        conditionModel.setFieldName(condition.getFieldName().substring(condition.getFieldName().indexOf("_")+1));
         conditionModel.setEntityName(SearchDBUtil.getEntityName(condition.getFieldName().split("_")[0]));
         conditionModel.setLogicOperation(condition.getLogicOperation());
         conditionModel.setOperation(condition.getOperation());

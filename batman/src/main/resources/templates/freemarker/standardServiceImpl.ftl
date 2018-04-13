@@ -554,11 +554,11 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             SearchMethodConditionModel searchMethodConditionModel =JSONObject.toJavaObject(entry.getValue(),SearchMethodConditionModel.class);
             map2.put(entry.getKey(),searchMethodConditionModel);
         }
-        map2 = map2.entrySet().stream().filter(entry->notNullNames.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
+        map2 = map2.entrySet().stream().filter(entry->notNullNames.stream().anyMatch(it->it.startsWith(entry.getKey()))).collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
         String dynamicConditionHql = SearchMethodUtil.getDynamicConditionStr(map2.values().stream().collect(Collectors.toList()));
         <#assign orderByJSON=constructSearchMethodUtil.getDynamicOrderByJSON(method,entity)>
         String orderByJSON = "${orderByJSON}";
-        List<SearchMethodResultModel> resultList = (List<SearchMethodResultModel>)JSONArray.parse(orderByJSON);
+        List<SearchMethodResultModel> resultList = ((List<JSONObject>)JSONArray.parse(orderByJSON)).parallelStream().map(it->JSONObject.toJavaObject(it,SearchMethodResultModel.class)).collect(Collectors.toList());
         String orderByHql = SearchMethodUtil.getOrderByStr(resultList);
         <#--按查询字段结果，按实体分组，构建查询字段-->
         <#if isReturnObject==false>
@@ -566,7 +566,13 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         <#else>
             <#assign basicJpql = constructSearchMethodUtil.constructObjectJPQL(method,entity)>
         </#if>
-        Query query = entityManager.createQuery("${basicJpql}"+dynamicConditionHql+orderByHql);
+        String basicJpql = "${basicJpql}";
+        if(dynamicConditionHql.trim().equals("")){
+            if(basicJpql.trim().endsWith("where")){
+                basicJpql = basicJpql.substring(0,basicJpql.indexOf("where"));
+            }
+        }
+        Query query = entityManager.createQuery(basicJpql+dynamicConditionHql+orderByHql);
         <#assign entityConditionMap = constructSearchMethodUtil.extractCondition(method.conditionList)>
         <#list entityConditionMap ?keys as key>
             <#--实体名-->
@@ -593,12 +599,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
                     <#--为condition条件设置对应的值，isNull和isNotNull不需要设置-->
                         <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
                         <#elseif condition.operation == "Between">
-        if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
+        if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
             query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Min",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin());
             query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Max",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax());
         }
                         <#elseif condition.operation == "In">
-        if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList.size() >0){
+        if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList().size() >0){
             query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}List",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList());
         }
                         <#elseif condition.operation == "Like">
@@ -618,7 +624,13 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             query.setFirstResult((${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage()-1)*${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
             query.setMaxResults(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
         <#assign baicCountHql = constructSearchMethodUtil.constructBasicCountJPQL(method,entity)>
-            Query countQuery = entityManager.createQuery("${baicCountHql}"+dynamicConditionHql);
+        String basicCountHql = "${baicCountHql}";
+        if(dynamicConditionHql.trim().equals("")){
+            if(basicCountHql.trim().endsWith("where")){
+                basicCountHql = basicCountHql.substring(0,basicCountHql.indexOf("where"));
+            }
+        }
+            Query countQuery = entityManager.createQuery(basicCountHql+dynamicConditionHql);
         <#list entityConditionMap ?keys as key>
         <#--实体名-->
             <#assign entityName = searchDBUtil.getEntityName(key)>
@@ -644,12 +656,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
                     <#--为condition条件设置对应的值，isNull和isNotNull不需要设置-->
                         <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
                         <#elseif condition.operation == "Between">
-            if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
+            if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
                 countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Min",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin());
                 countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Max",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax());
             }
                         <#elseif condition.operation == "In">
-            if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList.size() >0){
+            if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList().size() >0){
                 countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}List",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList());
             }
                         <#elseif condition.operation == "Like">
