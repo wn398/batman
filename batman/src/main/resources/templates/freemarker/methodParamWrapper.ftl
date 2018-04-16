@@ -6,6 +6,7 @@ import com.rayleigh.core.model.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.*;
+import java.math.BigDecimal;
 <#if entity.primaryKeyType=="String">
     <#assign entityIdType="String">
 <#else>

@@ -72,15 +72,15 @@ public class SearchMethodController extends BaseController {
             for(Map.Entry<Integer,List<SearchCondition>> entry:conditionPriorityMap.entrySet()){
                 Set<LogicOperation> set = entry.getValue().parallelStream().map(condition->condition.getLogicOperation()).collect(Collectors.toSet());
                 if(set.size()!=1){
-                    return getFailureResultAndInfo(searchMethod,"存在同一优先级内不同的逻辑运算符，请检查！");
+                    return getFailureResultAndInfo(null,"存在同一优先级内不同的逻辑运算符，请检查！");
                 }
             }
             searchMethod.setConditionList(realConditionList);
             searchMethod.setSearchResults(realResultList);
             SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
-            BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
-            return getSuccessResult(searchMethod1);
+            //BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
+            return getSuccessResult("添加成功!");
         } else {
             return getFailureResultAndInfo("", "传入对象为空");
         }
