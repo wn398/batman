@@ -20,3 +20,15 @@ $(document).ready(function () {
         }
     }
 })
+
+function selectThisTable(it) {
+    var isSelected = $(it).is(':checked');
+    if(isSelected){
+        $(it).parents('table').find(".result").removeProp('checked')
+        $(it).parents('table').find(".result").prop('checked',true)
+    }else{
+        $(it).parents('table').find(".result").removeProp('checked')
+        $(it).parents('table').find(".result").prop('checked',false)
+    }
+    
+}

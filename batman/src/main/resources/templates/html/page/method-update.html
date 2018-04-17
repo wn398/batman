@@ -51,6 +51,18 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否动态查询</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isDynamicSearch">
+
+                                    <option th:value="false" th:selected="${method.isDynamicSearch == false}" th:text="否"></option>
+                                    <option th:value="true" th:selected="${method.isDynamicSearch == true}" th:text="是"></option>
+                                </select>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -69,7 +81,7 @@
                         <tr>
                             <th>属性名</th>
                             <th>数据类型</th>
-                            <th>选择结果</th>
+                            <th>选择结果<input th:type="checkbox" onclick="selectThisTable(this)"></th>
                             <th>排序类型</th>
                             <th>排序级别</th>
                             <th>选择条件</th>
@@ -92,7 +104,7 @@
 
                             <td th:text="|${map.value.entityName}->${map.value.fieldName}|"></td>
                             <td th:text="${map.value.fieldDataType}"></td>
-                            <td><input th:type="checkbox" th:value="${map.value.fieldId}" name="searchResults[][field][id]" th:checked="${map.value.searchResult.fieldName eq map.key}"></td>
+                            <td><input th:type="checkbox" th:value="${map.value.fieldId}" class="result" name="searchResults[][field][id]" th:checked="${map.value.searchResult.fieldName eq map.key}"></td>
                             <td>
                                 <select name="searchResults[][orderByType]" class="form-control">
                                     <option th:value="desc" th:selected="${map.value.searchResult.orderByType eq 'desc'}">降序</option>
@@ -148,7 +160,7 @@
                         <tr>
                             <th>属性名</th>
                             <th>数据类型</th>
-                            <th>选择结果</th>
+                            <th>选择结果<input th:type="checkbox" onclick="selectThisTable(this)"></th>
                             <th>排序类型</th>
                             <th>排序级别</th>
                             <th>选择条件</th>
@@ -171,7 +183,7 @@
 
                             <td th:text="|${subOtherMap.value.entityName}->${subOtherMap.value.fieldName}|" ></td>
                             <td th:text="${subOtherMap.value.fieldDataType}" ></td>
-                            <td><input th:type="checkbox" th:value="${subOtherMap.value.fieldId}" th:checked="${subOtherMap.value.searchResult.fieldName eq subOtherMap.key}" name="searchResults[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${subOtherMap.value.fieldId}" class="result" th:checked="${subOtherMap.value.searchResult.fieldName eq subOtherMap.key}" name="searchResults[][field][id]" ></td>
                             <td>
                                 <select name="searchResults[][orderByType]" class="form-control">
                                     <option th:value="desc" th:selected="${subOtherMap.value.searchResult.orderByType eq 'desc'}">降序</option>
@@ -227,7 +239,7 @@
                         <tr>
                             <th>属性名</th>
                             <th>数据类型</th>
-                            <th>选择结果</th>
+                            <th>选择结果<input th:type="checkbox" onclick="selectThisTable(this)"></th>
                             <th>排序类型</th>
                             <th>排序级别</th>
                             <th>选择条件</th>
@@ -250,7 +262,7 @@
 
                             <td th:text="|${subOtherMap.value.entityName}->${subOtherMap.value.fieldName}|" ></td>
                             <td th:text="${subOtherMap.value.fieldDataType}" ></td>
-                            <td><input th:type="checkbox" th:value="${subOtherMap.value.fieldId}" th:checked="${subOtherMap.value.searchResult.fieldName eq subOtherMap.key}" name="searchResults[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${subOtherMap.value.fieldId}" class="result" th:checked="${subOtherMap.value.searchResult.fieldName eq subOtherMap.key}" name="searchResults[][field][id]" ></td>
                             <td>
                                 <select name="searchResults[][orderByType]" class="form-control">
                                     <option th:value="desc" th:selected="${subOtherMap.value.searchResult.orderByType eq 'desc'}">降序</option>

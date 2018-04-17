@@ -30,6 +30,9 @@ public class SearchMethod extends BaseModel{
     @Column
     private Boolean isReturnObject = false;
 
+    @FieldInfo("是否动态查询")
+    @Column
+    private Boolean isDynamicSearch = false;
 
     @FieldInfo("所对应的查询条件")
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "searchMethod",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE},orphanRemoval = true)
@@ -105,5 +108,13 @@ public class SearchMethod extends BaseModel{
 
     public void setIsReturnObject(Boolean returnObject) {
         isReturnObject = returnObject;
+    }
+
+    public Boolean getIsDynamicSearch() {
+        return isDynamicSearch;
+    }
+
+    public void setIsDynamicSearch(Boolean dynamicSearch) {
+        isDynamicSearch = dynamicSearch;
     }
 }

@@ -49,6 +49,17 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否动态查询</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isDynamicSearch">
+                                    <option th:value="false" th:text="否"></option>
+                                    <option th:value="true" th:text="是"></option>
+                                </select>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -67,7 +78,7 @@
                         <tr>
                             <th>属性名</th>
                             <th>数据类型</th>
-                            <th>选择结果</th>
+                            <th>选择结果<input th:type="checkbox" onclick="selectThisTable(this)"></th>
                             <th>排序类型</th>
                             <th>排序级别</th>
                             <th>选择过滤</th>
@@ -85,7 +96,7 @@
 
                             <td th:text="|${entity.name}->${field.name}|"></td>
                             <td th:text="${field.dataType}"></td>
-                            <td><input th:type="checkbox" th:value="${field.id}" name="searchResults[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${field.id}" name="searchResults[][field][id]" class="result"></td>
                             <td>
                                 <select name="searchResults[][orderByType]" class="form-control">
                                     <option th:value="desc">降序</option>
@@ -95,7 +106,7 @@
                             <td>
                                 <input type="number" th:value="0" name="searchResults[][orderByNum]" class="form-control">
                             </td>
-                            <td><input th:type="checkbox" th:value="${field.id}" name="conditionList[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${field.id}" name="conditionList[][field][id]"></td>
                             <td>
                                 <select name="conditionList[][operation]" class="form-control">
                                     <option th:value="Equal">=</option>
@@ -140,7 +151,7 @@
                         <tr>
                             <th>属性名</th>
                             <th>数据类型</th>
-                            <th>选择结果</th>
+                            <th>选择结果<input th:type="checkbox" onclick="selectThisTable(this)"></th>
                             <th>排序类型</th>
                             <th>排序级别</th>
                             <th>选择过滤</th>
@@ -157,7 +168,7 @@
 
                             <td th:text="|${relationShip.otherEntity.name}->${field2.name}|" ></td>
                             <td th:text="${field2.dataType}" ></td>
-                            <td><input th:type="checkbox" th:value="${field2.id}" name="searchResults[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${field2.id}" name="searchResults[][field][id]" class="result"></td>
                             <td>
                                 <select name="searchResults[][orderByType]" class="form-control">
                                     <option th:value="desc">降序</option>
@@ -211,7 +222,7 @@
                         <tr>
                             <th>属性名</th>
                             <th>数据类型</th>
-                            <th>选择结果</th>
+                            <th>选择结果<input th:type="checkbox" onclick="selectThisTable(this)"></th>
                             <th>排序类型</th>
                             <th>排序级别</th>
                             <th>选择过滤</th>
@@ -228,7 +239,7 @@
 
                             <td th:text="|${relationShip.otherEntity.name}->${field2.name}|" ></td>
                             <td th:text="${field2.dataType}" ></td>
-                            <td><input th:type="checkbox" th:value="${field2.id}" name="searchResults[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${field2.id}" name="searchResults[][field][id]" class="result"></td>
                             <td>
                                 <select name="searchResults[][orderByType]" class="form-control">
                                     <option th:value="desc">降序</option>
@@ -238,7 +249,7 @@
                             <td>
                                 <input type="number" th:value="0" name="searchResults[][orderByNum]" class="form-control">
                             </td>
-                            <td><input th:type="checkbox" th:value="${field2.id}" name="conditionList[][field][id]" ></td>
+                            <td><input th:type="checkbox" th:value="${field2.id}" name="conditionList[][field][id]"></td>
                             <td>
                                 <select name="conditionList[][operation]" class="form-control">
                                     <option th:value="Equal">=</option>
