@@ -3,6 +3,7 @@ package com.rayleigh.core.util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +24,7 @@ public class HttpClientUtil {
         HttpClient httpClient = HttpClients.createDefault();
         String result = null;
         HttpPost httpPost = new HttpPost(url);
+        httpPost.setConfig(getRequestConfig());
         httpPost.addHeader("Content-type","application/json; charset=utf-8");
         httpPost.setHeader("Accept", "application/json");
         for(Map.Entry<String,String> entry:headerMap.entrySet()){
@@ -43,6 +45,7 @@ public class HttpClientUtil {
     public static String doGet(String url,Map<String,String> headerParam) throws Exception{
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
+        httpGet.setConfig(getRequestConfig());
         //httpGet.addHeader("Content-type","application/json; charset=utf-8");
         httpGet.setHeader("Accept", "application/json");
         String result = null;
@@ -62,6 +65,7 @@ public class HttpClientUtil {
     public static String doPut(String url,Map<String,String> headerParam,String jsonBody)throws Exception{
         HttpClient httpClient = HttpClients.createDefault();
         HttpPut httpPut = new HttpPut(url);
+        httpPut.setConfig(getRequestConfig());
         for(Map.Entry<String,String> entry:headerParam.entrySet()){
             httpPut.addHeader(entry.getKey(),entry.getValue());
         }
@@ -84,6 +88,7 @@ public class HttpClientUtil {
     public static String doDelete(String url,Map<String,String> headerParam)throws Exception{
         HttpClient httpClient = HttpClients.createDefault();
         HttpDelete httpDelete = new HttpDelete(url);
+        httpDelete.setConfig(getRequestConfig());
         for(Map.Entry<String,String> entry:headerParam.entrySet()){
             httpDelete.addHeader(entry.getKey(),entry.getValue());
         }
@@ -124,5 +129,12 @@ public class HttpClientUtil {
             e.printStackTrace();
         }
 
+    }
+
+    public static RequestConfig getRequestConfig(){
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(5000).setConnectionRequestTimeout(1000)
+                .setSocketTimeout(10000).build();
+        return requestConfig;
     }
 } 

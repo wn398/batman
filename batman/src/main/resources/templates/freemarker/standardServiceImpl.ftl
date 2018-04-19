@@ -535,13 +535,16 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#list entity.methods as method>
     <#--赋值，如果不存在，给个默认值false-->
     <#assign isReturnObject=method.isReturnObject !false>
+    <#--赋值是否动态查询-->
+    <#assign isDynamicSearch=method.isDynamicSearch !false>
         <#--如果方法定义返回不是对象类型，返回为字段类型，则用JPQL查询-->
     <#if isReturnObject==false>
         <#assign resultType = entity.name+'$'+method.methodName ?cap_first +'ResultWrapper'>
     <#else>
         <#assign resultType = entity.name>
     </#if>
-    //${method.description}
+    <#if isDynamicSearch>
+    //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>
     public PageModel<${resultType}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
         <#--定义分页包装结果-->
         PageModel<${resultType}> pageModel = new PageModel();
@@ -724,6 +727,165 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         </#if>
         return pageModel;
     }
+    <#--非动态查询------------------------------------------------------------------------------------------->
+    <#else>
+     //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>
+    public PageModel<${resultType}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+    <#--定义分页包装结果-->
+        PageModel<${resultType}> pageModel = new PageModel();
+    <#--按查询字段结果，按实体分组，构建查询字段-->
+        <#if isReturnObject==false>
+            <#assign basicJpql = constructSearchMethodUtil.constructFullFieldsJPQL(method,entity)>
+        <#else>
+            <#assign basicJpql = constructSearchMethodUtil.constructFullObjectJPQL(method,entity)>
+        </#if>
+        Query query = entityManager.createQuery("${basicJpql}");
+        <#assign entityConditionMap = constructSearchMethodUtil.extractCondition(method.conditionList)>
+        <#list entityConditionMap ?keys as key>
+        <#--实体名-->
+            <#assign entityName = searchDBUtil.getEntityName(key)>
+        <#--这个实体下的条件-->
+            <#list entityConditionMap[key] as condition>
+            <#--获取condition的类型和名字-->
+                <#if condition.field?exists>
+                    <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
+                        <#assign fieldType = "Boolean">
+                        <#assign fieldName = condition.field.name+condition.operation>
+                    <#else>
+                        <#assign fieldType = condition.field.dataType>
+                        <#assign fieldName = condition.field.name>
+                    </#if>
+                <#else>
+                    <#assign fieldName = condition.fieldName ?split("_")[1]>
+                    <#if fieldName == "id">
+                        <#assign fieldType = entityIdType>
+                    <#else>
+                        <#assign fieldType = "Date">
+                    </#if>
+                </#if>
+            <#--为condition条件设置对应的值，isNull和isNotNull不需要设置-->
+                <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
+                <#elseif condition.operation == "Between">
+        if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
+            query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Min",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin());
+            query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Max",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax());
+        }
+                <#elseif condition.operation == "In">
+        if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList().size() >0){
+            query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}List",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList());
+        }
+                <#elseif condition.operation == "Like">
+        if(null !=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()){
+            query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}","%"+${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()+"%");
+        }
+                <#else>
+        if(null !=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()){
+            query.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}());
+        }
+                </#if>
+            </#list>
+        </#list>
+    <#--最后处理分页信息,如果有传参数，则处理分页参数，否则用默认的2的32次方-->
+        //如果需要分页
+        if(null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize()>0 &&null != ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage() >0){
+            query.setFirstResult((${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage()-1)*${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
+            query.setMaxResults(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
+        <#assign basicCountHql = constructSearchMethodUtil.constructFullCountJPQL(method,entity)>
+        Query countQuery = entityManager.createQuery("${basicCountHql}");
+        <#list entityConditionMap ?keys as key>
+        <#--实体名-->
+            <#assign entityName = searchDBUtil.getEntityName(key)>
+        <#--这个实体下的条件-->
+            <#list entityConditionMap[key] as condition>
+            <#--获取condition的类型和名字-->
+                <#if condition.field?exists>
+                    <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
+                        <#assign fieldType = "Boolean">
+                        <#assign fieldName = condition.field.name+condition.operation>
+                    <#else>
+                        <#assign fieldType = condition.field.dataType>
+                        <#assign fieldName = condition.field.name>
+                    </#if>
+                <#else>
+                    <#assign fieldName = condition.fieldName ?split("_")[1]>
+                    <#if fieldName == "id">
+                        <#assign fieldType = entityIdType>
+                    <#else>
+                        <#assign fieldType = "Date">
+                    </#if>
+                </#if>
+            <#--为condition条件设置对应的值，isNull和isNotNull不需要设置-->
+                <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
+                <#elseif condition.operation == "Between">
+            if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin() && null!= ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax()){
+                countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Min",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMin());
+                countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}Max",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}BetweenValue().getMax());
+            }
+                <#elseif condition.operation == "In">
+            if(null!=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList() && ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList().size() >0){
+                countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}List",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}InList());
+            }
+                <#elseif condition.operation == "Like">
+            if(null !=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()){
+                countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}","%"+${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()+"%");
+            }
+                <#else>
+            if(null !=${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}()){
+                countQuery.setParameter("${entityName ?uncap_first}${fieldName ?cap_first}",${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.get${entityName}${fieldName ?cap_first}());
+            }
+                </#if>
+            </#list>
+        </#list>
+            Long totalRecords = (Long)countQuery.getResultList().get(0);
+            pageModel.setTotalRecords(totalRecords);
+            Long totalPage;
+            if(totalRecords % ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize()==0){
+                totalPage = totalRecords/${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize();
+            }else{
+                totalPage = totalRecords/${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize()+1;
+            }
+            pageModel.setTotalPage(totalPage);
+            pageModel.setCurrentPage(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage());
+            pageModel.setPageSize(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
+        }
+        <#if isReturnObject == false>
+        <#--对结果map进行遍历-->
+            <#assign searchResultMap = constructSearchMethodUtil.extractResult(method.searchResults)>
+        List<Map> list = query.getResultList();
+        List<${entity.name}$${method.methodName ?cap_first}ResultWrapper> resultList2 = new ArrayList<>();
+        for(Map map:list){
+            ${entity.name}$${method.methodName ?cap_first}ResultWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ResultWrapper= new ${entity.name}$${method.methodName ?cap_first}ResultWrapper();
+        <#--开始设置结果-->
+            <#list searchResultMap ?keys as key>
+            <#--获取到实体名-->
+                <#assign entityName = searchDBUtil.getEntityName(key)>
+                <#list searchResultMap[key] as result>
+                <#--获取结果对应的类型-->
+                    <#if result.field?exists>
+                        <#assign fieldType = result.field.dataType>
+                        <#assign fieldName = result.field.name>
+                    <#else>
+                        <#assign fieldName = result.fieldName ?split("_")[1]>
+                        <#if fieldName == "id">
+                            <#assign fieldType = entityIdType>
+                        <#else>
+                            <#assign fieldType = "Date">
+                        </#if>
+                    </#if>
+                    ${entity.name ?uncap_first}$${method.methodName ?cap_first}ResultWrapper.set${entityName}${fieldName ?cap_first}((${fieldType})map.get("${entityName ?uncap_first}${fieldName ?cap_first}"));
+                </#list>
+
+            </#list>
+            resultList2.add(${entity.name ?uncap_first}$${method.methodName ?cap_first}ResultWrapper);
+        }
+        pageModel.setResults(resultList2);
+        <#else >
+        List<${resultType}> resultList2 = query.getResultList();
+        pageModel.setResults(resultList2);
+        </#if>
+        return pageModel;
+    }
+    </#if>
     </#list>
 
     <#--处理实体之间的关系-->

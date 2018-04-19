@@ -49,7 +49,7 @@ private ${relationShip.otherEntity.name}Service ${relationShip.otherEntity.name 
 @Autowired
 private ${entity.name}MethodIntercept ${entity.name ?uncap_first}MethodIntercept;
 
-@ApiOperation(value = "保存实体,不包括相关联实体")
+@ApiOperation(value = "✿自动生成✿->保存实体,不包括相关联实体")
 @PostMapping("/doSave")
 @ResponseBody
 public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -65,7 +65,7 @@ public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first
     }
 }
 
-@ApiOperation(value = "更新实体,不包括相关联实体")
+@ApiOperation(value = "✿自动生成✿->更新实体,不包括相关联实体")
 @PostMapping("/doUpdate")
 @ResponseBody
 public ResultWrapper update(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -81,7 +81,7 @@ public ResultWrapper update(@RequestBody ${entity.name} ${entity.name ?uncap_fir
     }
 }
 <#if (entity.mainEntityRelationShips ?size >0)>
-@ApiOperation(value = "保存，包括相关关联实体")
+@ApiOperation(value = "✿自动生成✿->保存，包括相关关联实体")
 @PostMapping("/doSaveWithRelated")
 @ResponseBody
 public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -98,7 +98,7 @@ public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?
     }
 }
 
-@ApiOperation(value = "更新,包括相关联实体")
+@ApiOperation(value = "✿自动生成✿->更新,包括相关联实体")
 @PostMapping("/doUpdateWithRelated")
 @ResponseBody
 public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -115,7 +115,7 @@ public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name
     }
 }
 
-@ApiOperation(value = "获取带有关系的数据，需要的关系指定true")
+@ApiOperation(value = "✿自动生成✿->获取带有关系的数据，需要的关系指定true")
 @PostMapping("/findOneWithRelationObj")
 @ResponseBody
 public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation ${entity.name ?uncap_first}Relation){
@@ -132,7 +132,7 @@ public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation
 }
 </#if>
 
-@ApiOperation(value = "保存自己分配id的实体,忽略关联实体")
+@ApiOperation(value = "✿自动生成✿->保存自己分配id的实体,忽略关联实体")
 @PostMapping("/saveWithAssignedId")
 @ResponseBody
 public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -161,7 +161,7 @@ public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.nam
     }
 }
 
-@ApiOperation(value = "根据id查找")
+@ApiOperation(value = "✿自动生成✿->根据id查找")
 @GetMapping("/findOne/{id}")
 @ResponseBody
 public ResultWrapper findOneById(@PathVariable("id") ${entityIdType} id){
@@ -190,8 +190,9 @@ public ResultWrapper deleteById(@PathVariable("id") ${entityIdType} id){
 
 <#--页面配置生成的方法-->
 <#list entity.methods as method>
+    <#assign isDynamicSearch=method.isDynamicSearch !false>
     <#if ((method.isInterface !?exists)||(method.isInterface ?exists &&method.isInterface ?boolean))>
-@ApiOperation(value = "${method.description}")
+@ApiOperation(value = "✿自动生成✿->${method.description}                <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>")
 @PostMapping("/${method.methodName}")
 @ResponseBody
 public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
@@ -216,7 +217,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
 <#else>
     <#if relationShip.relationType == "OneToMany" || relationShip.relationType == "ManyToMany">
     //增加与${relationShip.otherEntity.name}的关系
-    @ApiOperation(value = "关联${relationShip.otherEntity.name},只需要传入id即可")
+    @ApiOperation(value = "✿自动生成✿->关联${relationShip.otherEntity.name},只需要传入id即可")
     @PostMapping("/add${relationShip.otherEntity.name}")
     @ResponseBody
     public ResultWrapper add${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -224,7 +225,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
         return getSuccessResult(result);
     }
     //解除与${relationShip.otherEntity.name}的关系
-    @ApiOperation(value = "解除关联${relationShip.otherEntity.name},只需要传入id即可")
+    @ApiOperation(value = "✿自动生成✿->解除关联${relationShip.otherEntity.name},只需要传入id即可")
     @PostMapping("/remove${relationShip.otherEntity.name}")
     @ResponseBody
     public ResultWrapper remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -232,7 +233,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
         return getSuccessResult(result);
     }
     <#elseif relationShip.relationType == "ManyToOne" ||relationShip.relationType == "OneToOne">
-    @ApiOperation(value = "设置${relationShip.otherEntity.name}关系,只需要传入id即可")
+    @ApiOperation(value = "✿自动生成✿->设置${relationShip.otherEntity.name}关系,只需要传入id即可")
     @PostMapping("/set${relationShip.otherEntity.name}")
     @ResponseBody
     public ResultWrapper set${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
@@ -240,7 +241,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
         return getSuccessResult(result);
     }
 
-    @ApiOperation(value = "取消${relationShip.otherEntity.name}关系,只需要传入id即可")
+    @ApiOperation(value = "✿自动生成✿->取消${relationShip.otherEntity.name}关系,只需要传入id即可")
     @PostMapping("/remove${relationShip.otherEntity.name}")
     @ResponseBody
     public  ResultWrapper remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
