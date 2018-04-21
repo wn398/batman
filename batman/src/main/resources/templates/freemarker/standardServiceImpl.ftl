@@ -544,7 +544,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         <#assign resultType = entity.name+'$'+method.methodName ?cap_first +'ResultWrapper'>
     </#if>
     <#if isDynamicSearch>
-    //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>
+    //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if><#if isReturnObject>[主对象]<#else>[字段包装]</#if>
     public PageModel<${resultType}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
         <#--定义分页包装结果-->
         PageModel<${resultType}> pageModel = new PageModel();
@@ -572,7 +572,10 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         String basicJpql = "${basicJpql}";
         if(dynamicConditionHql.trim().equals("")){
             if(basicJpql.trim().endsWith("where")){
-                basicJpql = basicJpql.substring(0,basicJpql.indexOf("where"));
+                basicJpql = basicJpql.substring(0,basicJpql.trim().length()-5);
+            }
+            if(basicJpql.trim().endsWith("and")){
+                basicJpql = basicJpql.substring(0,basicJpql.trim().length()-3);
             }
         }
         Query query = entityManager.createQuery(basicJpql+dynamicConditionHql+orderByHql);
@@ -630,7 +633,10 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         String basicCountHql = "${baicCountHql}";
         if(dynamicConditionHql.trim().equals("")){
             if(basicCountHql.trim().endsWith("where")){
-                basicCountHql = basicCountHql.substring(0,basicCountHql.indexOf("where"));
+                basicCountHql = basicCountHql.substring(0,basicCountHql.trim().length()-5);
+            }
+            if(basicCountHql.trim().endsWith("and")){
+                basicCountHql = basicCountHql.substring(0,basicCountHql.trim().length()-3);
             }
         }
             Query countQuery = entityManager.createQuery(basicCountHql+dynamicConditionHql);
@@ -729,7 +735,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     <#--非动态查询------------------------------------------------------------------------------------------->
     <#else>
-     //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>
+     //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if><#if isReturnObject>[主对象]<#else>[字段包装]</#if>
     public PageModel<${resultType}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
     <#--定义分页包装结果-->
         PageModel<${resultType}> pageModel = new PageModel();

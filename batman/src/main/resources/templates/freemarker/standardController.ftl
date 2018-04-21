@@ -191,8 +191,9 @@ public ResultWrapper deleteById(@PathVariable("id") ${entityIdType} id){
 <#--页面配置生成的方法-->
 <#list entity.methods as method>
     <#assign isDynamicSearch=method.isDynamicSearch !false>
+    <#assign isReturnObject=method.isReturnObject !false>
     <#if ((method.isInterface !?exists)||(method.isInterface ?exists &&method.isInterface ?boolean))>
-@ApiOperation(value = "✿自动生成✿->${method.description}                <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>")
+@ApiOperation(value = "✿自动生成✿->${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if><#if isReturnObject>[主对象]<#else>[字段包装]</#if>")
 @PostMapping("/${method.methodName}")
 @ResponseBody
 public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
