@@ -248,6 +248,11 @@ public class ConstructSearchMethodUtil {
                 select.append(unCapOtherEntityName).append(".").append(fieldName).append(" as ").append(unCapOtherEntityName).append(StringUtil.capFirst(fieldName)).append(",");
             }
 
+            if(null==entry.getValue()||entry.getValue().size()==0){
+                //如果没有查询结果，默认使用主对象
+                return getObjectSelectFrom(method,mainEntity);
+            }
+
         }
 
         String selectStr = select.toString().substring(0,select.toString().length()-1);
@@ -350,13 +355,12 @@ public class ConstructSearchMethodUtil {
     //构建返回字段类型结果包装类的jpQl, 全条件传递
     public static String constructFullFieldsJPQL(SearchMethod searchMethod,Entities mainEntity){
         String selectFrom = getSelectFrom(searchMethod,mainEntity);
+        String basicWhere = getBasicWhereStr(searchMethod,mainEntity);
         String where = getWhere(searchMethod);
         String orderBy = getOrderBy(searchMethod,mainEntity);
-        if(!selectFrom.contains("where")){
-            where = " where "+where;
-        }
+
         //组合结果
-        StringBuilder resultSb = new StringBuilder(selectFrom).append(where).append(orderBy);
+        StringBuilder resultSb = new StringBuilder(selectFrom).append(basicWhere).append(where).append(orderBy);
 
         return resultSb.toString();
     }
@@ -364,13 +368,11 @@ public class ConstructSearchMethodUtil {
     //构建返回主对象类型结果包装类的jpql,全条件传递
     public static String constructFullObjectJPQL(SearchMethod searchMethod,Entities mainEntity){
         String selectFrom = getObjectSelectFrom(searchMethod,mainEntity);
+        String basicWhere = getBasicWhereStr(searchMethod,mainEntity);
         String where = getWhere(searchMethod);
         String orderBy = getOrderBy(searchMethod,mainEntity);
-        if(!selectFrom.contains("where")){
-            where = " where "+where;
-        }
         //组合结果
-        StringBuilder resultSb = new StringBuilder(selectFrom).append(where).append(orderBy);
+        StringBuilder resultSb = new StringBuilder(selectFrom).append(basicWhere).append(where).append(orderBy);
 
         return resultSb.toString();
     }

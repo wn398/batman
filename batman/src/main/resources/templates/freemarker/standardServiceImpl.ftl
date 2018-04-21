@@ -538,10 +538,10 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#--赋值是否动态查询-->
     <#assign isDynamicSearch=method.isDynamicSearch !false>
         <#--如果方法定义返回不是对象类型，返回为字段类型，则用JPQL查询-->
-    <#if isReturnObject==false>
-        <#assign resultType = entity.name+'$'+method.methodName ?cap_first +'ResultWrapper'>
-    <#else>
+    <#if isReturnObject>
         <#assign resultType = entity.name>
+    <#else>
+        <#assign resultType = entity.name+'$'+method.methodName ?cap_first +'ResultWrapper'>
     </#if>
     <#if isDynamicSearch>
     //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if>
@@ -564,10 +564,10 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         List<SearchMethodResultModel> resultList = ((List<JSONObject>)JSONArray.parse(orderByJSON)).parallelStream().map(it->JSONObject.toJavaObject(it,SearchMethodResultModel.class)).collect(Collectors.toList());
         String orderByHql = SearchMethodUtil.getOrderByStr(resultList);
         <#--按查询字段结果，按实体分组，构建查询字段-->
-        <#if isReturnObject==false>
-            <#assign basicJpql = constructSearchMethodUtil.constructBasicJPQL(method,entity)>
-        <#else>
+        <#if isReturnObject>
             <#assign basicJpql = constructSearchMethodUtil.constructObjectJPQL(method,entity)>
+        <#else>
+            <#assign basicJpql = constructSearchMethodUtil.constructBasicJPQL(method,entity)>
         </#if>
         String basicJpql = "${basicJpql}";
         if(dynamicConditionHql.trim().equals("")){
@@ -690,7 +690,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             pageModel.setCurrentPage(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage());
             pageModel.setPageSize(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
         }
-        <#if isReturnObject == false>
+        <#if !isReturnObject>
         <#--对结果map进行遍历-->
         <#assign searchResultMap = constructSearchMethodUtil.extractResult(method.searchResults)>
         List<Map> list = query.getResultList();
@@ -734,7 +734,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#--定义分页包装结果-->
         PageModel<${resultType}> pageModel = new PageModel();
     <#--按查询字段结果，按实体分组，构建查询字段-->
-        <#if isReturnObject==false>
+        <#if !isReturnObject>
             <#assign basicJpql = constructSearchMethodUtil.constructFullFieldsJPQL(method,entity)>
         <#else>
             <#assign basicJpql = constructSearchMethodUtil.constructFullObjectJPQL(method,entity)>
@@ -848,7 +848,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             pageModel.setCurrentPage(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getCurrentPage());
             pageModel.setPageSize(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper.getPageSize());
         }
-        <#if isReturnObject == false>
+        <#if !isReturnObject>
         <#--对结果map进行遍历-->
             <#assign searchResultMap = constructSearchMethodUtil.extractResult(method.searchResults)>
         List<Map> list = query.getResultList();

@@ -34,6 +34,7 @@ $(document).ready(function () {
             {"data": "methodName"},
             {"data": "description"},
             {"data": "isInterface"},
+            {"data": "isDynamicSearch"},
             {"data": "isReturnObject"},
             {"data": "createDate"},
             {"data": "updateDate"},
