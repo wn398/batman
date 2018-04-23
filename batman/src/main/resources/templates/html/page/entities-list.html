@@ -24,7 +24,9 @@
                                 <th>实体名称</th>
                                 <th>实体描述</th>
                                 <th>所属模块</th>
-                                <!--<th>关联数目</th>-->
+                                <th>表关联</th>
+                                <th>字段关联</th>
+                                <th>方法个数</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
                                 <th>版本号</th>
@@ -36,7 +38,9 @@
                                     <td th:text="${entity.name}"></td>
                                     <td th:text="${entity.description}"></td>
                                     <td th:text="${entity.module.name}"></td>
-                                    <!--<td th:text="${#lists.size(entity.mainEntityRelationShips)}"></td>-->
+                                    <td th:text="${#lists.size(entity.mainEntityRelationShips)}"></td>
+                                    <td th:text="${#lists.size(entity.mainFieldRelationShips)}"></td>
+                                    <td th:text="${#lists.size(entity.methods)}"></td>
                                     <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd')}"></td>
                                     <td th:text="${#dates.format(entity.updateDate, 'yyyy-MM-dd')}"></td>
                                     <td th:text="${entity.version}"></td>
