@@ -4,6 +4,7 @@ import com.rayleigh.batman.model.Project;
 import com.rayleigh.core.service.BaseService;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,4 +28,6 @@ public interface ProjectService extends BaseService {
     void testListSql();
 
     List<Project> findByUserId(String userId);
+
+    Date getMaxUpdateDate(Project project);
 }

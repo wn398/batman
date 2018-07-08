@@ -4,6 +4,8 @@ import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.MappingDirection;
 import com.rayleigh.core.enums.RelationType;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
@@ -11,6 +13,8 @@ import javax.persistence.*;
  * Created by wangn20 on 2017/6/14.
  * 表关联关系，两张表之间的关系
  */
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_relationship")
 public class RelationShip extends BaseModel {

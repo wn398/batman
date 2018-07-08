@@ -1,19 +1,27 @@
 package com.rayleigh.batman.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by wangn20 on 2017/6/13.
  */
+@DynamicInsert
+@DynamicUpdate
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_entity")
 public class Entities extends BaseModel {
@@ -37,6 +45,13 @@ public class Entities extends BaseModel {
     @FieldInfo("是否启用表名前辍")
     @Column
     private Boolean addPrefix;
+
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    @FieldInfo("层级更新日期,主要用于标示下面属性变化")
+    private Date hierachyDate;
     /**
      * 双向一对多，多对一
      */
@@ -187,5 +202,18 @@ public class Entities extends BaseModel {
 
     public void setAddPrefix(Boolean addPrefix) {
         this.addPrefix = addPrefix;
+    }
+
+    public Date getHierachyDate() {
+        if(null!=hierachyDate) {
+            return (Date)hierachyDate.clone();
+        }
+        else{
+            return null;
+        }
+    }
+
+    public void setHierachyDate(Date hierachyDate) {
+        this.hierachyDate = hierachyDate;
     }
 }

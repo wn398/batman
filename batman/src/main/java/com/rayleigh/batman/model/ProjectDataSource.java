@@ -3,12 +3,15 @@ package com.rayleigh.batman.model;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.DataBaseType;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-
+@DynamicInsert
+@DynamicUpdate
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_project_data_source")
 public class ProjectDataSource extends BaseModel{

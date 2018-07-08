@@ -2,12 +2,15 @@ package com.rayleigh.batman;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +40,11 @@ public class Test {
 //        list.add("e");
 //        System.out.println(list.subList(0,3).parallelStream().collect(Collectors.joining(",")));
 
-        InetAddress inetAddress = getLocalHostLANAddress();
-        System.out.println(inetAddress.getHostAddress());
+//        InetAddress inetAddress = getLocalHostLANAddress();
+//        System.out.println(inetAddress.getHostAddress());\
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date date = dateFormat.parse("1970-01-01 08:00:00");
+        System.out.println(date.getTime());
     }
 
 
@@ -118,5 +124,13 @@ public class Test {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static void test22(){
+
+        File file = new File("C:\\Users\\wangn20\\Desktop\\王宁.doc");
+        System.out.println(new Date(file.lastModified()));
+
     }
 }

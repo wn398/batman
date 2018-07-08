@@ -6,6 +6,7 @@ import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,5 +30,10 @@ public class ModuleServiceImpl implements ModuleService {
     @Override
     public Module findOne(String id) {
         return moduleRepository.findOne(id);
+    }
+
+    @Override
+    public Date getMaxModuleHierachyDate(String moduleId) {
+        return moduleRepository.getMaxModuleHierachyDate(moduleId);
     }
 }

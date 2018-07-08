@@ -18,7 +18,7 @@ import ${project.packageName}.standard.util.${entity.name}Util;
 import ${project.packageName}.standard.methodIntercept.${entity.name}MethodIntercept;
 import org.springframework.stereotype.Component;
 @Component
-public class ${entity.name}MethodInterceptImpl implements ${entity.name}MethodIntercept {
+public class ${entity.name}MethodInterceptImpl extends ${entity.name}MethodIntercept {
     public ResultWrapper saveBefore(${entity.name} ${entity.name ?uncap_first}){
         //do something of validation
         return getSuccessResultWrapper(${entity.name ?uncap_first});

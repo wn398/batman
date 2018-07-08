@@ -1,20 +1,27 @@
 package com.rayleigh.batman.model;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 /**
  * Created by wangn20 on 2017/6/13.
  */
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_project")
 public class Project extends BaseModel {
@@ -42,6 +49,13 @@ public class Project extends BaseModel {
     @FieldInfo("数据源加密")
     @Column
     private Boolean isEncodeDataSource;
+
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column
+    @FieldInfo("层级更新日期,主要用于标示下面属性变化")
+    private Date hierachyDate;
 
     @Valid
     @OneToMany(mappedBy = "project",cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},fetch = FetchType.LAZY,orphanRemoval = true)
@@ -141,5 +155,17 @@ public class Project extends BaseModel {
 
     public void setIsEncodeDataSource(Boolean encodeDataSource) {
         this.isEncodeDataSource = encodeDataSource;
+    }
+
+    public Date getHierachyDate() {
+        if(null!=hierachyDate) {
+            return (Date)hierachyDate.clone();
+        }else{
+            return null;
+        }
+    }
+
+    public void setHierachyDate(Date hierachyDate) {
+        this.hierachyDate = hierachyDate;
     }
 }

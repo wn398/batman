@@ -37,7 +37,7 @@ $(document).ready(function () {
             {"data": "description"},
             {"data": "packageName"},
             {"data": "createDate"},
-            {"data": "updateDate"},
+            {"data": "hierachyDate"},
             {"data": "version"},
             {
                 "data": function (e) {//这里给最后一列返回一个操作列表 e是得到的json数组中的一个item ，可以用于控制标签的属性。

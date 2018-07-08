@@ -1,5 +1,6 @@
 package com.rayleigh.batman.filter;
 
+import com.rayleigh.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -10,16 +11,29 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 @WebFilter(filterName = "loginFilter",urlPatterns = "/*")
 public class LoginFilter extends OncePerRequestFilter {
     private static Logger logger = LoggerFactory.getLogger(LoginFilter.class);
+    private static List<String> loginUrlList;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String uri = request.getRequestURI();
         if(uri.contains("/css")||uri.contains("/js")||uri.contains("/fonts")||uri.contains("/images")||uri.contains("/pageJs")||uri.contains("codeGeneratorCtl")){
             filterChain.doFilter(request,response);
             return;
+        }
+        if(null==loginUrlList){
+            loadRepeatUrl();
+        }
+        for(String str:loginUrlList){
+            if(uri.contains(str)){
+                filterChain.doFilter(request,response);
+                return;
+            }
         }
 
         String userId = (String)request.getSession().getAttribute("userId");
@@ -48,6 +62,30 @@ public class LoginFilter extends OncePerRequestFilter {
         }else{
             filterChain.doFilter(request,response);
             return;
+        }
+    }
+
+
+
+    private synchronized void loadRepeatUrl(){
+        logger.info("初始化loginExclude");
+        if(null==loginUrlList){
+            loginUrlList = new ArrayList<>();
+        }else{
+            return;
+        }
+        Properties properties = new Properties();
+        try{
+            properties.load(getClass().getResourceAsStream("/loginExclude.properties"));
+            String urls = properties.getProperty("exclude.urls");
+            for(String url:urls.split(",")){
+                if(!StringUtil.isEmpty(url)){
+                    loginUrlList.add(url);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("加载loginExclude出错!");
         }
     }
 }

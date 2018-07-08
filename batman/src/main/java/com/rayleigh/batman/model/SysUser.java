@@ -2,6 +2,8 @@ package com.rayleigh.batman.model;
 
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +18,8 @@ import java.util.Set;
 /**
  * Created by wangn20 on 2017/6/13.
  */
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_sys_user")
 public class SysUser extends BaseModel {

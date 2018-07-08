@@ -3,6 +3,8 @@ package com.rayleigh.batman.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -15,6 +17,8 @@ import java.util.Set;
 /**
  * Created by wangn20 on 2017/6/13.
  */
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_module")
 public class Module extends BaseModel {

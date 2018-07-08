@@ -65,6 +65,9 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 </#if>
 
     public ${entity.name} save(${entity.name} ${entity.name ?uncap_first}){
+        if(null!=${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null!=${entity.name ?uncap_first}.getVersion()</#if>){
+            throw new RuntimeException("保存实体id或version必须为空!");
+        }
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first});
     }
 

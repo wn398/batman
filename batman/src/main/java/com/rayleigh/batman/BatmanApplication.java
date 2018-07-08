@@ -12,11 +12,13 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(scanBasePackages = {"com.rayleigh"})
 @ServletComponentScan("com.rayleigh")
 @EnableCustomRepository
 @EnableDynamicDataSource
+@EnableAsync
 public class BatmanApplication  extends SpringBootServletInitializer{
 
 	@Override

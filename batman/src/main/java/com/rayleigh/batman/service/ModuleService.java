@@ -3,6 +3,7 @@ package com.rayleigh.batman.service;
 import com.rayleigh.batman.model.Module;
 import com.rayleigh.core.service.BaseService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,4 +15,6 @@ public interface ModuleService extends BaseService {
     void deleteById(String id);
 
     Module findOne(String id);
+
+    Date getMaxModuleHierachyDate(String moduleId);
 }

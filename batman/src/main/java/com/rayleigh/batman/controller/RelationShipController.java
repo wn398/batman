@@ -130,6 +130,21 @@ public class RelationShipController extends BaseController {
                 return getFailureResultAndInfo(relationShipMap, e.getMessage());
             }
         }
+
+        List<Entities> needEntity = new ArrayList<>();
+        list3.parallelStream().forEach(it -> {
+            needEntity.add(it.getMainEntity());
+            needEntity.add(it.getOtherEntity());
+        });
+        list4.parallelStream().forEach(it -> {
+            needEntity.add(it.getMainEntity());
+            needEntity.add(it.getOtherEntity());
+        });
+        needEntity.parallelStream().forEach(it -> {
+            it.setHierachyDate(new Date());
+            entityService.update(it);
+        });
+
         relationShipService.saveRelationShipListAndFieldRelationShip(list3,list4);
 
         return getSuccessResult("保存成功!");
@@ -189,6 +204,13 @@ public class RelationShipController extends BaseController {
                         relationShipService.delete(relationShip.getId());
                 }
             }
+            Entities entities = entityService.findOne(mainEntityId);
+            entities.setHierachyDate(new Date());
+            Entities otherEntity = entityService.findOne(otherEntityId);
+            entities.setHierachyDate(new Date());
+            entityService.update(entities);
+            entityService.update(otherEntity);
+            
             return getSuccessResult("success");
         }else{
             return getFailureResultAndInfo(null,"所传id或mainEntityId或otherEntityId为空!");

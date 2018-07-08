@@ -34,10 +34,11 @@
                                     <td th:text="${#lists.size(project.modules)}"></td>
                                     <td th:text="${#lists.size(project.entities)}"></td>
                                     <td th:text="${project.createDate}"></td>
-                                    <td th:text="${project.updateDate}"></td>
+                                    <td th:text="${project.hierachyDate}"></td>
                                     <td th:text="${project.version}"></td>
                                     <td>
                                         <a class="btn btn-success btn-xs" th:href="@{'/codeGeneratorCtl/generateProject/'+${project.id}}">下载代码</a>
+                                        <a class="btn btn-success btn-xs" th:href="@{'/codeGeneratorCtl/generateProjectWithStandJar/'+${project.id}}">下载代码2</a>
                                     </td>
                                 </tr>
                             </tbody>

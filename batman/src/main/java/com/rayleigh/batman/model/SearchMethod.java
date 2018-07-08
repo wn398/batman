@@ -2,13 +2,16 @@ package com.rayleigh.batman.model;
 
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.engine.internal.Cascade;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_search_method")
 public class SearchMethod extends BaseModel{
@@ -36,7 +39,7 @@ public class SearchMethod extends BaseModel{
 
     @FieldInfo("所对应的查询条件")
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "searchMethod",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE},orphanRemoval = true)
-    private List<SearchCondition> conditionList;
+    private List<SearchCondition> searchConditions;
 
     @FieldInfo("哪个实体上的查询方法")
     @ManyToOne
@@ -57,14 +60,14 @@ public class SearchMethod extends BaseModel{
     }
 
     public List<SearchCondition> getConditionList() {
-        return conditionList;
+        return searchConditions;
     }
 
-    public void setConditionList(List<SearchCondition> conditionList) {
-        if(null !=conditionList){
-            conditionList.parallelStream().forEach(condition->condition.setSearchMethod(this));
+    public void setConditionList(List<SearchCondition> searchConditions) {
+        if(null !=searchConditions){
+            searchConditions.parallelStream().forEach(condition->condition.setSearchMethod(this));
         }
-        this.conditionList = conditionList;
+        this.searchConditions = searchConditions;
     }
 
     public Entities getEntities() {

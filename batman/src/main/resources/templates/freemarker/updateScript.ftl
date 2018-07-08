@@ -25,9 +25,11 @@ echo "$s"
 rm -rf "$s/src/main/java/${project.packageName ?replace(".","/")}/standard"
 done
 
-curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectStandard/$projectId -o ${project.name}_standard.zip
+#curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectStandard/$projectId -o ${project.name}_standard.zip
 
-unzip ${project.name}_standard.zip
+#unzip ${project.name}_standard.zip
+
+curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectStandardJar/$projectId
 
 rm -rf ${project.name}_standard.zip
 

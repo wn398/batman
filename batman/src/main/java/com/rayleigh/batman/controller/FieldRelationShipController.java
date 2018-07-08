@@ -85,6 +85,17 @@ public class FieldRelationShipController extends BaseController {
                     fieldRelationShipService.delete(relationShip.getId());
                 }
             }
+            //更新hierachyDate
+            Entities mainEntity = new Entities();
+            mainEntity.setId(mainEntityId);
+            mainEntity.setHierachyDate(new Date());
+            entityService.update(mainEntity);
+
+            Entities otherEntity = new Entities();
+            otherEntity.setId(otherEntityId);
+            otherEntity.setHierachyDate(new Date());
+            entityService.update(otherEntity);
+
             return getSuccessResult("success");
         }else{
             return getFailureResultAndInfo(null,"所传id或mainEntityId或otherEntityId为空!");

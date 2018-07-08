@@ -42,7 +42,7 @@
                                     <td th:text="${#lists.size(entity.mainFieldRelationShips)}"></td>
                                     <td th:text="${#lists.size(entity.methods)}"></td>
                                     <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd')}"></td>
-                                    <td th:text="${#dates.format(entity.updateDate, 'yyyy-MM-dd')}"></td>
+                                    <td th:text="${#dates.format(entity.hierachyDate, 'yyyy-MM-dd')}"></td>
                                     <td th:text="${entity.version}"></td>
                                     <td>
                                         <a class="btn btn-success btn-xs" th:onclick="|showUpdate('${entity.id}',this,'${project.id}')|">更新</a>

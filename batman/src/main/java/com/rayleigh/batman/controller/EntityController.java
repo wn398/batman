@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class EntityController extends BaseController{
         }
 
         Entities resultEntities = (Entities) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
-
+        resultEntities.setHierachyDate(new Date());
         Entities entities1 = entityService.save(resultEntities);
         BaseModelUtil.preventMutualRef(entities1,new ArrayList());
 
@@ -118,7 +119,7 @@ public class EntityController extends BaseController{
                     return getFailureResultAndInfo(null,"不能修改主键类型，存在关联外键!");
                 }
             }
-
+            entities.setHierachyDate(new Date());
             Entities entities1 = entityService.partUpdate(entities);
             //entities1 = preventCirculation(entities1);
             BaseModelUtil.preventMutualRef(entities1,new ArrayList());

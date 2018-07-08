@@ -5,10 +5,13 @@ import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.OrderBy;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.SearchMethodResultModel;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_search_result")
 public class SearchResult extends BaseModel{

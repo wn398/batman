@@ -4,6 +4,8 @@ import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.StringUtil;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/6/12.
  */
+@DynamicInsert
+@DynamicUpdate
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_field")
 public class Field extends BaseModel{

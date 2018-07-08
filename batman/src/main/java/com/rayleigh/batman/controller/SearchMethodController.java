@@ -79,6 +79,9 @@ public class SearchMethodController extends BaseController {
             searchMethod.setSearchResults(realResultList);
             SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
+            Entities entities =searchMethod1.getEntities();
+            entities.setHierachyDate(new Date());
+            entityService.update(entities);
             //BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
             return getSuccessResult("添加成功!");
         } else {
@@ -90,6 +93,11 @@ public class SearchMethodController extends BaseController {
     @ResponseBody
     public ResultWrapper deleteById(@PathVariable String id) {
         try {
+            SearchMethod searchMethod = searchMethodService.findOne(id);
+            Entities entities = searchMethod.getEntities();
+            entities.setHierachyDate(new Date());
+            entityService.update(entities);
+
             searchMethodService.delete(id);
             return getSuccessResult("success!");
         } catch (Exception e) {
@@ -301,6 +309,9 @@ public class SearchMethodController extends BaseController {
             searchMethod.setSearchResults(realResultList);
             SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
+            Entities entities = searchMethod1.getEntities();
+            entities.setHierachyDate(new Date());
+            entityService.update(entities);
             BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
             return getSuccessResult(searchMethod1);
         } else {

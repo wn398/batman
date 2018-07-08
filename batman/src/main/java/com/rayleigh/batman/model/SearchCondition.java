@@ -7,11 +7,14 @@ import com.rayleigh.core.enums.Operation;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.SearchMethodConditionModel;
 import com.rayleigh.core.util.StringUtil;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "batman_search_condition")
 public class SearchCondition extends BaseModel{

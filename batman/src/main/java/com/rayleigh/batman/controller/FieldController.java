@@ -2,6 +2,7 @@ package com.rayleigh.batman.controller;
 
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
+import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.FieldService;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.ResultWrapper;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,12 +26,19 @@ import java.util.List;
 public class FieldController extends BaseController {
     @Autowired
     private FieldService fieldService;
+    @Autowired
+    private EntityService entityService;
 
     @RequestMapping(value = "/delById")
     @ResponseBody
     public ResultWrapper deleteById(@RequestBody Field field){
         if(null!=field&& !StringUtil.isEmpty(field.getId())){
             try {
+                //更新层级时间
+                Field field2 = fieldService.findOne(field.getId());
+                Entities entities = field2.getEntities();
+                entities.setHierachyDate(new Date());
+                entityService.update(entities);
                 fieldService.deleteById(field.getId());
 
             }catch (Exception e ){

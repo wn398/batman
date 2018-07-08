@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -78,6 +79,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> findByUserId(String userId) {
         return projectRepository.findByUserId(userId);
+    }
+
+    @Override
+    public Date getMaxUpdateDate(Project project) {
+        return null;
     }
 
 
