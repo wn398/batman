@@ -40,8 +40,10 @@ public class ${entity.name} extends BasicModel{
 <#--生成普通属性-->
 <#list entity.fields as field>
     <#assign fieldName = field.name>
+    <#assign fieldType = field.dataType>
 <#if fieldName == "id">
 <#--处理id,createDate,updateDate,version特殊字段开始-->
+    <#if fieldType == 'String'>
 @Id
 @GeneratedValue(generator = "hibernate-uuid")
 @GenericGenerator(name = "hibernate-uuid", strategy = "org.hibernate.id.UUIDGenerator")
@@ -49,7 +51,13 @@ public class ${entity.name} extends BasicModel{
 @Column(length = 48,nullable = false)
 @Size(max=48, min=1, message = "主键ID 长度必须大于等于1且小于等于48")
 public String id;
-    <#elseif fieldName == "createDate">
+    <#else>
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+@FieldInfo("主键")
+public Long id;
+    </#if>
+<#elseif fieldName == "createDate">
 @FieldInfo("创建时间")
 @ApiModelProperty(hidden=true)
 @CreatedDate

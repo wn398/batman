@@ -86,13 +86,11 @@ public class FieldRelationShipController extends BaseController {
                 }
             }
             //更新hierachyDate
-            Entities mainEntity = new Entities();
-            mainEntity.setId(mainEntityId);
+            Entities mainEntity = entityService.findOne(mainEntityId);
             mainEntity.setHierachyDate(new Date());
             entityService.update(mainEntity);
 
-            Entities otherEntity = new Entities();
-            otherEntity.setId(otherEntityId);
+            Entities otherEntity = entityService.findOne(otherEntityId);
             otherEntity.setHierachyDate(new Date());
             entityService.update(otherEntity);
 

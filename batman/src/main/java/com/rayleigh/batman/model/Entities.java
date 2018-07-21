@@ -20,10 +20,11 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/6/13.
  */
-@DynamicInsert
-@DynamicUpdate
+
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_entity")
+@DynamicInsert
+@DynamicUpdate
 public class Entities extends BaseModel {
 
     @FieldInfo("实体名字")

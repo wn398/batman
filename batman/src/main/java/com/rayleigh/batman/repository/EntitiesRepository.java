@@ -30,5 +30,6 @@ public interface EntitiesRepository extends CustomRepository<Entities, String> {
     //查询实体类字段关联关系的所有更新时间
     @Query("select new List(max(field.updateDate),max(relation.updateDate),max(entity.updateDate)) from Entities entity,FieldRelationShip relation,Field field where relation.mainEntity.id=:entityId and entity.id = relation.otherEntity.id and (field.id = relation.mainField.id or field.id = relation.otherField.id)")
     List<List<Date>> getMaxFieldRelationShipUpdateDateByEntityId(@Param("entityId") String entityId);
+
 }
 

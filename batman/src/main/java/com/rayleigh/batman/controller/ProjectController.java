@@ -65,9 +65,9 @@ public class ProjectController extends BaseController{
             return getFailureResultAndInfo(null,"模块名不能重复");
         }
 
-        if(project.getProjectDataSources().size()==0){
-            return getFailureResultAndInfo(null,"请至少增加一个主数据源!");
-        }
+//        if(project.getProjectDataSources().size()==0){
+//            return getFailureResultAndInfo(null,"请至少增加一个主数据源!");
+//        }
         List<ProjectDataSource> list = project.getProjectDataSources();
         if(null!=list && list.size() >0) {
             Set<String> dataSourceName = new HashSet<>();

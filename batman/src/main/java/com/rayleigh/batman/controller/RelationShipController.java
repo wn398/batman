@@ -131,22 +131,31 @@ public class RelationShipController extends BaseController {
             }
         }
 
-        List<Entities> needEntity = new ArrayList<>();
-        list3.parallelStream().forEach(it -> {
-            needEntity.add(it.getMainEntity());
-            needEntity.add(it.getOtherEntity());
-        });
-        list4.parallelStream().forEach(it -> {
-            needEntity.add(it.getMainEntity());
-            needEntity.add(it.getOtherEntity());
-        });
-        needEntity.parallelStream().forEach(it -> {
-            it.setHierachyDate(new Date());
-            entityService.update(it);
-        });
 
         relationShipService.saveRelationShipListAndFieldRelationShip(list3,list4);
 
+        //增加有关联关系，同步更新到对应的实体上时间，下次生成代码时可以做相应的修改
+        Map<String,Entities> needEntity = new HashMap<>();
+        if(null!=list3&&list3.size()>0) {
+            list3.parallelStream().forEach(it -> {
+                needEntity.put(it.getMainEntity().getId(),it.getMainEntity());
+                needEntity.put(it.getOtherEntity().getId(),it.getOtherEntity());
+            });
+        }
+        //list4是字段关联
+        if(null!=list4&&list4.size()>0) {
+            list4.parallelStream().forEach(it -> {
+                needEntity.put(it.getMainEntity().getId(),it.getMainEntity());
+                needEntity.put(it.getOtherEntity().getId(),it.getOtherEntity());
+            });
+        }
+        if(null!=needEntity&&needEntity.size()>0) {
+            needEntity.values().parallelStream().forEach(it -> {
+                Entities entities = entityService.findOne(it.getId());
+                entities.setHierachyDate(new Date());
+                entityService.update(entities);
+            });
+        }
         return getSuccessResult("保存成功!");
     }
 

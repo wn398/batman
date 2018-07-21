@@ -87,7 +87,7 @@ public class CodeGeneratorController extends BaseController{
 
         Project project = projectService.findOne(projectId);
         for(Module module :project.getModules()){
-            codeGenerateService.produceModuleStandardJar(generatorBasePath,module.getId());
+            codeGenerateService.produceModuleStandardJar(generatorBasePath,module,project);
         }
     }
 
@@ -100,11 +100,64 @@ public class CodeGeneratorController extends BaseController{
         tempMap.put("port",request.getServerPort()+"");
         tempMap.put("root",request.getRequestURI().split("/")[1]);
         Module module = moduleService.findOne(moduleId);
+        Project project = module.getProject();
         //生成的每个项目生成对应目录
-        String basePath = new StringBuilder("/").append(module.getProject().getId()).toString();
+        String basePath = new StringBuilder("/").append(project.getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
 
-        codeGenerateService.produceModuleStandardJar(generatorBasePath,moduleId);
+        codeGenerateService.produceModuleStandardJar(generatorBasePath,module,project);
+
+    }
+
+    //生成某个module standard部分代码
+    @RequestMapping("/generateModuleStandard/{moduleId}")
+    public void generatorModuleStandard(HttpServletRequest request, HttpServletResponse response, @PathVariable("moduleId") String moduleId) {
+
+
+        String realPath = request.getServletContext().getRealPath("/");
+        tempMap.put("port",request.getServerPort()+"");
+        tempMap.put("root",request.getRequestURI().split("/")[1]);
+        Module module = moduleService.findOne(moduleId);
+        //生成的模块对应根目录
+        String basePath = new StringBuilder("/").append(module.getId()).toString();
+        String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
+
+        File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(module.getProject().getName()).append("/").append(module.getName()).toString());
+        File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(module.getProject().getName()).append("/").append(module.getName()).append("Standard").append(".zip").toString());
+
+        Date maxModuleDate = moduleService.getMaxModuleHierachyDate(moduleId);
+        if(targetFile.exists()){
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,module.getProject().getHierachyDate().getTime(),module.getUpdateDate().getTime(),maxModuleDate.getTime());
+            if(isGenerate){
+                logger.info(new StringBuilder("文件【").append(module.getName()).append("Standard.zip】存在，需要更新生成！").toString());
+                codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
+                FileCompressUtil.compress(sourceDir, targetFile);
+            }else{
+                logger.info(new StringBuilder("文件【").append(module.getName()).append("Standard.zip】存在，不需要更新生成！").toString());
+            }
+        }else{
+            logger.info(new StringBuilder("文件【").append(module.getName()).append("Standard.zip】不存在，生成！").toString());
+            codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
+            FileCompressUtil.compress(sourceDir, targetFile);
+        }
+
+        //FileCompressUtil.compress(sourceDir,targetFile);
+        try {
+            String fileName = new String(new StringBuilder(module.getName()).append("Standard").append(".zip").toString().getBytes("UTF-8"), "iso-8859-1");//为了解决中文名称乱码问题
+            response.reset();
+            response.addHeader("Content-Length", "" + targetFile.length());
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            try (OutputStream outputStream = response.getOutputStream(); InputStream in = new FileInputStream(targetFile);) {
+                int len = 0;
+                byte[] buf = new byte[1024];
+                while ((len = in.read(buf, 0, 1024)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 

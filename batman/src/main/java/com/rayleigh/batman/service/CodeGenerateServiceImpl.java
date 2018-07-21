@@ -28,6 +28,8 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     private Configuration configuration;
     @Autowired
     private ModuleService moduleService;
+    @Autowired
+    private ProjectService projectService;
 
     @Value("${springBoot.version}")
     private String springBootVersion;
@@ -39,24 +41,24 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //==================以下为生成文件夹组合方法 ==================================================
     //生成模块标准部分代码并打包发布
     @Async
-    public void produceModuleStandardJar(String generateBasePath, String moduleId) {
+    public void produceModuleStandardJar(String generateBasePath, Module module,Project project) {
 
         String realPath = generateBasePath;
-        Module module = moduleService.findOne(moduleId);
-        Project project = module.getProject();
+
         //生成的每个项目根据moduleId成对应目录
-        String basePath = new StringBuilder("/").append(moduleId).toString();
+        String basePath = new StringBuilder("/").append(module.getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("/").append(module.getName()).toString());
 
         File jarFile = new File(sourceDir.getPath()+"/target/"+project.getName()+"-"+module.getName()+"Standard-0.0.1-SNAPSHOT.jar");
         if(jarFile.exists()) {
-            Date moduleMaxDate = moduleService.getMaxModuleHierachyDate(moduleId);
+            Date moduleMaxDate = moduleService.getMaxModuleHierachyDate(module.getId());
             boolean isGenerate = checkIsNewGenerate(jarFile, project.getHierachyDate().getTime(), module.getUpdateDate().getTime(), moduleMaxDate.getTime());
             if (isGenerate) {
                 logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】已存在，并且需要更新").toString());
                 produceProjectStandard(generatorBasePath, project);
+                deployJarFile(sourceDir);
             }else{
                 logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】已存在，并且不需要更新").toString());
                 return;
@@ -64,9 +66,30 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         }else{
             logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】不存在,立即生成").toString());
             produceProjectStandard(generatorBasePath, project);
+            deployJarFile(sourceDir);
         }
 
 
+
+
+
+//
+//
+//        String fileName=new String((project.getModules().get(0).getName()+"Standard-1.0-SNAPSHOT.jar").getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
+//        response.reset();
+//        response.addHeader("Content-Length", "" + jarFile.length());
+//        response.setContentType("application/octet-stream;charset=UTF-8");
+//        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+//        try(OutputStream outputStream =response.getOutputStream();InputStream in = new FileInputStream(jarFile);){
+//            int len = 0;
+//            byte[] buf = new byte[1024];
+//            while ((len = in.read(buf, 0, 1024)) != -1) {
+//                outputStream.write(buf, 0, len);
+//            }
+//        }
+    }
+    //编译打包jar包
+    private void deployJarFile(File sourceDir) {
         Map<String, String> map = System.getenv();
         String os=System.getProperty("os.name");
         String m2= map.get("M2_HOME");
@@ -88,22 +111,56 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
 
+    @Override
+    public void produceModuleStandard(String generatorBasePath, String moduleId) {
+        Module module = moduleService.findOne(moduleId);
+        Project project = module.getProject();
+        BuildProjectDirUtil.createDirForProjectModuleStandard(generatorBasePath,project,module);
+        //获取模块根路径，用于pom文件
+        File moduleRootPath = new File(BuildProjectDirUtil.getModuleBasePath(generatorBasePath,project.getName(),module.getName()));
+        //standard Model根路径
+        File standardModelPath = new File(BuildProjectDirUtil.getStandardModelPath(generatorBasePath, project.getName(),module.getName(),project.getPackageName()));
+        //standard Repository根路径
+        File standardRepositoryPath = new File(BuildProjectDirUtil.getStandardRepositoryPath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
+        //standard Java根路径
+        File standardJavaRootPath = new File(BuildProjectDirUtil.getStandardJavaBasePackagePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+        // standard Service根路径
+        File standardServicePath = new File(BuildProjectDirUtil.getStandardServicePath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+        //standard Controller根路径
+        File standardControllerPath = new File(BuildProjectDirUtil.getStandardControllerPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+        //standard MethodIntercept根路径
+        File standardMethodInterceptPath = new File(BuildProjectDirUtil.getStandardMethodInterceptPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+        //standard资源根路径
+        File resourceRootPath = new File(BuildProjectDirUtil.getStandardModuleResourcePath(generatorBasePath, project.getName(), module.getName()));
+        //standard util路径
+        File standardEntityUtil = new File(BuildProjectDirUtil.getStandardUtilPath(generatorBasePath, project.getName(), module.getName(),project.getPackageName()));
+        //standard methodModel 方法的入参和结果模型目录
+        File standardMethodModelPath = new File(BuildProjectDirUtil.getStandardMethodModel(generatorBasePath, project.getName(), module.getName(),project.getPackageName()));
+        //standard modelRelation 路径
+        File standardModelRelation = new File(BuildProjectDirUtil.getModuleRelationDirPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
+        //standard serviceImpl路径
+        File standardServiceImplPath = new File(BuildProjectDirUtil.getStandardServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
 
-//
-//
-//        String fileName=new String((project.getModules().get(0).getName()+"Standard-1.0-SNAPSHOT.jar").getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
-//        response.reset();
-//        response.addHeader("Content-Length", "" + jarFile.length());
-//        response.setContentType("application/octet-stream;charset=UTF-8");
-//        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-//        try(OutputStream outputStream =response.getOutputStream();InputStream in = new FileInputStream(jarFile);){
-//            int len = 0;
-//            byte[] buf = new byte[1024];
-//            while ((len = in.read(buf, 0, 1024)) != -1) {
-//                outputStream.write(buf, 0, len);
-//            }
-//        }
+        //生成entity文件
+        generateModelFile(standardModelPath,project,module);
+        //生成standRepository文件
+        generateRepositoryFile(standardRepositoryPath,project,module,false);
+        //生成standService文件
+        generateServiceFile(standardServicePath,project,module,false);
+        //生成方法的入参和结果类型 ---【2017-8-4】
+        generateMethodWrapperFile(standardMethodModelPath,project,module);
+        //生成modelRelation文件
+        generateModuleRelationFile(standardModelRelation,project,module);
+        //生成standServiceImpl文件
+        generateServiceImplFile(standardServiceImplPath,project,module,false);
+        //生成standController文件
+        generateControllerFile(standardControllerPath,project,module,false);
+        //生成standMethodIntercept文件
+        generateMethodInterceptFile(standardMethodInterceptPath,project,module);
+        //生成standardEntityUtil文件
+        generateStandardUtilFile(standardEntityUtil,project,module,false);
     }
 
     //生成项目全部 standard部分代码
@@ -167,7 +224,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             produceModuleOtherFiles(generatorBasePath,project,module,port,root);
             //生成standard路径下所有文件
             //produceModuleStandardAllFiles(generatorBasePath,project,module);
-            produceModuleStandardJar(generatorBasePath,module.getId());
+            produceModuleStandardJar(generatorBasePath,module,project);
             //生成extend路径下所有文件
             produceModuleExtendAllFiles(generatorBasePath,project,module);
         }

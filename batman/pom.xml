@@ -126,12 +126,6 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 
-		<!--打印hibernate有参数日志-->
-		<dependency>
-			<groupId>p6spy</groupId>
-			<artifactId>p6spy</artifactId>
-			<version>3.0.0</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.alibaba</groupId>
