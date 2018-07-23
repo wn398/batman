@@ -29,7 +29,17 @@
             </header>
         </section>
         <hr/>
-        <div class="panel" th:each="entities,entitieStat:${project.entities}">
+        <div class="panel" th:each="modules,modulesStat:${project.modules}">
+            <header class="panel-heading">
+                <button class="btn btn-success" th:text="|${modulesStat.index+1}>>${modules.description}模块(${modules.name})|" class="button" disabled></button>
+                <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+            </header>
+            <br/>
+            <hr color="red"/>
+            <hr color="red"/>
+            <div class="panel" th:each="entities,entitieStat:${modules.entities}">
             <header class="panel-heading">
                 <button class="btn btn-success" th:text="|${entitieStat.index+1}>>${entities.description}表(${entities.name})|" class="button" disabled></button>
                 <span class="tools pull-right">
@@ -106,6 +116,9 @@
                 </table>
                 <hr/>
             </div>
+        </div>
+            <hr color="red"/>
+            <hr color="red"/>
         </div>
     </div>
 </div>

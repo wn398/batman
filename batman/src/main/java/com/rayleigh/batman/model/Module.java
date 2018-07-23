@@ -37,7 +37,7 @@ public class Module extends BaseModel {
 //    @ManyToMany(targetEntity = Entities.class,fetch = FetchType.LAZY)
 //    @JoinTable(name = "more_module_entites",joinColumns = @JoinColumn(name = "module_id",referencedColumnName = "id"),
 //    inverseJoinColumns = @JoinColumn(name = "entities_id",referencedColumnName = "id"))
-    @OneToMany(mappedBy = "module",cascade = {CascadeType.PERSIST},fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "module",cascade = {CascadeType.PERSIST,CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<Entities> entities = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -77,16 +77,16 @@ public class Entities extends BaseModel {
     @JoinColumn(name = "module_id")
     private Module module;
 
-    @OneToMany(mappedBy = "mainEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "mainEntity",cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<RelationShip> mainEntityRelationShips = new ArrayList<>();
 
-    @OneToMany(mappedBy = "otherEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "otherEntity",cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<RelationShip> otherEntityRelationShips = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mainEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "mainEntity",cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<FieldRelationShip> mainFieldRelationShips = new ArrayList<>();
 
-    @OneToMany(mappedBy = "otherEntity",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "otherEntity",cascade = {CascadeType.REMOVE},fetch = FetchType.LAZY)
     private List<FieldRelationShip> otherFieldRelationShips = new ArrayList<>();
 
     public Project getProject() {
