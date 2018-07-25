@@ -30,6 +30,8 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     private ModuleService moduleService;
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private BuildService buildService;
 
     @Value("${springBoot.version}")
     private String springBootVersion;
@@ -40,7 +42,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 
     //==================以下为生成文件夹组合方法 ==================================================
     //生成模块标准部分代码并打包发布
-    @Async
+    //@Async
     public void produceModuleStandardJar(String generateBasePath, Module module,Project project) {
 
         String realPath = generateBasePath;
@@ -57,16 +59,16 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             boolean isGenerate = checkIsNewGenerate(jarFile, project.getHierachyDate().getTime(), module.getUpdateDate().getTime(), moduleMaxDate.getTime());
             if (isGenerate) {
                 logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】已存在，并且需要更新").toString());
-                produceProjectStandard(generatorBasePath, project);
-                deployJarFile(sourceDir);
+                produceProjectModuleStandard(generatorBasePath, project,module);
+                buildService.deployJarFile(sourceDir);
             }else{
                 logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】已存在，并且不需要更新").toString());
                 return;
             }
         }else{
             logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】不存在,立即生成").toString());
-            produceProjectStandard(generatorBasePath, project);
-            deployJarFile(sourceDir);
+            produceProjectModuleStandard(generatorBasePath, project,module);
+            buildService.deployJarFile(sourceDir);
         }
 
 
@@ -87,30 +89,6 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 //                outputStream.write(buf, 0, len);
 //            }
 //        }
-    }
-    //编译打包jar包
-    private void deployJarFile(File sourceDir) {
-        Map<String, String> map = System.getenv();
-        String os=System.getProperty("os.name");
-        String m2= map.get("M2_HOME");
-        ProcessBuilder processBuilder;
-        if(os.startsWith("Windows")) {
-            processBuilder = new ProcessBuilder(m2 + "\\bin\\mvn.cmd","clean", "deploy","-f","standard-pom.xml");
-        }else{
-            processBuilder = new ProcessBuilder(m2 + "/bin/mvn","clean","deploy","-f","standard-pom.xml");
-        }
-        processBuilder.directory(sourceDir);
-        try {
-            Process process = processBuilder.start();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
-            String line;
-            while ((line = br.readLine()) != null) {
-                logger.info(line);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -169,6 +147,12 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         for(Module module:project.getModules()) {
             produceModuleStandardAllFiles(generatorBasePath,project,module);
         }
+    }
+
+    //生成项目module全部 standard部分代码
+    public void produceProjectModuleStandard(String generatorBasePath, Project project,Module module) {
+        BuildProjectDirUtil.createDirForProjectModuleStandard(generatorBasePath,project,module);
+        produceModuleStandardAllFiles(generatorBasePath,project,module);
     }
 
 

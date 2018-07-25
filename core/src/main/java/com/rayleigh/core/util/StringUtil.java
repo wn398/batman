@@ -39,6 +39,14 @@ public class StringUtil {
             return false;
         }
     }
+
+    public static boolean isDigitFirst(String str){
+        if(null!=str && str.length()>0){
+            return Character.isDigit(str.charAt(0));
+        }else{
+            return false;
+        }
+    }
     //首字线小写
     public static String unCapFirst(String str){
         return new StringBuilder(str.substring(0,1).toLowerCase()).append(str.substring(1)).toString();

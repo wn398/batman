@@ -10,7 +10,6 @@ import java.util.Map;
 
 public interface CodeGenerateService {
     //生成模块标准部分代码并打包发布
-    @Async
     void produceModuleStandardJar(String generateBasePath, Module module,Project project);
     //生成模块标准部分代码，只是标准代码，不包括一些配置文件
     void produceModuleStandard(String generateBasePath, String moduleId);

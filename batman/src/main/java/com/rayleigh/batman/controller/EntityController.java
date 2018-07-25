@@ -52,6 +52,9 @@ public class EntityController extends BaseController{
             if(!StringUtil.isUnCapFirst(field.getName())){
                 return getFailureResultAndInfo(field,new StringBuilder("字段名首字母不能大写:").append(field.getName()).toString());
             }
+            if(StringUtil.isDigitFirst(field.getName())){
+                return getFailureResultAndInfo(field,new StringBuilder("字段首字母不能为数字！").toString());
+            }
         }
 
         entities.getFields().parallelStream().forEach(field -> {if(StringUtil.isEmpty(field.getValidMessage())){field.setValidMessage(null);}});
@@ -92,6 +95,9 @@ public class EntityController extends BaseController{
                 }
                 if(!StringUtil.isUnCapFirst(field.getName())){
                     return getFailureResultAndInfo(field,new StringBuilder("字段名首字母不能大写:").append(field.getName()).toString());
+                }
+                if(StringUtil.isDigitFirst(field.getName())){
+                    return getFailureResultAndInfo(field,new StringBuilder("字段首字母不能为数字！").toString());
                 }
             }
             //检测字段名是否重复

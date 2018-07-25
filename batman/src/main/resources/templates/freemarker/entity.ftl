@@ -23,18 +23,17 @@ import java.util.*;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = <#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.name)}"</#if>,
-    indexes = {
-     @Index(name = "rk_${entity.name}_id", columnList = "id",unique=true)
-<#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>
-<#if isUpdateDate == true>,@Index(name = "rk_${entity.name}_updateDate", columnList = "updateDate")</#if>
-    <#list entity.fields as field>
-        <#if field.isIndex && field.name !='id'>
-    ,@Index(name = "rk_${entity.name}_${field.name}", columnList = "${field.name}")
-        </#if>
-    </#list>
-}
-)
+@Table(name = <#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.name)}"</#if>)
+    <#--indexes = {-->
+     <#--@Index(name = "rk_${entity.name}_id", columnList = "id",unique=true)-->
+<#--<#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>-->
+<#--<#if isUpdateDate == true>,@Index(name = "rk_${entity.name}_updateDate", columnList = "updateDate")</#if>-->
+    <#--<#list entity.fields as field>-->
+        <#--<#if field.isIndex && field.name !='id'>-->
+    <#--,@Index(name = "rk_${entity.name}_${field.name}", columnList = "${field.name}")-->
+        <#--</#if>-->
+    <#--</#list>-->
+<#--}-->
 public class ${entity.name} extends BasicModel{
 
 <#--生成普通属性-->
@@ -44,6 +43,7 @@ public class ${entity.name} extends BasicModel{
 <#if fieldName == "id">
 <#--处理id,createDate,updateDate,version特殊字段开始-->
     <#if fieldType == 'String'>
+
 @Id
 @GeneratedValue(generator = "hibernate-uuid")
 @GenericGenerator(name = "hibernate-uuid", strategy = "org.hibernate.id.UUIDGenerator")
@@ -52,12 +52,14 @@ public class ${entity.name} extends BasicModel{
 @Size(max=48, min=1, message = "主键ID 长度必须大于等于1且小于等于48")
 public String id;
     <#else>
+
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 @FieldInfo("主键")
 public Long id;
     </#if>
 <#elseif fieldName == "createDate">
+
 @FieldInfo("创建时间")
 @ApiModelProperty(hidden=true)
 @CreatedDate
@@ -67,6 +69,7 @@ public Long id;
 @Column
 public Date createDate;
     <#elseif fieldName == "updateDate">
+
 @FieldInfo("更新时间")
 @ApiModelProperty(hidden=true)
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
@@ -76,10 +79,12 @@ public Date createDate;
 @Column(nullable = false)
 public Date updateDate;
     <#elseif fieldName == "version">
+
 @FieldInfo("版本号")
 @Version
 public Long version;
     <#else>
+
 <#--处理id,createDate,updateDate,version特殊字段结束-->
 @FieldInfo("${field.description}")
     <#if field.dataType == "Date">

@@ -514,7 +514,6 @@ public class BuildProjectDirUtil {
         }
     }
 
-
     //构建项目生成代码extend代码相关路径文件夹
     public static  void createDirForProjectExtend(String generatorBasePath,Project project){
 //        StringBuilder sb = new StringBuilder(generatorBasePath);
