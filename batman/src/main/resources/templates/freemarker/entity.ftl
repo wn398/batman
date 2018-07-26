@@ -23,7 +23,7 @@ import java.util.*;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = <#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.name)}"</#if>)
+@Table(name = <#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.preFix+entity.name)}"</#if>)
     <#--indexes = {-->
      <#--@Index(name = "rk_${entity.name}_id", columnList = "id",unique=true)-->
 <#--<#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>-->

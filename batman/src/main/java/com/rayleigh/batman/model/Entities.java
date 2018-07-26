@@ -53,6 +53,10 @@ public class Entities extends BaseModel {
     @Column
     @FieldInfo("层级更新日期,主要用于标示下面属性变化")
     private Date hierachyDate;
+
+    @Column
+    @FieldInfo("自定义表名前辍")
+    private String preFix;
     /**
      * 双向一对多，多对一
      */
@@ -216,5 +220,13 @@ public class Entities extends BaseModel {
 
     public void setHierachyDate(Date hierachyDate) {
         this.hierachyDate = hierachyDate;
+    }
+
+    public String getPreFix() {
+        return preFix;
+    }
+
+    public void setPreFix(String preFix) {
+        this.preFix = preFix;
     }
 }

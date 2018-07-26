@@ -60,13 +60,19 @@
                                 <label class="control-label">是否启用表名前辍</label>
                             </td>
                             <td>
-                                <select name="prefix" class="form-control">
+                                <select name="addPrefix" class="form-control">
                                     <option th:value="true" th:if="${entities.addPrefix == true}" th:selected="selected">是</option>
                                     <option th:value="false" th:if="${entities.addPrefix == false}" th:selected="selected">否</option>
 
                                     <option th:value="true" th:unless="${entities.addPrefix == true}" >是</option>
                                     <option th:value="false" th:unless="${entities.addPrefix == false}" >否</option>
                                 </select>
+                            </td>
+                            <td>
+                                <label  class="control-label">自定义表名前辍</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="preFix" th:value="${entities.preFix}" placeholder="字母" th:title="字母数字">
                             </td>
                         </tr>
                         </tbody>
