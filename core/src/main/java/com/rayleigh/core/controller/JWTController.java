@@ -18,7 +18,9 @@ public class JWTController extends BaseController {
 
     @Value("${jwt.expire.millisecond}")
     private Long jwtExpireTime;
-    //私钥
+    /**
+     *私钥
+     */
     @Value("${jwt.secret.key}")
     private String base64Key;
 
