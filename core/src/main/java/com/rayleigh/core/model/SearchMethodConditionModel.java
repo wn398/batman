@@ -3,29 +3,39 @@ package com.rayleigh.core.model;
 import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.enums.LogicOperation;
 import com.rayleigh.core.enums.Operation;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * 条件模型
  */
+//@ApiModel("查询方法条件model")
 public class SearchMethodConditionModel {
-    //优先级
+
+    @ApiModelProperty("优先级")
     private Integer priority = 0;
 
-    //逻辑操作符
+
+    @ApiModelProperty("逻辑操作符")
     private LogicOperation logicOperation = LogicOperation.and;
 
-    //字段所在实体名
+
+    @ApiModelProperty("字段所在实体名")
     private String entityName;
 
-    //字段名
+
+    @ApiModelProperty("字段名称")
     private String fieldName;
 
-    //操作符
+
+    @ApiModelProperty("操作符")
     private Operation operation;
 
-    //包装类中条件的名字
+
+    @ApiModelProperty("包装类中条件的名字")
     private String conditionName;
-    //字段的数据类型
+
+    @ApiModelProperty("字段的数据类型")
     private DataType fieldDataType;
 
     public String getConditionName() {

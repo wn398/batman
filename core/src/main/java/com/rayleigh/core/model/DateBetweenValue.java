@@ -2,13 +2,18 @@ package com.rayleigh.core.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
-
+//@ApiModel("日期间隔model")
 public class DateBetweenValue {
+    @ApiModelProperty("开始时间")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date min;
+
+    @ApiModelProperty("结束时间")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date max;

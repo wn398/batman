@@ -1,10 +1,13 @@
 package com.rayleigh.core.model;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.List;
 
 /**
  * 获取对象id加关系的模型
  */
+//@ApiModel("关系模型")
 public class RelationModel {
     private String mainObjId;
     private List<String> subObjName;

@@ -1,12 +1,21 @@
 package com.rayleigh.core.model;
 
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+//@ApiModel("分页类型")
 public class PageModel<T> {
+    @ApiModelProperty("总记录数")
     private Long totalRecords;
+    @ApiModelProperty("总页数")
     private Long totalPage;
+    @ApiModelProperty("当前页数")
     private Integer currentPage;
+    @ApiModelProperty("每页条数")
     private Integer pageSize;
+    @ApiModelProperty("结果集")
     private List<T> results;
 
     public Long getTotalRecords() {

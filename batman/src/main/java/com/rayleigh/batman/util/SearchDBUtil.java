@@ -18,6 +18,10 @@ public class SearchDBUtil {
         return ((EntityService) SpringContextUtils.getBean("entityServiceImpl")).findOne(id).getName();
     }
 
+    public static String getEntityDescription(String id){
+        return ((EntityService) SpringContextUtils.getBean("entityServiceImpl")).findOne(id).getDescription();
+    }
+
     //通过主对象和副对象id获取它们之间的关系
     public static RelationType getRelationTypeByMainOtherEntityId(String mainEntityId, String otherEntityId){
         return ((RelationShipService)SpringContextUtils.getBean("relationShipServiceImpl")).getByMainEntityAndOtherEntityIds(mainEntityId,otherEntityId).get(0).getRelationType();

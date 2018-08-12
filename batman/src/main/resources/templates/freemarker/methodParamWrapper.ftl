@@ -6,22 +6,27 @@ import com.rayleigh.core.model.*;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 <#if entity.primaryKeyType=="String">
     <#assign entityIdType="String">
 <#else>
     <#assign entityIdType="Long">
 </#if>
-
+//@ApiModel("${method.description} 方法入参包装类")
 public class ${entity.name}$${method.methodName ?cap_first}ParamWrapper{
 
 <#--分页参数-->
+@ApiModelProperty("每页条数")
 private Integer pageSize;
+@ApiModelProperty("请求第几页")
 private Integer currentPage;
 <#--属性-->
     <#list method.conditionList as condition>
         <#--获取结果字段所在的实体类-->
         <#assign entityName=searchDBUtil.getEntityName(condition.fieldName ?split("_")[0])>
+        <#assign entityDescription=searchDBUtil.getEntityDescription(condition.fieldName ?split("_")[0])>
         <#--获取数据类型-->
         <#if condition.field?exists>
             <#if condition.operation == "IsNull" || condition.operation == "IsNotNull">
@@ -43,18 +48,23 @@ private Integer currentPage;
 
         <#if condition.operation =="Between">
             <#if fieldType =="Date">
+@ApiModelProperty("${entityDescription}->${condition.field.description}.日期间隔")
 private  DateBetweenValue ${entityName ?uncap_first}${fieldName ?cap_first}BetweenValue;
             <#else>
+@ApiModelProperty("${entityDescription}->${condition.field.description}.大小间隔")
 private  BetweenValue<${fieldType}> ${entityName ?uncap_first}${fieldName ?cap_first}BetweenValue;
             </#if>
         <#elseif condition.operation == "In">
+@ApiModelProperty("${entityDescription}->${condition.field.description}.in集合")
 private List<${fieldType}> ${entityName ?uncap_first}${fieldName ?cap_first}InList = new ArrayList<>();
         <#else>
             <#if fieldType == "Date">
+@ApiModelProperty("${entityDescription}->${condition.field.description}")
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 private ${fieldType} ${entityName ?uncap_first}${fieldName ?cap_first};
                 <#else>
+@ApiModelProperty("${entityDescription}->${condition.field.description}")
 private ${fieldType} ${entityName ?uncap_first}${fieldName ?cap_first};
             </#if>
         </#if>

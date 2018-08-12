@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,14 +22,14 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/6/13.
  */
-
+@ApiModel("实体")
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_entity")
 @DynamicInsert
 @DynamicUpdate
 public class Entities extends BaseModel {
 
-    @FieldInfo("实体名字")
+    @ApiModelProperty("实体名字")
     @Column
     @NotEmpty(message = "实体名字不能空")
     //@Pattern(regexp = "",message = "不符合规则")

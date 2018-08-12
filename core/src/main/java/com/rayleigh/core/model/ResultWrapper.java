@@ -3,6 +3,8 @@ package com.rayleigh.core.model;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rayleigh.core.enums.ResultStatus;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Date;
@@ -12,30 +14,31 @@ import java.util.Map;
 /**
  * Created by wangn20 on 2017/7/4.
  */
-//结果包装类
-public class ResultWrapper {
+//@ApiModel("统一返回结果包装类")
+public class ResultWrapper<T> {
 
-    //状态
     @NotEmpty
+    @ApiModelProperty("状态")
     private ResultStatus status;
 
-    //存放结果数据
-    private Object data;
+    @ApiModelProperty("结果数据")
+    private T data;
 
-    //用于验证的错误信息
+    @ApiModelProperty("系统验证信息")
     private Map<String,Object> validMessage = new HashMap<>();
 
-    //存放错误信息
+    @ApiModelProperty("异常信息")
     private String exceptionMessage;
-    //提示信息
+
+    @ApiModelProperty("提示信息")
     private String info;
 
-    //业务代码
+    @ApiModelProperty("业务code")
     private String code;
 
-    //时间
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty("时间")
     private Date dateTime = new Date();
 
     public String getInfo() {
@@ -54,11 +57,11 @@ public class ResultWrapper {
         this.status = status;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 

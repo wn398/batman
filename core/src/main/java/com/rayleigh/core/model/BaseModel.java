@@ -28,13 +28,12 @@ public class BaseModel implements Serializable {
     @Id
     @GeneratedValue(generator = "hibernate-uuid")
     @GenericGenerator(name = "hibernate-uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    @FieldInfo("主键")
+    @ApiModelProperty("主键")
     @Column(length = 48,nullable = false)
     @Size(max=48, min=1, message = "主键ID 长度必须大于等于1且小于等于48")
     public String id;
 
-    @FieldInfo("创建时间")
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(value = "创建时间",hidden=true)
     @CreatedDate
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -42,8 +41,7 @@ public class BaseModel implements Serializable {
     @Column
     public Date createDate;
 
-    @FieldInfo("更新时间")
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(value = "更新时间",hidden=true)
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -51,7 +49,7 @@ public class BaseModel implements Serializable {
     @Column(nullable = false)
     public Date updateDate;
 
-    @FieldInfo("版本号")
+    @ApiModelProperty("版本号")
     @Version
     public Long version;
 

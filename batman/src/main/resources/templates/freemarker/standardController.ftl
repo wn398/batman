@@ -1,6 +1,7 @@
 <#include "CopyRight.ftl">
 package ${project.packageName}.standard.controller;
 
+import com.rayleigh.core.model.PageModel;
 import ${project.packageName}.standard.model.${entity.name};
 import ${project.packageName}.standard.methodIntercept.${entity.name}MethodIntercept;
 <#list entity.mainEntityRelationShips as relationShip>
@@ -52,7 +53,7 @@ private ${entity.name}MethodIntercept ${entity.name ?uncap_first}MethodIntercept
 @ApiOperation(value = "✿自动生成✿->保存实体,不包括相关联实体")
 @PostMapping("/doSave")
 @ResponseBody
-public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+public ResultWrapper<${entity.name}> save(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
     if(${entity.name ?uncap_first}MethodIntercept.saveBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.saveBefore(${entity.name ?uncap_first});
     }
@@ -68,7 +69,7 @@ public ResultWrapper save(@RequestBody ${entity.name} ${entity.name ?uncap_first
 @ApiOperation(value = "✿自动生成✿->更新实体,不包括相关联实体")
 @PostMapping("/doUpdate")
 @ResponseBody
-public ResultWrapper update(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+public ResultWrapper<${entity.name}> update(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
     if(${entity.name ?uncap_first}MethodIntercept.updateBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.updateBefore(${entity.name ?uncap_first});
     }
@@ -84,7 +85,7 @@ public ResultWrapper update(@RequestBody ${entity.name} ${entity.name ?uncap_fir
 @ApiOperation(value = "✿自动生成✿->保存，包括相关关联实体")
 @PostMapping("/doSaveWithRelated")
 @ResponseBody
-public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+public ResultWrapper<${entity.name}> saveWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
     if(${entity.name ?uncap_first}MethodIntercept.saveWithRelatedBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.saveWithRelatedBefore(${entity.name ?uncap_first});
     }
@@ -101,7 +102,7 @@ public ResultWrapper saveWithRelated(@RequestBody ${entity.name} ${entity.name ?
 @ApiOperation(value = "✿自动生成✿->更新,包括相关联实体")
 @PostMapping("/doUpdateWithRelated")
 @ResponseBody
-public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+public ResultWrapper<${entity.name}> updateWithRelated(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
     if(${entity.name ?uncap_first}MethodIntercept.updateWithRelatedBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.updateWithRelatedBefore(${entity.name ?uncap_first});
     }
@@ -118,7 +119,7 @@ public ResultWrapper updateWithRelated(@RequestBody ${entity.name} ${entity.name
 @ApiOperation(value = "✿自动生成✿->获取带有关系的数据，需要的关系指定true")
 @PostMapping("/findOneWithRelationObj")
 @ResponseBody
-public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation ${entity.name ?uncap_first}Relation){
+public ResultWrapper<${entity.name}> findOneWithRelationObj(@RequestBody ${entity.name}$Relation ${entity.name ?uncap_first}Relation){
     if(${entity.name ?uncap_first}MethodIntercept.findOneWithRelationObjBefore(${entity.name ?uncap_first}Relation).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.findOneWithRelationObjBefore(${entity.name ?uncap_first}Relation);
     }
@@ -135,7 +136,7 @@ public ResultWrapper findOneWithRelationObj(@RequestBody ${entity.name}$Relation
 @ApiOperation(value = "✿自动生成✿->保存自己分配id的实体,忽略关联实体")
 @PostMapping("/saveWithAssignedId")
 @ResponseBody
-public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+public ResultWrapper<${entity.name}> saveWithAssignedId(@RequestBody ${entity.name} ${entity.name ?uncap_first}){
     if(${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdBefore(${entity.name ?uncap_first});
     }
@@ -164,7 +165,7 @@ public ResultWrapper saveWithAssignedId(@RequestBody ${entity.name} ${entity.nam
 @ApiOperation(value = "✿自动生成✿->根据id查找")
 @GetMapping("/findOne/{id}")
 @ResponseBody
-public ResultWrapper findOneById(@PathVariable("id") ${entityIdType} id){
+public ResultWrapper<${entity.name}> findOneById(@PathVariable("id") ${entityIdType} id){
     try{
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first}Service.findOne(id);
         return getSuccessResult(${entity.name ?uncap_first}Result);
@@ -192,11 +193,16 @@ public ResultWrapper deleteById(@PathVariable("id") ${entityIdType} id){
 <#list entity.methods as method>
     <#assign isDynamicSearch=method.isDynamicSearch !false>
     <#assign isReturnObject=method.isReturnObject !false>
+
     <#if ((method.isInterface !?exists)||(method.isInterface ?exists &&method.isInterface ?boolean))>
 @ApiOperation(value = "✿自动生成✿->${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if><#if isReturnObject>[主对象]<#else>[字段包装]</#if>")
 @PostMapping("/${method.methodName}")
 @ResponseBody
-public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+        <#if method.isReturnObject ?exists && method.isReturnObject>
+public ResultWrapper<PageModel<${entity.name}>> ${method.methodName}(@RequestBody ${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+        <#else>
+public ResultWrapper<PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper>> ${method.methodName}(@RequestBody ${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
+        </#if>
     if(${entity.name ?uncap_first}MethodIntercept.${method.methodName}Before(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.${method.methodName}Before(${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
     }
@@ -221,7 +227,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
     @ApiOperation(value = "✿自动生成✿->关联${relationShip.otherEntity.name},只需要传入id即可")
     @PostMapping("/add${relationShip.otherEntity.name}")
     @ResponseBody
-    public ResultWrapper add${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+    public ResultWrapper<String> add${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
         String result = ${entity.name ?uncap_first}Service.add${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}List().parallelStream().map(it->it.getId()).collect(Collectors.toList()));
         return getSuccessResult(result);
     }
@@ -229,7 +235,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
     @ApiOperation(value = "✿自动生成✿->解除关联${relationShip.otherEntity.name},只需要传入id即可")
     @PostMapping("/remove${relationShip.otherEntity.name}")
     @ResponseBody
-    public ResultWrapper remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+    public ResultWrapper<String> remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
         String result = ${entity.name ?uncap_first}Service.remove${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}List().parallelStream().map(it->it.getId()).collect(Collectors.toList()));
         return getSuccessResult(result);
     }
@@ -237,7 +243,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
     @ApiOperation(value = "✿自动生成✿->设置${relationShip.otherEntity.name}关系,只需要传入id即可")
     @PostMapping("/set${relationShip.otherEntity.name}")
     @ResponseBody
-    public ResultWrapper set${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+    public ResultWrapper<String> set${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
         String result = ${entity.name ?uncap_first}Service.set${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}().getId());
         return getSuccessResult(result);
     }
@@ -245,7 +251,7 @@ public ResultWrapper ${method.methodName}(@RequestBody ${entity.name}$${method.m
     @ApiOperation(value = "✿自动生成✿->取消${relationShip.otherEntity.name}关系,只需要传入id即可")
     @PostMapping("/remove${relationShip.otherEntity.name}")
     @ResponseBody
-    public  ResultWrapper remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
+    public  ResultWrapper<String> remove${relationShip.otherEntity.name} (@RequestBody ${entity.name} ${entity.name ?uncap_first}){
         String result = ${entity.name ?uncap_first}Service.remove${relationShip.otherEntity.name}(${entity.name ?uncap_first}.getId(),${entity.name ?uncap_first}.get${relationShip.otherEntity.name}().getId());
         return getSuccessResult(result);
     }

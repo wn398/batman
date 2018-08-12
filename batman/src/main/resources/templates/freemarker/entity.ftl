@@ -3,7 +3,6 @@ package ${project.packageName}.standard.model;
 
 import com.rayleigh.core.model.BasicModel;
 import com.rayleigh.core.util.StringUtil;
-import com.rayleigh.core.annotation.FieldInfo;
 import org.hibernate.validator.constraints.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -14,12 +13,14 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.*;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.math.BigDecimal;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.*;
 
-@FieldInfo("${entity.description}")
+@ApiModel("${entity.description}")
 @Entity
 @DynamicInsert
 @DynamicUpdate
@@ -47,7 +48,7 @@ public class ${entity.name} extends BasicModel{
 @Id
 @GeneratedValue(generator = "hibernate-uuid")
 @GenericGenerator(name = "hibernate-uuid", strategy = "org.hibernate.id.UUIDGenerator")
-@FieldInfo("主键")
+@ApiModelProperty("主键")
 @Column(length = 48,nullable = false)
 @Size(max=48, min=1, message = "主键ID 长度必须大于等于1且小于等于48")
 public String id;
@@ -55,13 +56,12 @@ public String id;
 
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-@FieldInfo("主键")
+@ApiModelProperty("主键")
 public Long id;
     </#if>
 <#elseif fieldName == "createDate">
 
-@FieldInfo("创建时间")
-@ApiModelProperty(hidden=true)
+@ApiModelProperty(value="创建时间",hidden=true)
 @CreatedDate
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -70,8 +70,7 @@ public Long id;
 public Date createDate;
     <#elseif fieldName == "updateDate">
 
-@FieldInfo("更新时间")
-@ApiModelProperty(hidden=true)
+@ApiModelProperty(value="更新时间",hidden=true)
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 @Temporal(TemporalType.TIMESTAMP)
@@ -80,13 +79,13 @@ public Date createDate;
 public Date updateDate;
     <#elseif fieldName == "version">
 
-@FieldInfo("版本号")
+@ApiModelProperty("版本号")
 @Version
 public Long version;
     <#else>
 
 <#--处理id,createDate,updateDate,version特殊字段结束-->
-@FieldInfo("${field.description}")
+@ApiModelProperty("${field.description}")
     <#if field.dataType == "Date">
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

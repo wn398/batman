@@ -22,11 +22,10 @@ public class BaseModel2 implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @FieldInfo("主键")
+    @ApiModelProperty("主键")
     public Long id;
 
-    @FieldInfo("创建时间")
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(value = "创建时间",hidden=true)
     @CreatedDate
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -34,8 +33,7 @@ public class BaseModel2 implements Serializable {
     @Column
     public Date createDate;
 
-    @FieldInfo("更新时间")
-    @ApiModelProperty(hidden=true)
+    @ApiModelProperty(value = "更新时间",hidden=true)
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,7 +41,7 @@ public class BaseModel2 implements Serializable {
     @Column(nullable = false)
     public Date updateDate;
 
-    @FieldInfo("版本号")
+    @ApiModelProperty("版本号")
     @Version
     public Long version;
 

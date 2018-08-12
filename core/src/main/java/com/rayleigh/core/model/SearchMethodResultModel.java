@@ -1,15 +1,22 @@
 package com.rayleigh.core.model;
 
 import com.rayleigh.core.enums.OrderBy;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+//@ApiModel("查询方法结果")
 public class SearchMethodResultModel {
-    //字段名
+
+    @ApiModelProperty("字段名")
     private String fieldName;
-    //排序优先级
+
+    @ApiModelProperty("排序优先级")
     private Integer orderByNum = 0;
-    //排序类型
+
+    @ApiModelProperty("排序类型")
     private OrderBy orderByType;
-    //字段所在实体名字
+
+    @ApiModelProperty("字段所在实体")
     private String entityName;
 
     public String getFieldName() {

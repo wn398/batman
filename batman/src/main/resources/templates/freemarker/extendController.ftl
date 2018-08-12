@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 
-@Api(value = "${entity.name}ExtendController", description = "${entity.description}相关api")
+@Api(tags = "${entity.description} Controller", description = "${entity.description}相关api")
 @RequestMapping("/${entity.name ?uncap_first}Ctl")
 @Controller
 public class ${entity.name}ExtendController extends ${entity.name}Controller{

@@ -2,26 +2,36 @@ package com.rayleigh.core.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 
 /**
  * Created by wangn20 on 2017/7/5.
  */
-//用于分页的model
+//@ApiModel("dataTable分页插件model")
 public class DataTablesPageModel {
+    @ApiModelProperty("起始页码")
     private int start;
+    @ApiModelProperty("每页条数")
     private int pageSize;
-    //dataTable特殊用,重绘次数
+
+    @ApiModelProperty("dataTable特殊用，重绘次数")
     private int draw;
-    //总记录数
+
+    @ApiModelProperty("总记录条数")
     private Long recordsTotal;
-    //查询过滤出来的条数
+
+    @ApiModelProperty("查询过滤出来的条数")
     private Long recordsFiltered;
+    @ApiModelProperty("数据")
     private Object data;
-    //存放错误信息
+
+    @ApiModelProperty("存放错误信息")
     private String error;
-    //回复时间,请求时间
+
+    @ApiModelProperty("回复时间，请求时间")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date dateTime;
