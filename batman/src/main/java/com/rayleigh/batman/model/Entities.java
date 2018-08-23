@@ -2,7 +2,6 @@ package com.rayleigh.batman.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.model.BaseModel;
 import io.swagger.annotations.ApiModel;
@@ -35,17 +34,17 @@ public class Entities extends BaseModel {
     //@Pattern(regexp = "",message = "不符合规则")
     private String name;
 
-    @FieldInfo("实体描述")
+    @ApiModelProperty("实体描述")
     @Column
     @NotEmpty(message = "实体名字不能空")
     private String description;
 
-    @FieldInfo("主键类型")
+    @ApiModelProperty("主键类型")
     @Column
     @Enumerated(EnumType.STRING)
     private PrimaryKeyType primaryKeyType;
 
-    @FieldInfo("是否启用表名前辍")
+    @ApiModelProperty("是否启用表名前辍")
     @Column
     private Boolean addPrefix;
 
@@ -53,12 +52,16 @@ public class Entities extends BaseModel {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column
-    @FieldInfo("层级更新日期,主要用于标示下面属性变化")
+    @ApiModelProperty("层级更新日期,主要用于标示下面属性变化")
     private Date hierachyDate;
 
     @Column
-    @FieldInfo("自定义表名前辍")
+    @ApiModelProperty("自定义表名前辍")
     private String preFix;
+
+    @Column
+    @ApiModelProperty("自定义表名")
+    private String tableName;
     /**
      * 双向一对多，多对一
      */
@@ -230,5 +233,13 @@ public class Entities extends BaseModel {
 
     public void setPreFix(String preFix) {
         this.preFix = preFix;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 }

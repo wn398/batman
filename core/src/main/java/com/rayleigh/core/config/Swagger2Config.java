@@ -39,8 +39,8 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Spring Boot中使用Swagger2构建RESTful APIs")
-                .description(new StringBuilder("此处为swagger生成").append("-").append(StringUtil.dateToString(new Date())).toString())
+                .title("Batman 不要让这个世界的复杂性阻碍你前进")
+                .description(new StringBuilder("swagger生成于").append("-").append(StringUtil.dateToString(new Date())).toString())
                 .termsOfServiceUrl("http://wn398.github.io/")
                 .contact("batman")
                 .version("2.0")
