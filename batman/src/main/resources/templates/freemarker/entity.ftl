@@ -24,7 +24,7 @@ import java.util.*;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = <#if entity.tableName ?exists && (entity.tableName ?length>0) >"${entity.tableName}"<#else><#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.preFix+entity.name)}"</#if></#if>)
+@Table(name = <#if entity.tableName ?exists && (entity.tableName ?length>0) >"${entity.tableName}"<#else><#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.preFix! +entity.name)}"</#if></#if>)
     <#--indexes = {-->
      <#--@Index(name = "rk_${entity.name}_id", columnList = "id",unique=true)-->
 <#--<#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>-->
