@@ -62,6 +62,10 @@ public class Entities extends BaseModel {
     @Column
     @ApiModelProperty("自定义表名")
     private String tableName;
+
+    @Column
+    @ApiModelProperty("数据源名称")
+    private String dataSourceName;
     /**
      * 双向一对多，多对一
      */
@@ -241,5 +245,13 @@ public class Entities extends BaseModel {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 }

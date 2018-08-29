@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.rayleigh.core.model.SearchMethodConditionModel;
 import com.rayleigh.core.model.SearchMethodResultModel;
+import com.rayleigh.core.dynamicDataSource.TargetDataSource;
 import com.rayleigh.core.util.SearchMethodUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -64,6 +65,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#assign entityIdType="Long">
 </#if>
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} save(${entity.name} ${entity.name ?uncap_first}){
         if(null!=${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null!=${entity.name ?uncap_first}.getVersion()</#if>){
             throw new RuntimeException("保存实体id或version必须为空!");
@@ -72,11 +74,13 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
 
 <#if (entity.mainEntityRelationShips ?size >0)>
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} saveWithRelated(${entity.name} ${entity.name ?uncap_first}){
         ${entity.name} ${entity.name ?uncap_first}Result = ${entity.name}Util.buildRelation(${entity.name ?uncap_first});
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first}){
         if(null==${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null==${entity.name ?uncap_first}.getVersion()</#if>){
             throw new RuntimeException("更新实体id或version不能为空!");
@@ -85,6 +89,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}Result);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation){
     ${entity.name} ${entity.name ?uncap_first} = ${entity.name ?uncap_first}Repository.findOne(${entity.name ?uncap_first}$Relation.getId());
     <#list entity.mainEntityRelationShips as mainR>
@@ -110,6 +115,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
 </#if>
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} update(${entity.name} ${entity.name ?uncap_first}){
         if(null==${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null==${entity.name ?uncap_first}.getVersion()</#if>){
             throw new RuntimeException("更新实体id或version不能为空!");
@@ -118,24 +124,29 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
 
     //保存人为分配id的实体
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception{
          jdbcTemplate.execute(${generatorStringUtil.constructInsertSql(project,entity)});
          logger.info(new StringBuilder("执行本地SQL:").append(${generatorStringUtil.constructInsertSql(project,entity)}).toString());
          return ${entity.name ?uncap_first};
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public void deleteByIds(List<${entityIdType}> ids){
         ids.parallelStream().forEach(id->${entity.name ?uncap_first}Repository.delete(id));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public void deleteById(${entityIdType} id){
         ${entity.name ?uncap_first}Repository.delete(id);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByIds(List<${entityIdType}> ids){
         return  ${entity.name ?uncap_first}Repository.findAll(ids);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByIds(List<${entityIdType}> ids,List<String> propertyNames){
          CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
          CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
@@ -162,10 +173,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findByIds(ids, Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOne(${entityIdType} id){
         return   ${entity.name ?uncap_first}Repository.findOne(id);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOne(${entityIdType} id,List<String> propertyNames){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
@@ -191,10 +204,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findOne(id,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<Object[]> findBySQL(String sql){
         return   ${entity.name ?uncap_first}Repository.listBySQL(sql);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneByProperties(Map<String,Object> map){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<${entity.name}> criteriaQuery = criteriaBuilder.createQuery(${entity.name}.class);
@@ -211,7 +226,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findOneByProperties(map,Arrays.asList(propertyNames));
     }
 
-
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneByProperties(Map<String,Object> map,List<String> propertyNames){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
@@ -231,7 +246,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return ${entity.name ?uncap_first};
     }
 
-
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByProperties(Map<String,Object> map){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
             @Override
@@ -265,6 +280,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findOneByProperty(name,value,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByProperty(String name,Object value){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
             @Override
@@ -282,6 +298,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findByProperty(name,value,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperty(String name,Object value,Pageable pageAble){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
             @Override
@@ -299,6 +316,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findByProperty(name,value,pageAble,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable){
         return ${entity.name ?uncap_first}Repository.findAll(new Specification<${entity.name}>() {
             @Override
@@ -313,6 +331,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         },pageable);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,List<String> propertyNames){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
@@ -362,10 +381,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findByProperties(map,pageable,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable){
         return  ${entity.name ?uncap_first}Repository.findByAuto(${entity.name ?uncap_first},pageable);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findAll(Pageable pageable){
         return   ${entity.name ?uncap_first}Repository.findAll(pageable);
     }
@@ -378,6 +399,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findAll(pageable,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(Specification<${entity.name}> specification){
         return   ${entity.name ?uncap_first}Repository.findAll(specification);
     }
@@ -389,10 +411,13 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     public List<${entity.name}> findAll(Specification<${entity.name}> specification,String ...propertyNames){
         return findAll(specification,Arrays.asList(propertyNames));
     }
+
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort){
         return   ${entity.name ?uncap_first}Repository.findAll(specification,sort);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable){
         return   ${entity.name ?uncap_first}Repository.findAll(specification,pageable);
     }
@@ -401,6 +426,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return  findAll(specification,pageable,Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,List<String> propertyNames){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> tupleCriteriaQuery = criteriaBuilder.createTupleQuery();
@@ -439,6 +465,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(){
         return   ${entity.name ?uncap_first}Repository.findAll();
     }
@@ -451,6 +478,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return findAll(Arrays.asList(propertyNames));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,String name,Object value){
         Map<String,Object> conditionMap = new HashMap<>();
         conditionMap.put("id",id);
@@ -458,6 +486,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return updateByProperties(conditionMap,Collections.singletonMap(name,value));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,Map<String,Object> updatedNameValues){
         Map<String,Object> conditionMap = new HashMap<>();
         conditionMap.put("id",id);
@@ -465,6 +494,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return updateByProperties(conditionMap,updatedNameValues);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues){
         updatedNameValues.put("updateDate",new Date());
         return ${entity.name ?uncap_first}Repository.updateAll(specification,updatedNameValues);
@@ -486,6 +516,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return updateByProperties(conditionMap,Collections.singletonMap(name,value));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateByProperties(Map<String,Object> conditionMap,Map<String,Object> updatedNameValues){
         return updateAll(new Specification<${entity.name}>() {
         @Override
@@ -505,6 +536,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return deleteByProperties(Collections.singletonMap(name,value));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer deleteByProperties(Map<String,Object> conditionMap){
         return deleteAll(new Specification<${entity.name}>() {
         @Override
@@ -519,18 +551,22 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             });
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer deleteAll(Specification<${entity.name}> specification){
         return ${entity.name ?uncap_first}Repository.deleteAll(specification);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Query getBySQL(String sql){
         return ${entity.name ?uncap_first}Repository.getBySQL(sql);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Query getByHQL(String hql){
         return ${entity.name ?uncap_first}Repository.getByHQL(hql);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Long getCount(Specification<${entity.name}> specification){
         return ${entity.name ?uncap_first}Repository.getCount(specification);
     }
@@ -548,6 +584,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     </#if>
     <#if isDynamicSearch>
     //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if><#if isReturnObject>[主对象]<#else>[字段包装]</#if>
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public PageModel<${resultType}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
         <#--定义分页包装结果-->
         PageModel<${resultType}> pageModel = new PageModel();
@@ -739,6 +776,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#--非动态查询------------------------------------------------------------------------------------------->
     <#else>
      //${method.description} <#if isDynamicSearch>->[动态查询]<#else>->[静态查询]</#if><#if isReturnObject>[主对象]<#else>[字段包装]</#if>
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public PageModel<${resultType}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper){
     <#--定义分页包装结果-->
         PageModel<${resultType}> pageModel = new PageModel();
@@ -910,6 +948,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         <#if relationShip.relationType == "OneToMany">
     //增加与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String add${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -925,6 +964,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     //解除与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -941,6 +981,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#elseif relationShip.relationType == "ManyToMany">
     //增加与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String add${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             List list = jdbcTemplate.queryForList("select * from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id ='"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -966,6 +1007,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     //解除与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             jdbcTemplate.execute("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -982,6 +1024,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#elseif relationShip.relationType == "ManyToOne">
     //重新设置与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
             jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'");
             logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'").toString());
@@ -989,6 +1032,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     //移除与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
         jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'");
         logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'").toString());
@@ -997,6 +1041,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#elseif relationShip.relationType == "OneToOne">
     //重新设置与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
         List list = jdbcTemplate.queryForList("select * from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'");
         if(list.size()>0){
@@ -1011,6 +1056,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     //移除与${relationShip.otherEntity.name}的关系
     @Transactional
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
         jdbcTemplate.execute("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'");
         logger.info(new StringBuilder("执行本地SQL:").append("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'").toString());

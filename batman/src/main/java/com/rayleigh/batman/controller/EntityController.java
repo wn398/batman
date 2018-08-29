@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -81,7 +82,7 @@ public class EntityController extends BaseController{
 
     @PostMapping(value = "/partUpdate")
     @ResponseBody
-    public ResultWrapper partUpdate(@RequestBody Entities entities){
+    public ResultWrapper partUpdate(@RequestBody Entities entities,HttpServletRequest request){
 
         if(null!=entities&& !StringUtil.isEmpty(entities.getId())) {
 
@@ -125,6 +126,25 @@ public class EntityController extends BaseController{
                     return getFailureResultAndInfo(null,"不能修改主键类型，存在关联外键!");
                 }
             }
+            //处理修改实体名称
+            Entities dataBaseEntity = entityService.findOne(entities.getId());
+            if(!entities.getName().equals(dataBaseEntity.getName())){
+                String realPath = request.getServletContext().getRealPath("/");
+                //生成的每个项目根据时间生成对应目录
+                String basePath = new StringBuilder("/").append(dataBaseEntity.getProject().getId()).toString();
+                String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
+                File file = new File(generatorBasePath);
+                if(file.exists()){
+                    boolean success = file.renameTo(new File(generatorBasePath+"-delete-"+System.currentTimeMillis()));
+                    if(!success){
+                        return getFailureResultAndInfo(null,"重命名实体类名称失败!");
+                    }
+                }
+
+            }
+
+
+
             entities.setHierachyDate(new Date());
             Entities entities1 = entityService.partUpdate(entities);
             //entities1 = preventCirculation(entities1);
