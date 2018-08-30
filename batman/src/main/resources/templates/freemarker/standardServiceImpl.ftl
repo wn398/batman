@@ -169,6 +169,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return resultList;
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByIds(List<${entityIdType}> ids,String ...propertyNames){
         return findByIds(ids, Arrays.asList(propertyNames));
     }
@@ -200,6 +201,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOne(${entityIdType} id,String ...propertyNames){
         return findOne(id,Arrays.asList(propertyNames));
     }
@@ -222,6 +224,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return typedQuery.getSingleResult();
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneByProperties(Map<String,Object> map,String ...propertyNames){
         return findOneByProperties(map,Arrays.asList(propertyNames));
     }
@@ -261,21 +264,29 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             });
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByProperties(Map<String,Object> map,List<String> propertyNames){
         return findByProperties(map,null,propertyNames).getContent();
     }
+
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByProperties(Map<String,Object> map,String ...propertyNames){
         return findByProperties(map,Arrays.asList(propertyNames));
     }
 
+
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneByProperty(String name,Object value){
         return findOneByProperties(Collections.singletonMap(name,value));
     }
 
+
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneByProperty(String name,Object value,List<String> propertyNames){
         return findOneByProperties(Collections.singletonMap(name,value),propertyNames);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneByProperty(String name,Object value,String ...propertyNames){
         return findOneByProperty(name,value,Arrays.asList(propertyNames));
     }
@@ -290,10 +301,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         });
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByProperty(String name,Object value,List<String> propertyNames){
         return findByProperties(Collections.singletonMap(name,value),propertyNames);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByProperty(String name,Object value,String ...propertyNames){
         return findByProperty(name,value,Arrays.asList(propertyNames));
     }
@@ -308,10 +321,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         },pageAble);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperty(String name,Object value,Pageable pageAble,List<String> propertyNames){
         return findByProperties(Collections.singletonMap(name,value),pageAble,propertyNames);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperty(String name,Object value,Pageable pageAble,String ...propertyNames){
         return findByProperty(name,value,pageAble,Arrays.asList(propertyNames));
     }
@@ -377,6 +392,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,String ...propertyNames){
         return findByProperties(map,pageable,Arrays.asList(propertyNames));
     }
@@ -391,10 +407,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return   ${entity.name ?uncap_first}Repository.findAll(pageable);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findAll(Pageable pageable,List<String> propertyNames){
         return findAll(null,pageable,propertyNames);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findAll(Pageable pageable,String ...propertyNames){
         return findAll(pageable,Arrays.asList(propertyNames));
     }
@@ -404,10 +422,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return   ${entity.name ?uncap_first}Repository.findAll(specification);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(Specification<${entity.name}> specification,List<String> propertyNames){
         return findAll(specification,null,propertyNames).getContent();
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(Specification<${entity.name}> specification,String ...propertyNames){
         return findAll(specification,Arrays.asList(propertyNames));
     }
@@ -422,6 +442,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return   ${entity.name ?uncap_first}Repository.findAll(specification,pageable);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,String ...propertyNames){
         return  findAll(specification,pageable,Arrays.asList(propertyNames));
     }
@@ -470,10 +491,12 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return   ${entity.name ?uncap_first}Repository.findAll();
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(List<String> propertyNames){
         return findAll(null,null,propertyNames).getContent();
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findAll(String ...propertyNames){
         return findAll(Arrays.asList(propertyNames));
     }
@@ -500,18 +523,22 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return ${entity.name ?uncap_first}Repository.updateAll(specification,updatedNameValues);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateAll(Specification<${entity.name}> specification,String name,Object value){
         return updateAll(specification,Collections.singletonMap(name,value));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateByProperty(String fieldName,Object fieldValue,String name,Object value){
         return updateByProperty(fieldName,fieldValue,Collections.singletonMap(name,value));
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateByProperty(String fieldName,Object fieldValue,Map<String,Object> updatedNameValues){
         return updateByProperties(Collections.singletonMap(fieldName,fieldValue),updatedNameValues);
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer updateByProperties(Map<String,Object> conditionMap,String name,Object value){
         return updateByProperties(conditionMap,Collections.singletonMap(name,value));
     }
@@ -532,6 +559,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Integer deleteByProperty(String name,Object value){
         return deleteByProperties(Collections.singletonMap(name,value));
     }
