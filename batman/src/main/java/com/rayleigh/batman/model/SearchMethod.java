@@ -52,11 +52,20 @@ public class SearchMethod extends BaseModel{
 
 
     public String getMethodName() {
-        return methodName;
+        if(null!=methodName){
+            return methodName.trim();
+        }else{
+            return methodName;
+        }
+
     }
 
     public void setMethodName(String methodName) {
-        this.methodName = methodName;
+        if(null!=methodName){
+            this.methodName = methodName.trim();
+        }else{
+            this.methodName = methodName;
+        }
     }
 
     public List<SearchCondition> getConditionList() {

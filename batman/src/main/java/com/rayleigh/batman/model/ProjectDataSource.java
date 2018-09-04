@@ -75,11 +75,21 @@ public class ProjectDataSource extends BaseModel{
     }
 
     public String getHostName() {
-        return hostName;
+        if(null!=hostName){
+            return hostName.trim();
+        }else{
+            return hostName;
+        }
+
     }
 
     public void setHostName(String hostName) {
-        this.hostName = hostName;
+        if(null!=hostName){
+            this.hostName = hostName.trim();
+        }else{
+            this.hostName = hostName;
+        }
+
     }
 
     public Integer getPort() {
@@ -91,11 +101,20 @@ public class ProjectDataSource extends BaseModel{
     }
 
     public String getDataBaseName() {
-        return dataBaseName;
+        if(null!=dataBaseName){
+            return dataBaseName.trim();
+        }else{
+            return dataBaseName;
+        }
     }
 
     public void setDataBaseName(String dataBaseName) {
-        this.dataBaseName = dataBaseName;
+        if(null!=dataBaseName){
+            this.dataBaseName = dataBaseName.trim();
+        }else{
+            this.dataBaseName = dataBaseName;
+        }
+
     }
 
     public boolean getIsMainDataSource() {

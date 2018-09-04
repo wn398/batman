@@ -76,7 +76,11 @@ public class Project extends BaseModel {
     private List<Entities> entities = new ArrayList<>();
 
     public String getPort() {
-        return port;
+        if(null!=port){
+            return port.trim();
+        }else{
+            return port;
+        }
     }
 
     public void setPort(String port) {
@@ -95,19 +99,39 @@ public class Project extends BaseModel {
     }
 
     public String getPackageName() {
-        return packageName;
+        if(null!=packageName){
+            return packageName.trim();
+        }else{
+            return packageName;
+        }
+
     }
 
     public void setPackageName(String packageName) {
-        this.packageName = packageName;
+        if(null!=packageName){
+            this.packageName = packageName.trim();
+        }else{
+            this.packageName = packageName;
+        }
+
     }
 
     public String getName() {
-        return name;
+        if(null!=name){
+            return name.trim();
+        }else{
+            return name;
+        }
+
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(null!=name){
+            this.name = name.trim();
+        }else{
+            this.name = name;
+        }
+
     }
 
     public String getDescription() {

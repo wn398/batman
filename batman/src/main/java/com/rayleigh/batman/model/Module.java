@@ -46,11 +46,19 @@ public class Module extends BaseModel {
 
 
     public String getName() {
-        return name;
+        if(null!=name){
+            return name.trim();
+        }else {
+            return name;
+        }
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(null!=name){
+            this.name = name.trim();
+        }else {
+            this.name = name;
+        }
     }
 
     public String getDescription() {

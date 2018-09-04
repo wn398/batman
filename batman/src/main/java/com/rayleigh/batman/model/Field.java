@@ -77,14 +77,18 @@ public class Field extends BaseModel{
     }
 
     public String getName() {
-        return name;
+        if(null!=name){
+            return name.trim();
+        }else {
+            return name;
+        }
     }
 
     public void setName(String name) {
         if(StringUtil.isEmpty(name)){
             this.name = null;
         }else {
-            this.name = name;
+            this.name = name.trim();
         }
     }
 
