@@ -12,6 +12,7 @@ import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
 import com.rayleigh.core.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
+import io.undertow.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -135,7 +136,14 @@ public class EntityController extends BaseController{
                 String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
                 File file = new File(generatorBasePath);
                 if(file.exists()){
-                    boolean success = file.renameTo(new File(generatorBasePath+"-delete-"+System.currentTimeMillis()));
+                    File deleteFile = new File(generatorBasePath+"-delete-"+System.currentTimeMillis());
+                    boolean success = file.renameTo(deleteFile);
+                    try {
+                        FileUtils.deleteRecursive(deleteFile.toPath());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        logger.error(new StringBuilder("递归删除文件出错！,文件路径：").append(deleteFile.getAbsolutePath()).toString());
+                    }
                     if(!success){
                         return getFailureResultAndInfo(null,"重命名实体类名称失败!");
                     }
