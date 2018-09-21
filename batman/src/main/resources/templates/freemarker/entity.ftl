@@ -1,6 +1,8 @@
 <#include "CopyRight.ftl">
 package ${project.packageName}.standard.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.rayleigh.core.model.BasicModel;
 import com.rayleigh.core.util.StringUtil;
 import org.hibernate.validator.constraints.*;
@@ -203,5 +205,8 @@ public void set${mainR.otherEntity.name} (${mainR.otherEntity.name} ${mainR.othe
 
 </#list>
 
+public String toString(){
+    return JSON.toJSONString(this,SerializerFeature.WriteMapNullValue);
+}
 
 }
