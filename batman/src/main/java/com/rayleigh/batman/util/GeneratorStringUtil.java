@@ -29,7 +29,20 @@ public class GeneratorStringUtil {
     }
 
     public static String constructInsertSql(Project project, Entities entities){
-        StringBuilder sb = new StringBuilder("\"insert into ").append(humpToUnderline(project.getName()+entities.getName()));
+        StringBuilder sb = new StringBuilder("\"insert into ");
+        if(!StringUtil.isEmpty(entities.getTableName())){
+            sb.append(entities.getTableName());
+        }else{
+            if(!StringUtil.isEmpty(entities.getPreFix())){
+                sb.append(entities.getPreFix()).append("_").append(humpToUnderline(entities.getName()));
+            }else{
+                if(entities.getAddPrefix()){
+                    sb.append(humpToUnderline(entities.getModule().getName()+entities.getName()));
+                }else{
+                    sb.append(humpToUnderline(entities.getName()));
+                }
+            }
+        }
         List<String> dbFieldsNames = new ArrayList<>();
         List<String> fieldValues = new ArrayList<>();
         String unCapEntityName = StringUtil.unCapFirst(entities.getName());

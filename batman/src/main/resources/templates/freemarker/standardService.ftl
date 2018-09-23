@@ -31,6 +31,8 @@ public interface ${entity.name}Service extends BaseService{
 
     ${entity.name} save(${entity.name} ${entity.name ?uncap_first});
 
+    List<${entity.name}> save(List<${entity.name}> ${entity.name ?uncap_first}s);
+
 <#if (entity.mainEntityRelationShips ?size >0)>
     ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first});
 

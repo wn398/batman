@@ -73,6 +73,11 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first});
     }
 
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    public List<${entity.name}> save(List<${entity.name}> ${entity.name ?uncap_first}s){
+        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}s);
+    }
+
 <#if (entity.mainEntityRelationShips ?size >0)>
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} saveWithRelated(${entity.name} ${entity.name ?uncap_first}){
@@ -221,7 +226,11 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         Predicate[] predicates = new Predicate[list.size()];
         criteriaQuery.where(list.toArray(predicates));
         TypedQuery<${entity.name}> typedQuery = entityManager.createQuery(criteriaQuery);
-        return typedQuery.getSingleResult();
+        try{
+            return typedQuery.getSingleResult();
+        }catch(Exception e){
+            return null;
+        }
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
@@ -242,11 +251,15 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         propertyNames.stream().forEach(name->selectList.add(root.get(name).alias(name)));
         tupleCriteriaQuery.multiselect(selectList);
         TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
-        Tuple tuple = tupleTypedQuery.getSingleResult();
-        Map<String,Object> fieldMap = new HashMap<String,Object>();
-        propertyNames.stream().forEach(name->fieldMap.put(name,tuple.get(name)));
-        ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(fieldMap);
-        return ${entity.name ?uncap_first};
+        try{
+            Tuple tuple = tupleTypedQuery.getSingleResult();
+            Map<String,Object> fieldMap = new HashMap<String,Object>();
+            propertyNames.stream().forEach(name->fieldMap.put(name,tuple.get(name)));
+            ${entity.name} ${entity.name ?uncap_first} = ${entity.name}Util.setPartProperties(fieldMap);
+            return ${entity.name ?uncap_first};
+        }catch(Exception e){
+            return null;
+        }
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
@@ -975,8 +988,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#else>
         <#if relationShip.relationType == "OneToMany">
     //增加与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String add${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -991,8 +1004,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
     }
     //解除与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+relationShip.otherEntity.name)} set ${generatorStringUtil.humpToUnderline(entity.name)}_id = NULL where id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -1008,8 +1021,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     <#elseif relationShip.relationType == "ManyToMany">
     //增加与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String add${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             List list = jdbcTemplate.queryForList("select * from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id ='"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -1034,8 +1047,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
     }
     //解除与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids){
         if(${relationShip.otherEntity.name ?uncap_first}Ids.size()==1){
             jdbcTemplate.execute("delete from more_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Ids.get(0)+"'");
@@ -1051,16 +1064,17 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     <#elseif relationShip.relationType == "ManyToOne">
     //重新设置与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
             jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'");
             logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'").toString());
             return "success";
     }
     //移除与${relationShip.otherEntity.name}的关系
-    @Transactional
+
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
         jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'");
         logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'").toString());
@@ -1068,8 +1082,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     }
     <#elseif relationShip.relationType == "OneToOne">
     //重新设置与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
         List list = jdbcTemplate.queryForList("select * from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"'");
         if(list.size()>0){
@@ -1083,8 +1097,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
     }
     //移除与${relationShip.otherEntity.name}的关系
-    @Transactional
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Transactional
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
         jdbcTemplate.execute("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'");
         logger.info(new StringBuilder("执行本地SQL:").append("delete from one_${generatorStringUtil.humpToUnderlineAndOrder(relationShip.mainEntity.name,relationShip.otherEntity.name)} where ${generatorStringUtil.humpToUnderline(entity.name)}_id = '"+${entity.name ?uncap_first}Id+"' and ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"'").toString());
