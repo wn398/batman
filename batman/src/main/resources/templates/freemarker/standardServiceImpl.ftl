@@ -66,7 +66,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 <#elseif entity.primaryKeyType=="Long">
     <#assign entityIdType="Long">
 </#if>
-
+<#--设置表名变量-->
+<#if entity.tableName ?exists && (entity.tableName ?length>0) ><#assign tableName = "${entity.tableName}"><#else><#if entity.addPrefix ==true><#assign tableName = "${GeneratorStringUtil.humpToUnderline(module.name+entity.name)}"></#if><#if entity.addPrefix==false><#assign tableName = "${GeneratorStringUtil.humpToUnderline(entity.preFix! +entity.name)}"></#if></#if>
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} save(${entity.name} ${entity.name ?uncap_first}){
         if(null!=${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null!=${entity.name ?uncap_first}.getVersion()</#if>){
@@ -158,6 +159,56 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
          jdbcTemplate.execute(sb.toString());
          logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
          return ${entity.name ?uncap_first};
+    }
+
+    //保存人为分配id的实体列表
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    public List<${entity.name}> saveWithAssignedId(List<${entity.name}> ${entity.name ?uncap_first}s)throws Exception{
+        StringBuilder sb = new StringBuilder(${generatorStringUtil.constructInsertPartSql(project,entity)});
+        List<String> properties = ${entity.name}Util.getPropertyNames();
+        StringBuilder names = new StringBuilder();
+        for(String name:properties){
+            names.append(StringUtil.humpToUnderline(name)).append(",");
+        }
+        sb.append(" (").append(names.toString().substring(0,names.toString().length()-1));
+        StringBuilder values = new StringBuilder();
+        ${entity.name ?uncap_first}s.parallelStream().forEach(it->{
+            StringBuilder value = new StringBuilder(" (");
+            Map<String,Object> nameValues = ${entity.name}Util.getAllPropertiesValueMap(it);
+            for(String name:properties){
+                DataType dataType = ${entity.name}Util.getPropertyDataType(name);
+                if(dataType== DataType.String) {
+                    if(null != nameValues.get(name)){
+                        value.append("\'").append(nameValues.get(name)).append("\'").append(",");
+                    }else{
+                        value.append("NULL").append(" ,");
+                    }
+                }else if(dataType == DataType.Date){
+                    if(null != nameValues.get(name)){
+                        value.append("\'").append(StringUtil.dateToDbString((Date)nameValues.get(name))).append("\'").append(",");
+                    }else{
+                        value.append("NULL").append(" ,");
+                    }
+                }else if(dataType == DataType.Integer || dataType == DataType.Double || dataType == DataType.BigDecimal || dataType == DataType.Long){
+                    if(null != nameValues.get(name)){
+                        value.append(nameValues.get(name)).append(",");
+                    }else{
+                        value.append("NULL").append(" ,");
+                    }
+                }else if(dataType == DataType.Boolean){
+                    if(null != nameValues.get(name)){
+                        value.append("\'").append(StringUtil.booleanToString((Boolean)nameValues.get(name))).append("\'").append(",");
+                    }else{
+                        value.append("NULL").append(" ,");
+                    }
+                }
+            }
+            values.append(value.toString().substring(0,value.toString().length()-1)).append(")").append(",");
+        });
+        sb.append(") values ").append(values.toString().substring(0,values.toString().length()-1));
+        jdbcTemplate.execute(sb.toString());
+        logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
+        return ${entity.name ?uncap_first}s;
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
@@ -1091,7 +1142,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     @Transactional
     public String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
-            jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'");
+            jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(module.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'");
             logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = '"+${relationShip.otherEntity.name ?uncap_first}Id2+"' where id = '"+${entity.name ?uncap_first}Id+"'").toString());
             return "success";
     }
@@ -1100,7 +1151,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     @Transactional
     public String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2){
-        jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'");
+        jdbcTemplate.update("update ${generatorStringUtil.humpToUnderline(module.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'");
         logger.info(new StringBuilder("执行本地SQL:").append("update ${generatorStringUtil.humpToUnderline(project.name+entity.name)} set ${generatorStringUtil.humpToUnderline(relationShip.otherEntity.name)}_id = NULL where id = '"+${entity.name ?uncap_first}Id+"'").toString());
         return "success";
     }

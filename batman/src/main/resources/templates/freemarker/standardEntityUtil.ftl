@@ -192,13 +192,22 @@ public static ${entity.name} setPartProperties(Map<String,Object> propertyValueM
 }
 
 //获取实体类的属性名和值对应的map
-public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.name ?uncap_first}){
+public static Map<String,Object> getNotNullPropertiesValueMap(${entity.name} ${entity.name ?uncap_first}){
     Map<String,Object> map = new HashMap<String,Object>();
     <#list entity.fields as field>
     if(null != ${entity.name ?uncap_first}.get${field.name ?cap_first}()){
         map.put("${field.name ?uncap_first}",${entity.name ?uncap_first}.get${field.name ?cap_first}());
     }
     </#list>
+    return map;
+}
+
+//获取实体类所有的属性名和值对应的map
+public static Map<String,Object> getAllPropertiesValueMap(${entity.name} ${entity.name ?uncap_first}){
+    Map<String,Object> map = new HashMap<String,Object>();
+<#list entity.fields as field>
+    map.put("${field.name ?uncap_first}",${entity.name ?uncap_first}.get${field.name ?cap_first}());
+</#list>
     return map;
 }
 
@@ -224,6 +233,21 @@ public static List<String> getPropertyNames(){
     list.add("${field.name ?uncap_first}");
     </#list>
     return list;
+}
+
+//通过属性名获取属性类型
+public static DataType getPropertyDataType(String propertyName){
+    <#list entity.fields as field>
+    if("${field.name}".equals(propertyName)){
+        return DataType.${field.dataType};
+    }
+    </#list>
+    return null;
+}
+
+//获取表名
+public static String getTableName(){
+    return <#if entity.tableName ?exists && (entity.tableName ?length>0) >"${entity.tableName}"<#else><#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(module.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.preFix! +entity.name)}"</#if></#if>;
 }
 
 }

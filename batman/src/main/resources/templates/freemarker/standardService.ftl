@@ -25,6 +25,8 @@ public interface ${entity.name}Service extends BaseService{
 
     ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception;
 
+    List<${entity.name}> saveWithAssignedId(List<${entity.name}> ${entity.name ?uncap_first}s)throws Exception;
+
     void deleteByIds(List<${entityIdType}> ids);
 
     ${entity.name} update(${entity.name} ${entity.name ?uncap_first});
