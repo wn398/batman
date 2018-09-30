@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.rayleigh.core.model.SearchMethodConditionModel;
 import com.rayleigh.core.model.SearchMethodResultModel;
+import com.rayleigh.core.model.NameValueType;
+import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.dynamicDataSource.TargetDataSource;
 import com.rayleigh.core.util.SearchMethodUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,8 +133,30 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     //保存人为分配id的实体
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception{
-         jdbcTemplate.execute(${generatorStringUtil.constructInsertSql(project,entity)});
-         logger.info(new StringBuilder("执行本地SQL:").append(${generatorStringUtil.constructInsertSql(project,entity)}).toString());
+        if(null==${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null==${entity.name ?uncap_first}.getVersion()</#if>){
+            throw new RuntimeException("保存实体id或version不能为空!");
+        }
+         StringBuilder sb = new StringBuilder(${generatorStringUtil.constructInsertPartSql(project,entity)});
+         List<NameValueType> nameValueTypeList = ${entity.name}Util.getNameValueTypeList(${entity.name ?uncap_first});
+         StringBuilder names = new StringBuilder();
+         StringBuilder values = new StringBuilder(" ");
+         nameValueTypeList.parallelStream().forEach(it->{
+            names.append(StringUtil.humpToUnderline(it.getName())).append(",");
+                if(it.getDataType()== DataType.String) {
+                    values.append("\'").append(it.getValue()).append("\'").append(",");
+                }else if(it.getDataType() == DataType.Date){
+                    values.append("\'").append(StringUtil.dateToDbString((Date)it.getValue())).append("\'").append(",");
+                }else if(it.getDataType() == DataType.Integer || it.getDataType() == DataType.Double || it.getDataType() == DataType.BigDecimal || it.getDataType() == DataType.Long){
+                    values.append(it.getValue()).append(",");
+                }else if(it.getDataType() == DataType.Boolean){
+                    values.append("\'").append(StringUtil.booleanToString((Boolean)it.getValue())).append("\'").append(",");
+                }
+            });
+            StringBuilder sb2 = new StringBuilder(values.toString().substring(0,values.toString().length()-1));
+            sb2.append(")");
+            sb.append(" (").append(names.toString().substring(0,names.toString().length()-1)).append(") values (").append(sb2.toString());
+         jdbcTemplate.execute(sb.toString());
+         logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
          return ${entity.name ?uncap_first};
     }
 

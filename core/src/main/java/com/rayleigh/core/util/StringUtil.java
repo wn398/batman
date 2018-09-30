@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
     private static Logger logger = LoggerFactory.getLogger(StringUtil.class);
-
+    public static final char UNDERLINE = '_';
 
     public static boolean isEmpty(String str){
         if(null==str||str.trim().length()==0){
@@ -99,11 +99,49 @@ public class StringUtil {
         return result;
     }
 
+    //驼峰转下划线，如（BatMan==>bat_man)
+    public static String humpToUnderline(String param) {
+        if (param == null || "".equals(param.trim())) {
+            return "";
+        }
+        int len = param.length();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            char c = param.charAt(i);
+            if (Character.isUpperCase(c)) {
+                //首字母大写，只是转化为小写
+                if(i>0) {
+                    sb.append(UNDERLINE);
+                }
+                sb.append(Character.toLowerCase(c));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    //下划线转驼峰
+    public static String underlineToHump(String param) {
+        if (param == null || "".equals(param.trim())) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(param);
+        Matcher mc = Pattern.compile("_").matcher(param);
+        int i = 0;
+        while (mc.find()) {
+            int position = mc.end() - (i++);
+            sb.replace(position - 1, position + 1, sb.substring(position, position + 1).toUpperCase());
+        }
+        return sb.toString();
+    }
+
 
     public static void main(String[] args) {
-        System.out.println(isCapFirst("test"));
-        System.out.println(isCapFirst("12EE"));
-        System.out.println(isCapFirst("Eest"));
+//        System.out.println(isCapFirst("test"));
+//        System.out.println(isCapFirst("12EE"));
+//        System.out.println(isCapFirst("Eest"));
+        System.out.println(humpToUnderline("updateDate"));
     }
 
 }

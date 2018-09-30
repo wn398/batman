@@ -26,7 +26,7 @@ import java.util.*;
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = <#if entity.tableName ?exists && (entity.tableName ?length>0) >"${entity.tableName}"<#else><#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(project.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.preFix! +entity.name)}"</#if></#if>)
+@Table(name = <#if entity.tableName ?exists && (entity.tableName ?length>0) >"${entity.tableName}"<#else><#if entity.addPrefix ==true>"${GeneratorStringUtil.humpToUnderline(module.name+entity.name)}"</#if><#if entity.addPrefix==false>"${GeneratorStringUtil.humpToUnderline(entity.preFix! +entity.name)}"</#if></#if>)
     <#--indexes = {-->
      <#--@Index(name = "rk_${entity.name}_id", columnList = "id",unique=true)-->
 <#--<#if isCreateDate == true>,@Index(name = "rk_${entity.name}_createDate", columnList = "createDate")</#if>-->
@@ -63,7 +63,7 @@ public Long id;
     </#if>
 <#elseif fieldName == "createDate">
 
-@ApiModelProperty(value="创建时间",hidden=true)
+@ApiModelProperty(value="创建时间")
 @CreatedDate
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -72,7 +72,7 @@ public Long id;
 public Date createDate;
     <#elseif fieldName == "updateDate">
 
-@ApiModelProperty(value="更新时间",hidden=true)
+@ApiModelProperty(value="更新时间")
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 @Temporal(TemporalType.TIMESTAMP)

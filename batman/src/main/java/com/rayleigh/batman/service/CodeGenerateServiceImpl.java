@@ -695,6 +695,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 Map<String,Object> map = new HashMap();
                 map.put("project",project);
                 map.put("entity",entity);
+                map.put("module",module);
                 map.put("GeneratorStringUtil",new GeneratorStringUtil());
                 List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("createDate")){

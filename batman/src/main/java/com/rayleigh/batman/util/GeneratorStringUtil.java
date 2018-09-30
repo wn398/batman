@@ -27,6 +27,25 @@ public class GeneratorStringUtil {
             return false;
         }
     }
+    // insert tableName
+    public static String constructInsertPartSql(Project project, Entities entities){
+        StringBuilder sb = new StringBuilder("\"insert into ");
+        if(!StringUtil.isEmpty(entities.getTableName())){
+            sb.append(entities.getTableName());
+        }else{
+            if(!StringUtil.isEmpty(entities.getPreFix())){
+                sb.append(humpToUnderline(entities.getPreFix())).append("_").append(humpToUnderline(entities.getName()));
+            }else{
+                if(entities.getAddPrefix()){
+                    sb.append(humpToUnderline(entities.getModule().getName()+entities.getName()));
+                }else{
+                    sb.append(humpToUnderline(entities.getName()));
+                }
+            }
+        }
+        sb.append("\"");
+        return sb.toString();
+    }
 
     public static String constructInsertSql(Project project, Entities entities){
         StringBuilder sb = new StringBuilder("\"insert into ");
@@ -34,7 +53,7 @@ public class GeneratorStringUtil {
             sb.append(entities.getTableName());
         }else{
             if(!StringUtil.isEmpty(entities.getPreFix())){
-                sb.append(entities.getPreFix()).append("_").append(humpToUnderline(entities.getName()));
+                sb.append(humpToUnderline(entities.getPreFix())).append("_").append(humpToUnderline(entities.getName()));
             }else{
                 if(entities.getAddPrefix()){
                     sb.append(humpToUnderline(entities.getModule().getName()+entities.getName()));
@@ -63,7 +82,7 @@ public class GeneratorStringUtil {
                 fieldValues.add(new StringBuilder("'\"").append("+").append(unCapEntityName).append(".get").append(StringUtil.capFirst(field.getName())).append("()").append("+").append("\"'").toString());
             }else if(field.getDataType() == DataType.Date){
                 fieldValues.add(new StringBuilder("'\"").append("+").append("StringUtil.dateToDbString(").append(unCapEntityName).append(".get").append(StringUtil.capFirst(field.getName())).append("()").append(")").append("+").append("\"'").toString());
-            }else if(field.getDataType() == DataType.Integer || field.getDataType() == DataType.Double || field.getDataType() == DataType.BigDecimal){
+            }else if(field.getDataType() == DataType.Integer || field.getDataType() == DataType.Double || field.getDataType() == DataType.BigDecimal  || field.getDataType() == DataType.Long){
                 fieldValues.add(new StringBuilder("\"").append("+").append(unCapEntityName).append(".get").append(StringUtil.capFirst(field.getName())).append("()").append("+").append("\"").toString());
             }else if(field.getDataType() == DataType.Boolean){
                 fieldValues.add(new StringBuilder("\"").append("+").append("StringUtil.booleanToString(").append(unCapEntityName).append(".get").append(StringUtil.capFirst(field.getName())).append("())").append("+").append("\"").toString());

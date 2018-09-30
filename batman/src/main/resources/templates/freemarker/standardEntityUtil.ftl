@@ -3,7 +3,8 @@ package ${project.packageName}.standard.util;
 
 import com.rayleigh.core.util.SpringContextUtils;
 import com.rayleigh.core.util.StringUtil;
-
+import com.rayleigh.core.model.NameValueType;
+import com.rayleigh.core.enums.*;
 import ${project.packageName}.standard.model.${entity.name};
 import ${project.packageName}.standard.service.${entity.name}Service;
 <#list entity.mainEntityRelationShips as relationShip>
@@ -199,6 +200,21 @@ public static Map<String,Object> getPropertiesValueMap(${entity.name} ${entity.n
     }
     </#list>
     return map;
+}
+
+//获取实体类的属性名和值及对应字段类型
+public static List<NameValueType> getNameValueTypeList(${entity.name} ${entity.name ?uncap_first}){
+    List<NameValueType> list = new ArrayList<>();
+<#list entity.fields as field>
+    if(null != ${entity.name ?uncap_first}.get${field.name ?cap_first}()){
+        NameValueType nameValueType = new NameValueType();
+        nameValueType.setName("${field.name ?uncap_first}");
+        nameValueType.setValue(${entity.name ?uncap_first}.get${field.name ?cap_first}());
+        nameValueType.setDataType(DataType.${field.dataType});
+        list.add(nameValueType);
+    }
+</#list>
+    return list;
 }
 
 //获取实体类所有简单属性值列表
