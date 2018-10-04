@@ -67,7 +67,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#assign entityIdType="Long">
 </#if>
 <#--设置表名变量-->
-<#if entity.tableName ?exists && (entity.tableName ?length>0) ><#assign tableName = "${entity.tableName}"><#else><#if entity.addPrefix ==true><#assign tableName = "${GeneratorStringUtil.humpToUnderline(module.name+entity.name)}"></#if><#if entity.addPrefix==false><#assign tableName = "${GeneratorStringUtil.humpToUnderline(entity.preFix! +entity.name)}"></#if></#if>
+<#if entity.tableName ?exists && (entity.tableName ?length>0) ><#assign tableName = "${entity.tableName}"><#else><#if entity.addPrefix ==true><#assign tableName = "${generatorStringUtil.humpToUnderline(module.name+entity.name)}"></#if><#if entity.addPrefix==false><#assign tableName = "${generatorStringUtil.humpToUnderline(entity.preFix +entity.name)}"></#if></#if>
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} save(${entity.name} ${entity.name ?uncap_first}){
         if(null!=${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null!=${entity.name ?uncap_first}.getVersion()</#if>){

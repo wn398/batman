@@ -3,7 +3,7 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <property resource="application.properties"/>
     <!--定义的值会被插入到logger上下文中。定义变量后，可以使“${r'${}'}”来使用变量-->
-    <property name="test" value="test"/>
+    <property name="loggingFile" value="${module.name}"/>
     <!--每个logger都关联到logger上下文，默认上下文名称为“default”。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改,可以通过%contextName来打印日志上下文名称-->
     <contextName>${module.name}</contextName>
     <!--输出到控制台-->
@@ -14,7 +14,7 @@
         <!--</filter>-->
         <!--表示对日志进行编码-->
         <encoder>
-            <pattern>%X{traceId} %X{ip} %X{method} %X{path} --- %d [%t] %-5p [%c] %m%n</pattern>
+            <pattern>%X{ip} %X{method} %X{path} --- %d [%t] %-5p [%c] %m%n</pattern>
         </encoder>
     </appender>
 
@@ -55,6 +55,14 @@
     <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="ERROR"/>
     <logger name="springfox" level="ERROR"/>
     <!--日志级别有：TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF-->
+
+    <logger name="jdbc.connection" level="OFF"/>
+    <logger name="jdbc.resultset" level="OFF"/>
+    <logger name="jdbc.resultsettable" level="INFO"/>
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.sqltiming" level="INFO"/>
+    <logger name="jdbc.sqlonly" level="OFF"/>
+
     <root level="INFO">
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>

@@ -83,7 +83,7 @@ logging.file=../logs/${module.name}.log
 # Specify the DBMS
 #spring.jpa.database =
 # Show or not log for each sql query
-spring.jpa.show-sql = true
+spring.jpa.show-sql = false
 
 # Hibernate ddl auto (create, create-drop, update)
 spring.jpa.hibernate.ddl-auto = update
@@ -104,7 +104,7 @@ spring.datasource.maxWait=60000
 spring.datasource.timeBetweenEvictionRunsMillis=60000
 <#--# 配置一个连接在池中最小生存的时间，单位是毫秒-->
 spring.datasource.minEvictableIdleTimeMillis=300000
-spring.datasource.validationQuery=SELECT 1 FROM DUAL
+spring.datasource.validationQuery=SELECT 1
 spring.datasource.testWhileIdle=true
 spring.datasource.testOnBorrow=false
 spring.datasource.testOnReturn=false

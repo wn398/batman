@@ -32,12 +32,14 @@ spring.datasource.name=main
 <#assign port = GeneratorStringUtil.number2String(mainDataSource.port)>
 <#if databaseType == "postgresql">
     <#assign dialect = "org.hibernate.dialect.PostgreSQL9Dialect">
-    <#assign driverclassname = "org.postgresql.Driver">
+    <#--<#assign driverclassname = "org.postgresql.Driver">-->
+    <#assign driverclassname = "net.sf.log4jdbc.DriverSpy">
 <#elseif databaseType == "mysql">
     <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
-    <#assign driverclassname = "com.mysql.jdbc.Driver">
+    <#--<#assign driverclassname = "com.mysql.jdbc.Driver">-->
+    <#assign driverclassname = "net.sf.log4jdbc.DriverSpy">
 </#if>
-spring.datasource.url = jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
+spring.datasource.url = jdbc:log4jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
 spring.datasource.username = ${mainDataSource.username}
 spring.datasource.password = ${mainDataSource.password}
 spring.datasource.driverClassName =${driverclassname}
@@ -53,12 +55,14 @@ custom.datasource.names=${otherDataSourceNames}
         <#assign port = GeneratorStringUtil.number2String(otherDataSource.port)>
         <#if databaseType == "postgresql">
             <#assign dialect = "org.hibernate.dialect.PostgreSQL9Dialect">
-            <#assign driverclassname = "org.postgresql.Driver">
+            <#--<#assign driverclassname = "org.postgresql.Driver">-->
+            <#assign driverclassname = "net.sf.log4jdbc.DriverSpy">
         <#elseif databaseType == "mysql">
             <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
-            <#assign driverclassname = "com.mysql.jdbc.Driver">
+            <#--<#assign driverclassname = "com.mysql.jdbc.Driver">-->
+            <#assign driverclassname = "net.sf.log4jdbc.DriverSpy">
         </#if>
-custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
+custom.datasource.${otherDataSourceNickName}.url=jdbc:log4jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
 custom.datasource.${otherDataSourceNickName}.driverClassName =${driverclassname}
 custom.datasource.${otherDataSourceNickName}.username=${otherDataSource.username}
 custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password}
@@ -83,7 +87,7 @@ logging.file=../logs/${module.name}.log
 # Specify the DBMS
 #spring.jpa.database =
 # Show or not log for each sql query
-spring.jpa.show-sql = true
+spring.jpa.show-sql = false
 
 # Hibernate ddl auto (create, create-drop, update)
 spring.jpa.hibernate.ddl-auto = update
@@ -104,7 +108,7 @@ spring.datasource.maxWait=60000
 spring.datasource.timeBetweenEvictionRunsMillis=60000
 <#--# 配置一个连接在池中最小生存的时间，单位是毫秒-->
 spring.datasource.minEvictableIdleTimeMillis=300000
-spring.datasource.validationQuery=SELECT 1 FROM DUAL
+spring.datasource.validationQuery=SELECT 1
 spring.datasource.testWhileIdle=true
 spring.datasource.testOnBorrow=false
 spring.datasource.testOnReturn=false
@@ -118,3 +122,5 @@ spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowS
 <#--# 合并多个DruidDataSource的监控数据-->
 spring.datasource.useGlobalDataSourceStat=true
 #druid datasouce database settings end
+
+log4jdbc.spylogdelegator.name=net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator

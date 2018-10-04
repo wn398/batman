@@ -91,6 +91,13 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.log4jdbc</groupId>
+            <artifactId>log4jdbc</artifactId>
+            <version>1.2</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
