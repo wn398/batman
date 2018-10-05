@@ -20,9 +20,9 @@
 
     <!--输出到文件-->
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${r'${logging.file}'}</File>
+        <File>${r'${loggingFile}'}</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${r'${logging.file}'}_%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${r'${loggingFile}'}_%d{yyyy-MM-dd}.log</FileNamePattern>
             <!--最多保留日志个数-->
             <maxHistory>31</maxHistory>
             <!--到了这个大小后就会删掉旧的日志-->
