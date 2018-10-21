@@ -43,6 +43,8 @@ public class ${entity.name} extends BasicModel{
 <#list entity.fields as field>
     <#assign fieldName = field.name>
     <#assign fieldType = field.dataType>
+    <#--设置字段名-->
+    <#assign columnName = GeneratorStringUtil.humpToUnderline(field.name)>
 <#if fieldName == "id">
 <#--处理id,createDate,updateDate,version特殊字段开始-->
     <#if fieldType == 'String'>
@@ -85,7 +87,6 @@ public Date updateDate;
 @Version
 public Long version;
     <#else>
-
 <#--处理id,createDate,updateDate,version特殊字段结束-->
 @ApiModelProperty("${field.description}")
     <#if field.dataType == "Date">
@@ -96,10 +97,10 @@ public Long version;
 <#--长度设置只对字符串类型有用-->
     <#if (field.dataType == "String" && field.size ?exists)>
 
-@Column(nullable = ${field.isNull ?string("true","false")},length=${field.size ?c}<#if field.isUnique>,unique = true</#if>)
+@Column(name="`${columnName}`",nullable = ${field.isNull ?string("true","false")},length=${field.size ?c}<#if field.isUnique>,unique = true</#if>)
     <#else>
 
-@Column(nullable = ${field.isNull ?string("true","false")}<#if field.isUnique>,unique = true</#if>)
+@Column(name="`${columnName}`",nullable = ${field.isNull ?string("true","false")}<#if field.isUnique>,unique = true</#if>)
     </#if>
 <#if (field.validMessage ?exists && field.validMessage ?length>0)>
     <#list field.validMessage ?split("||") as validMessage>

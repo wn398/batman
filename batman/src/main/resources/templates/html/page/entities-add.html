@@ -89,6 +89,10 @@
                     <span class="tools pull-right">
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                     </span>
+
+
+                    <button class="btn btn-success" th:alt-title="自动获取表信息" onclick="showConfig()">自动获取表信息</button>
+
                 </header>
                 <div class="panel-body">
                     <table class="table  table-hover general-table" id="moduleTable">
@@ -306,5 +310,6 @@
     }
 </script>
 <script th:replace="fragment/script"></script>
+<script type="text/javascript" th:src="@{/pageJs/entities-add.js}"/>
 </body>
 </html>

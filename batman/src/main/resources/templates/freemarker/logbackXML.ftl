@@ -3,7 +3,7 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <property resource="application.properties"/>
     <!--定义的值会被插入到logger上下文中。定义变量后，可以使“${r'${}'}”来使用变量-->
-    <property name="loggingFile" value="${module.name}"/>
+    <property name="loggingFile" value="${module.name}.log"/>
     <!--每个logger都关联到logger上下文，默认上下文名称为“default”。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改,可以通过%contextName来打印日志上下文名称-->
     <contextName>${module.name}</contextName>
     <!--输出到控制台-->

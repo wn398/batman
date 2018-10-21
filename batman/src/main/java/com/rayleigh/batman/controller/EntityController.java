@@ -2,16 +2,23 @@ package com.rayleigh.batman.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Strings;
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.batman.service.ProjectService;
+import com.rayleigh.batman.uiModel.DataBaseConnectionModel;
 import com.rayleigh.core.controller.BaseController;
+import com.rayleigh.core.enums.DataBaseType;
+import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
 import com.rayleigh.core.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
+import io.jsonwebtoken.lang.Collections;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.undertow.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +27,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.xml.crypto.Data;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -238,4 +250,119 @@ public class EntityController extends BaseController{
         return entities;
     }
 
+    @ApiOperation("测试数据库连接功能!")
+    @PostMapping("testDatabaseConnection")
+    @ResponseBody
+    public ResultWrapper testDataBaseConnection(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
+        try (Connection connection = getConn(dataBaseConnectionModel)) {
+            String sql = "select 1";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                getSuccessResult("连接成功!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getFailureResultAndInfo(e.getMessage(), "连接失败!");
+
+        }
+        return getSuccessResult("连接成功!");
+    }
+
+
+    @ApiOperation("获取表字段!")
+    @PostMapping("getTableColums")
+    @ResponseBody
+    public ResultWrapper getTableColums(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
+        try (Connection connection = getConn(dataBaseConnectionModel)) {
+            DataBaseType dataBaseType = dataBaseConnectionModel.getDataBaseType();
+            String sql=null;
+            if(dataBaseType.equals(DataBaseType.MySQL)){
+                sql = "select COLUMN_NAME as name,COLUMN_COMMENT as description,data_TYPE as dataType from information_schema.columns where table_name= ? and table_schema=? ";
+
+            }else if(dataBaseType.equals(DataBaseType.PostgreSql)){
+
+            }else if(dataBaseType.equals(DataBaseType.Oracle)){
+
+            }
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1,dataBaseConnectionModel.getTableName());
+            ps.setString(2,dataBaseConnectionModel.getDataBaseName());
+            ResultSet rs = ps.executeQuery();
+            String[] stringArray = {"varchar","char","text","json"};
+            List<String> stringList = Collections.arrayToList(stringArray);
+
+            String[] integerArray = {"tinyint","smallint","mediumint","int"};
+            List<String> integerList = Collections.arrayToList(integerArray);
+
+            String[] doubArray = {"float","double"};
+            List<String> doubleList = Collections.arrayToList(doubArray);
+
+            String[] booleanArray = {"bit","boolean"};
+            List<String> booleanList = Collections.arrayToList(booleanArray);
+
+            String[] dateArray={"date","time","datetime","timestamp","year"};
+            List<String> dateList = Collections.arrayToList(dateArray);
+
+            String[] longArray={"integer","id","bigint"};
+            List<String> longList = Collections.arrayToList(longArray);
+
+            List<Field> fieldsList = new ArrayList<>();
+            while (rs.next()) {
+                Field field = new Field();
+                //下划线转驼峰
+                String name = StringUtil.underlineToHump(rs.getString(1));
+                String description = rs.getString(2);
+                String dataType = rs.getString(3).toLowerCase();
+                field.setName(name);
+                field.setDescription(description);
+                if(stringList.contains(dataType)) {
+                    field.setDataType(DataType.String);
+                }else if(integerList.contains(dataType)){
+                    field.setDataType(DataType.Integer);
+                }else if(dateList.contains(dataType)){
+                    field.setDataType(DataType.Date);
+                }else if(doubleList.contains(dataType)){
+                    field.setDataType(DataType.Double);
+                }else if(booleanList.contains(dataType)){
+                    field.setDataType(DataType.Boolean);
+                }else if(dataType.equals("decimal")){
+                    field.setDataType(DataType.BigDecimal);
+                }else if(longList.contains(dataType)){
+                    field.setDataType(DataType.Long);
+                }
+                fieldsList.add(field);
+            }
+            return getSuccessResult(fieldsList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getFailureResultAndInfo(e.getMessage(), "连接失败!");
+
+        }
+    }
+
+    /**
+     * @Description 获取数据库连接
+     * @param dataBaseConnectionModel
+     * @return
+     * @throws Exception
+     */
+    public Connection getConn(DataBaseConnectionModel dataBaseConnectionModel) throws Exception{
+        DataBaseType dataBaseType = dataBaseConnectionModel.getDataBaseType();
+        String driverClassName=null;
+        String url=null;
+        if(dataBaseType.equals(DataBaseType.PostgreSql)){
+            driverClassName = "org.postgresql.Driver";
+            url = new StringBuilder("jdbc:postgresql://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).toString();
+        }else if(dataBaseType.equals(DataBaseType.MySQL)){
+            driverClassName = "com.mysql.jdbc.Driver";
+            url = new StringBuilder("jdbc:mysql://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).toString();
+        }else if(dataBaseType.equals(DataBaseType.Oracle)){
+            driverClassName = "oracle.jdbc.driver.OracleDriver";
+            url = new StringBuilder("jdbc:oracle://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).toString();
+        }
+        Class.forName(driverClassName);
+        Connection c = DriverManager.getConnection(url, dataBaseConnectionModel.getUsername(), dataBaseConnectionModel.getPassword());
+        return c;
+    }
 }

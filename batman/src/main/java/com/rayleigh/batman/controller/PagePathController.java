@@ -54,4 +54,5 @@ public class PagePathController {
     public String goHtml(@PathVariable("html") String html){
         return html;
     }
+
 }

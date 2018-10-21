@@ -5,10 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("数据库枚举")
 public enum DataBaseType {
-    @ApiModelProperty("mysql")
+    @ApiModelProperty("MySQL")
     MySQL("MySQL"),
-    @ApiModelProperty("pgsql")
-    PostgreSql("PostgreSql");
+    @ApiModelProperty("PostgreSql")
+    PostgreSql("PostgreSql"),
+    @ApiModelProperty("Oracle")
+    Oracle("Oracle");
 
 
     DataBaseType(String name){

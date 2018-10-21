@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="entities" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">获取表配置</h3>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">数据库类型</label>
+                            </td>
+                            <td>
+                                <select class="form-control" name="dataBaseType">
+                                    <option th:value="MySQL" th:text="MySQL"></option>
+                                    <option th:value="PostgreSql" th:text="PostgreSql"></option>
+                                    <option th:value="Oracle " th:text="Oracle"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">主机名</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="hostName" placeholder="主机名或IP" value="localhost">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">端口号</label>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" th:name="port" placeholder="端口号" value="3306">
+                            </td>
+                            <td>
+                            <label  class="control-label">数据库名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="dataBaseName" placeholder="数据库名" value="test">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">用户名</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="username" placeholder="用户名" value="root">
+                            </td>
+                            <td>
+                                <label  class="control-label">密码</label>
+                            </td>
+                            <td>
+                                <input type="password" class="form-control" th:name="password" placeholder="密码" value="root">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">数据库表名</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="tableName" placeholder="字母" value="course">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <!--<header class="panel-heading">-->
+                    <!--<button class="btn btn-success" th:alt-title="实体属性" onclick="addTr('moduleTable','demoTr')">点击为表增加属性</button>-->
+                    <!--<button class="btn btn-success" th:alt-title="自动生成表" onclick="showConfig()">自动生成表</button>-->
+                <!--</header>-->
+            </section>
+        </div>
+    </div>
+</form>
+
+
+<!--</section>-->
+<script>
+    function bindPriKeyType(obj) {
+        var value = $(obj).val();
+        $("#idType").val(value)
+    }
+</script>
+<script th:replace="fragment/script"></script>
+</body>
+</html>
