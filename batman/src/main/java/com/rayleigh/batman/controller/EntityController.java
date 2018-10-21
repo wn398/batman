@@ -277,22 +277,28 @@ public class EntityController extends BaseController{
         try (Connection connection = getConn(dataBaseConnectionModel)) {
             DataBaseType dataBaseType = dataBaseConnectionModel.getDataBaseType();
             String sql=null;
+            PreparedStatement ps = null;
             if(dataBaseType.equals(DataBaseType.MySQL)){
                 sql = "select COLUMN_NAME as name,COLUMN_COMMENT as description,data_TYPE as dataType from information_schema.columns where table_name= ? and table_schema=? ";
+                ps = connection.prepareStatement(sql);
+                ps.setString(1,dataBaseConnectionModel.getTableName());
+                ps.setString(2,dataBaseConnectionModel.getDataBaseName());
 
             }else if(dataBaseType.equals(DataBaseType.PostgreSql)){
+
+                sql = "SELECT a.attname as name, col_description(a.attrelid,a.attnum) as description, format_type(a.atttypid,a.atttypmod) as dataType  FROM pg_class as c,pg_attribute as a where c.relname = ? and a.attrelid = c.oid and a.attnum>0";
+                ps = connection.prepareStatement(sql);
+                ps.setString(1,dataBaseConnectionModel.getTableName());
 
             }else if(dataBaseType.equals(DataBaseType.Oracle)){
 
             }
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1,dataBaseConnectionModel.getTableName());
-            ps.setString(2,dataBaseConnectionModel.getDataBaseName());
+
             ResultSet rs = ps.executeQuery();
-            String[] stringArray = {"varchar","char","text","json"};
+            String[] stringArray = {"varchar","char","text","json","character"};
             List<String> stringList = Collections.arrayToList(stringArray);
 
-            String[] integerArray = {"tinyint","smallint","mediumint","int"};
+            String[] integerArray = {"tinyint","smallint","mediumint","int","bit"};
             List<String> integerList = Collections.arrayToList(integerArray);
 
             String[] doubArray = {"float","double"};
@@ -307,6 +313,9 @@ public class EntityController extends BaseController{
             String[] longArray={"integer","id","bigint"};
             List<String> longList = Collections.arrayToList(longArray);
 
+            String[] bigDecimalArray = {"decimal","numeric","numeric(19,2)"};
+            List<String> bigDecimalList = Collections.arrayToList(bigDecimalArray);
+
             List<Field> fieldsList = new ArrayList<>();
             while (rs.next()) {
                 Field field = new Field();
@@ -314,11 +323,13 @@ public class EntityController extends BaseController{
                 String name = StringUtil.underlineToHump(rs.getString(1));
                 String description = rs.getString(2);
                 String dataType = rs.getString(3).toLowerCase();
+                //获取pg前面的字符串
+                dataType = dataType.split(" ")[0];
                 field.setName(name);
                 field.setDescription(description);
                 if(stringList.contains(dataType)) {
                     field.setDataType(DataType.String);
-                }else if(integerList.contains(dataType)){
+                }else if(integerList.contains(dataType) || dataType.startsWith("bit")){
                     field.setDataType(DataType.Integer);
                 }else if(dateList.contains(dataType)){
                     field.setDataType(DataType.Date);
@@ -326,7 +337,7 @@ public class EntityController extends BaseController{
                     field.setDataType(DataType.Double);
                 }else if(booleanList.contains(dataType)){
                     field.setDataType(DataType.Boolean);
-                }else if(dataType.equals("decimal")){
+                }else if(bigDecimalList.contains(dataType)||dataType.startsWith("numeric")){
                     field.setDataType(DataType.BigDecimal);
                 }else if(longList.contains(dataType)){
                     field.setDataType(DataType.Long);

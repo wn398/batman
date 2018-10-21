@@ -256,18 +256,18 @@ public class ProjectController extends BaseController{
     public String goAddEntity(@PathVariable String id,Model model){
         if(!StringUtil.isEmpty(id)) {
             Project project2 = projectService.findOne(id);
-            List<ProjectDataSource> mainProjectDataSourceList = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
-            ProjectDataSource mainProjectDataSource = null;
-            if(null!=mainProjectDataSourceList&&mainProjectDataSourceList.size()>0){
-                mainProjectDataSource = mainProjectDataSourceList.get(0);
-                mainProjectDataSource.setDataSourceNickName(mainProjectDataSource.getDataSourceNickName()+"(主数据源)");
-            }
-            List<ProjectDataSource> otherProjectDataSource = null;
-            if(null!=project2.getProjectDataSources()&&project2.getProjectDataSources().size()>0){
-                otherProjectDataSource = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==false).collect(Collectors.toList());
-            }
-            model.addAttribute("mainDataSource",mainProjectDataSource);
-            model.addAttribute("otherDataSource",otherProjectDataSource);
+//            List<ProjectDataSource> mainProjectDataSourceList = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
+//            ProjectDataSource mainProjectDataSource = null;
+//            if(null!=mainProjectDataSourceList&&mainProjectDataSourceList.size()>0){
+//                mainProjectDataSource = mainProjectDataSourceList.get(0);
+//                mainProjectDataSource.setDataSourceNickName(mainProjectDataSource.getDataSourceNickName()+"(主数据源)");
+//            }
+//            List<ProjectDataSource> otherProjectDataSource = null;
+//            if(null!=project2.getProjectDataSources()&&project2.getProjectDataSources().size()>0){
+//                otherProjectDataSource = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==false).collect(Collectors.toList());
+//            }
+//            model.addAttribute("mainDataSource",mainProjectDataSource);
+//            model.addAttribute("otherDataSource",otherProjectDataSource);
             model.addAttribute("project", project2);
             return "/page/entities-add";
         }else{

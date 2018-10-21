@@ -328,10 +328,10 @@ function showConfig() {
                 var form = layer.getChildFrame('form',index);//父页面获取子frame中DOM元素
                 var data = $(form).serializeJSON();//把表单数据转化成json数据
                 testDataBaseConnection(index,getRootPath()+"/entitiesCtl/testDatabaseConnection",data);
+                return false;
             },
             btn3: function (index,layero) {
-                alert("xxxx")
-                return false;
+                layer.close(index);
             }
         });
 }
