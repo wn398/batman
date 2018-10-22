@@ -141,7 +141,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
          List<NameValueType> nameValueTypeList = ${entity.name}Util.getNameValueTypeList(${entity.name ?uncap_first});
          StringBuilder names = new StringBuilder();
          StringBuilder values = new StringBuilder(" ");
-         nameValueTypeList.parallelStream().forEach(it->{
+         nameValueTypeList.stream().forEach(it->{
             names.append(StringUtil.humpToUnderline(it.getName())).append(",");
                 if(it.getDataType()== DataType.String) {
                     values.append("\'").append(it.getValue()).append("\'").append(",");
@@ -156,8 +156,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             StringBuilder sb2 = new StringBuilder(values.toString().substring(0,values.toString().length()-1));
             sb2.append(")");
             sb.append(" (").append(names.toString().substring(0,names.toString().length()-1)).append(") values (").append(sb2.toString());
-         jdbcTemplate.execute(sb.toString());
          logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
+         jdbcTemplate.execute(sb.toString());
          return ${entity.name ?uncap_first};
     }
 
@@ -172,7 +172,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         }
         sb.append(" (").append(names.toString().substring(0,names.toString().length()-1));
         StringBuilder values = new StringBuilder();
-        ${entity.name ?uncap_first}s.parallelStream().forEach(it->{
+        ${entity.name ?uncap_first}s.stream().forEach(it->{
             StringBuilder value = new StringBuilder(" (");
             Map<String,Object> nameValues = ${entity.name}Util.getAllPropertiesValueMap(it);
             for(String name:properties){
@@ -206,8 +206,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             values.append(value.toString().substring(0,value.toString().length()-1)).append(")").append(",");
         });
         sb.append(") values ").append(values.toString().substring(0,values.toString().length()-1));
-        jdbcTemplate.execute(sb.toString());
         logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
+        jdbcTemplate.execute(sb.toString());
         return ${entity.name ?uncap_first}s;
     }
 

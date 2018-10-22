@@ -308,7 +308,7 @@ function showMethodList(entityId) {
 }
 
 //到配置页面
-function showConfig() {
+function showConfig(projectId) {
         layer.open({
             type: 2,
             title: '数据源配置',
@@ -316,7 +316,7 @@ function showConfig() {
             maxmin:true,
             area: ['60%', '60%'],
             shadeClose: false, //点击遮罩关闭
-            content: getRootPath()+'/goPage/entities-config/',
+            content: getRootPath()+'/entitiesCtl/showConfig/'+projectId,
             btn: ['确认','测试连接','关闭'], //只是为了演示
             btn1: function(index,layero){
                 var form = layer.getChildFrame('form',index);//父页面获取子frame中DOM元素

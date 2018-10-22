@@ -16,10 +16,27 @@
                         <tbody>
                         <tr>
                             <td>
+                                <label class="control-label">选择数据源</label>
+                            </td>
+                            <td>
+                                <select name="datasource" class="form-control" onchange="changeValue(this)" id="datasource">
+                                    <option></option>
+                                    <option th:each="datasource:${dataSources}" th:text="${datasource.dataSourceNickName}" th:id="${datasource.dataBaseType}" th:value="${datasource.dataBaseType+'||'+datasource.hostName+'||'+datasource.port+'||'+datasource.username+'||'+datasource.password+'||'+datasource.dataBaseName}" ></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">数据库表名</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="tableName" placeholder="字母">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
                                 <label class="control-label">数据库类型</label>
                             </td>
                             <td>
-                                <select class="form-control" name="dataBaseType">
+                                <select class="form-control" name="dataBaseType" id="dataBaseType">
                                     <option th:value="MySQL" th:text="MySQL"></option>
                                     <option th:value="PostgreSql" th:text="PostgreSql"></option>
                                     <option th:value="Oracle " th:text="Oracle"></option>
@@ -29,7 +46,7 @@
                                 <label class="control-label">主机名</label>
                             </td>
                             <td>
-                                <input type="text" class="form-control" th:name="hostName" placeholder="主机名或IP" value="localhost">
+                                <input type="text" class="form-control" th:name="hostName" id="hostName" placeholder="主机名或IP" value="localhost">
                             </td>
                         </tr>
                         <tr>
@@ -37,13 +54,13 @@
                                 <label class="control-label">端口号</label>
                             </td>
                             <td>
-                                <input type="number" class="form-control" th:name="port" placeholder="端口号">
+                                <input type="number" class="form-control" th:name="port" placeholder="端口号" id="port">
                             </td>
                             <td>
                             <label  class="control-label">数据库名称</label>
                             </td>
                             <td>
-                                <input type="text" class="form-control" th:name="dataBaseName" placeholder="数据库名">
+                                <input type="text" class="form-control" th:name="dataBaseName" placeholder="数据库名" id="dataBaseName">
                             </td>
                         </tr>
                         <tr>
@@ -51,21 +68,13 @@
                                 <label class="control-label">用户名</label>
                             </td>
                             <td>
-                                <input type="text" class="form-control" th:name="username" placeholder="用户名">
+                                <input type="text" class="form-control" th:name="username" placeholder="用户名" id="username">
                             </td>
                             <td>
                                 <label  class="control-label">密码</label>
                             </td>
                             <td>
-                                <input type="password" class="form-control" th:name="password" placeholder="密码">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label class="control-label">数据库表名</label>
-                            </td>
-                            <td>
-                                <input type="text" class="form-control" th:name="tableName" placeholder="字母">
+                                <input type="password" class="form-control" th:name="password" placeholder="密码" id="password">
                             </td>
                         </tr>
                         </tbody>
@@ -85,9 +94,20 @@
 
 <!--</section>-->
 <script>
-    function bindPriKeyType(obj) {
+    function changeValue(obj) {
         var value = $(obj).val();
-        $("#idType").val(value)
+        if(value!=null) {
+            var values = value.split("||");
+            //$("#datasource").find("option[text='"+values[0]+"']").attr("selected", "selected");
+            $("#dataBaseType").find("option:selected").attr("selected",false);
+            //$("'#"+values[0]+"'").attr("selected", "selected");
+            $("#dataBaseType option[value='"+values[0]+"']").attr("selected", true);
+            $("#hostName").val(values[1]);
+            $("#port").val(values[2]);
+            $("#username").val(values[3]);
+            $("#password").val(values[4]);
+            $("#dataBaseName").val(values[5]);
+        }
     }
 </script>
 <script th:replace="fragment/script"></script>

@@ -288,26 +288,27 @@
 		</repository>
 	</repositories>
 
-	<!--<distributionManagement>-->
-		<!--<repository>-->
-			<!--<id>nexus</id>-->
-			<!--<name>rayleigh Nexus Release Repository</name>-->
-			<!--<url>http://10.0.137.108:8081/repository/maven-releases/</url>-->
-		<!--</repository>-->
-		<!--<snapshotRepository>-->
-			<!--<id>nexus</id>-->
-			<!--<name>rayleigh Nexus Snapshot Repository</name>-->
-			<!--<url>http://10.0.137.108:8081/repository/maven-snapshots/</url>-->
-		<!--</snapshotRepository>-->
-	<!--</distributionManagement>-->
 	<distributionManagement>
 		<repository>
-			<id>vanke-nexus-releases</id>
-			<url>http://repository.devops.vanke.com/repository/maven-releases/</url>
+			<id>nexus</id>
+			<name>rayleigh Nexus Release Repository</name>
+			<url>http://10.0.137.108:8081/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>vanke-nexus-snapshots</id>
-			<url>http://repository.devops.vanke.com/repository/maven-snapshots/</url>
+			<id>nexus</id>
+			<name>rayleigh Nexus Snapshot Repository</name>
+			<url>http://10.0.137.108:8081/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<!--<distributionManagement>-->
+		<!--<repository>-->
+			<!--<id>vanke-nexus-releases</id>-->
+			<!--<url>http://repository.devops.vanke.com/repository/maven-releases/</url>-->
+		<!--</repository>-->
+		<!--<snapshotRepository>-->
+			<!--<id>vanke-nexus-snapshots</id>-->
+			<!--<url>http://repository.devops.vanke.com/repository/maven-snapshots/</url>-->
+		<!--</snapshotRepository>-->
+	<!--</distributionManagement>-->
 </project>

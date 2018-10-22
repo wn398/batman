@@ -250,6 +250,15 @@ public class EntityController extends BaseController{
         return entities;
     }
 
+    //方法增加页面
+    @RequestMapping("/showConfig/{id}")
+    public String showConfig(Model model,@PathVariable("id") String projectId){
+        Project project = projectService.findOne(projectId);
+        List<ProjectDataSource> dataSources = project.getProjectDataSources();
+        model.addAttribute("dataSources",dataSources);
+        return "/page/entities-config";
+    }
+
     @ApiOperation("测试数据库连接功能!")
     @PostMapping("testDatabaseConnection")
     @ResponseBody

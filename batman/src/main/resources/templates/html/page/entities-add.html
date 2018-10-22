@@ -91,7 +91,7 @@
                     </span>
 
 
-                    <button class="btn btn-success" th:alt-title="自动获取表信息" onclick="showConfig()">自动获取表信息</button>
+                    <th:button class="btn btn-success" th:alt-title="自动获取表信息" th:onclick="|showConfig('${project.id}')|">自动获取表信息</th:button>
 
                 </header>
                 <div class="panel-body">
