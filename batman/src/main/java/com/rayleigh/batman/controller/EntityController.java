@@ -278,11 +278,41 @@ public class EntityController extends BaseController{
         return getSuccessResult("连接成功!");
     }
 
+    @ApiOperation("获取数据源表名!")
+    @PostMapping("getTableNames")
+    @ResponseBody
+    public ResultWrapper getTableNames(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
+        try (Connection connection = getConn(dataBaseConnectionModel)) {
+            String sql = null;
+            if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.MySQL)){
+                sql = "select table_name as tablename from information_schema.tables where table_schema='"+dataBaseConnectionModel.getDataBaseName()+"' and table_type='base table' order by tablename";
+            }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.PostgreSql)){
+                sql = "SELECT   tablename   FROM   pg_tables WHERE   tablename   NOT   LIKE   'pg%' AND tablename NOT LIKE 'sql_%' ORDER   BY   tablename";
+            }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.Oracle)){
+                //todo
+            }
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<String> tableNames = new ArrayList<>();
+            while (rs.next()) {
+                tableNames.add(rs.getString(1));
+            }
+            return getSuccessResult(tableNames.parallelStream().collect(Collectors.joining(",")));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getFailureResultAndInfo(e.getMessage(), "连接失败!");
+
+        }
+    }
+
 
     @ApiOperation("获取表字段!")
     @PostMapping("getTableColums")
     @ResponseBody
     public ResultWrapper getTableColums(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
+        if(StringUtil.isEmpty(dataBaseConnectionModel.getTableName())){
+            return getFailureResultAndInfo(null,"数据库表名不能为空!");
+        }
         try (Connection connection = getConn(dataBaseConnectionModel)) {
             DataBaseType dataBaseType = dataBaseConnectionModel.getDataBaseType();
             String sql=null;

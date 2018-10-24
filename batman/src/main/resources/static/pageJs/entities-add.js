@@ -319,7 +319,7 @@ function showConfig(projectId) {
             content: getRootPath()+'/entitiesCtl/showConfig/'+projectId,
             btn: ['确认','测试连接','关闭'], //只是为了演示
             btn1: function(index,layero){
-                var form = layer.getChildFrame('form',index);//父页面获取子frame中DOM元素
+                var form = layer.getChildFrame('form', index);//父页面获取子frame中DOM元素
                 var data = $(form).serializeJSON();//把表单数据转化成json数据
                 getTableColums(index,getRootPath()+"/entitiesCtl/getTableColums",data);
 
@@ -393,3 +393,4 @@ function getTableColums(index,url,data) {
         }
     });
 }
+
