@@ -31,10 +31,10 @@
                             <tbody>
                                 <tr th:each="project:${projects}">
                                     <td th:text="${project.name}"></td>
-                                    <td th:text="${#lists.size(project.modules)}"></td>
-                                    <td th:text="${#lists.size(project.entities)}"></td>
-                                    <td th:text="${project.createDate}"></td>
-                                    <td th:text="${project.hierachyDate}"></td>
+                                    <td th:text="${project.moduleNum}"></td>
+                                    <td th:text="${project.entityNum}"></td>
+                                    <td th:text="${#dates.format(project.createDate,'yyyy-MM-dd hh:mm:ss')}"></td>
+                                    <td th:text="${#dates.format(project.hierachyDate,'yyyy-MM-dd hh:mm:ss')}"></td>
                                     <td th:text="${project.version}"></td>
                                     <td>
                                         <a class="btn btn-success btn-xs" th:href="@{'/codeGeneratorCtl/generateProject/'+${project.id}}">下载代码</a>

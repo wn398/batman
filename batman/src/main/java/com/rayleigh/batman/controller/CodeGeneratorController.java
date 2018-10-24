@@ -2,10 +2,12 @@ package com.rayleigh.batman.controller;
 
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.*;
+import com.rayleigh.batman.uiModel.ProjectListModel;
 import com.rayleigh.batman.util.*;
 import com.rayleigh.core.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,8 @@ public class CodeGeneratorController extends BaseController{
     private EntityService entityService;
     @Autowired
     private CodeGenerateService codeGenerateService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Value("${batman.aesEncode.rule}")
     private String aesEndoeRule;
@@ -36,8 +40,38 @@ public class CodeGeneratorController extends BaseController{
     @GetMapping("/goProjectCodeGenerator")
     public String goCodeGenerator(HttpServletRequest request){
         String userId = (String)request.getSession().getAttribute("userId");
-        SysUser sysUser = sysUserService.findOne(userId);
-        request.setAttribute("projects",sysUser.getProjects());
+        String sql = "SELECT\n" +
+                "  project.id as id,\n" +
+                "\tproject. NAME AS NAME,\n" +
+                "\tCOUNT (DISTINCT(\"module\". ID)) AS moduleNum,\n" +
+                "\tCOUNT (DISTINCT(entity. ID)) AS entityNum,\n" +
+                "\tproject.create_date AS createDate,\n" +
+                "\tproject.hierachy_date as hierachyDate,\n" +
+                "\tproject.\"version\" as version\n" +
+                "FROM\n" +
+                "\tbatman_project project\n" +
+                "LEFT JOIN batman_module MODULE ON \"module\".project_id = project.\"id\"\n" +
+                "LEFT JOIN batman_entity entity ON entity.project_id = project. ID\n" +
+                "WHERE\n" +
+                "\tproject.sysuser_id = '"+userId+"'\n" +
+                "GROUP BY\n" +
+                "\tproject. ID";
+        logger.info(new StringBuilder("执行本地sql：").append(sql).toString());
+        List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
+        List<ProjectListModel> resultList = new ArrayList<>();
+        list.stream().forEach(it->{
+            ProjectListModel model = new ProjectListModel();
+            model.setId((String)it.get("id"));
+            model.setCreateDate((Date)it.get("createDate"));
+            model.setHierachyDate((Date)it.get("hierachyDate"));
+            model.setEntityNum((Long)it.get("entityNum"));
+            model.setModuleNum((Long)it.get("moduleNum"));
+            model.setVersion((Long)it.get("version"));
+            model.setName((String)it.get("name"));
+            resultList.add(model);
+        });
+
+        request.setAttribute("projects",resultList);
         return "/page/project-list-for-code-generator";
     }
 
