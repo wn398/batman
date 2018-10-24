@@ -34,20 +34,20 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="entity:${project.entities}">
+                                <tr th:each="entity:${entities}">
                                     <td th:text="${entity.name}"></td>
                                     <td th:text="${entity.description}"></td>
-                                    <td th:text="${entity.module.name}"></td>
-                                    <td th:text="${#lists.size(entity.mainEntityRelationShips)}"></td>
-                                    <td th:text="${#lists.size(entity.mainFieldRelationShips)}"></td>
-                                    <td th:text="${#lists.size(entity.methods)}"></td>
-                                    <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd')}"></td>
-                                    <td th:text="${#dates.format(entity.hierachyDate, 'yyyy-MM-dd')}"></td>
+                                    <td th:text="${entity.modelDescription}"></td>
+                                    <td th:text="${entity.tableNum}"></td>
+                                    <td th:text="${entity.fieldNum}"></td>
+                                    <td th:text="${entity.methodNum}"></td>
+                                    <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                                    <td th:text="${#dates.format(entity.hierachyDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                                     <td th:text="${entity.version}"></td>
                                     <td>
                                         <a class="btn btn-success btn-xs" th:onclick="|showUpdate('${entity.id}',this,'${project.id}')|">更新</a>
                                         <a class="btn btn-danger btn-xs" th:onclick="|deleteById('${entity.id}',this,'${project.id}')|">删除</a>
-                                        <a class="btn btn-info btn-xs" th:onclick="|showAddRelation('${entity.id}',this,'${entity.module.id}','${project.id}')|">关联</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="|showAddRelation('${entity.id}',this,'${entity.modelId}','${project.id}')|">关联</a>
                                         <a class="btn btn-info btn-xs" th:onclick="|showMethodList('${entity.id}')|">方法服务</a>
                                     </td>
 

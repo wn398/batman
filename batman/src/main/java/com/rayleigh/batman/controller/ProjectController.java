@@ -5,6 +5,7 @@ import com.rayleigh.batman.model.ProjectDataSource;
 import com.rayleigh.batman.model.SysUser;
 import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.batman.service.SysUserService;
+import com.rayleigh.batman.uiModel.EntityListModel;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.DataTablesPageModel;
@@ -13,6 +14,7 @@ import com.rayleigh.core.service.BaseService;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 public class ProjectController extends BaseController{
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private JdbcTemplate JdbcTemplate;
     @Autowired
     private SysUserService sysUserService;
 
@@ -234,7 +238,49 @@ public class ProjectController extends BaseController{
     public String goEntityList(@PathVariable String id,Model model){
         if(!StringUtil.isEmpty(id)) {
             Project project2 = projectService.findOne(id);
+            String sql = "SELECT\n" +
+                    "entity. ID AS ID,\n" +
+                    "entity. NAME AS NAME,\n" +
+                    "entity.description AS description,\n" +
+                    "MODULE .description AS modelDescription,\n" +
+                    "MODULE . ID AS modelId,\n" +
+                    "COUNT (DISTINCT(relationship. ID)) AS tableNum,\n" +
+                    "COUNT (distinct(fieldRelationShip. ID)) AS fieldNum,\n" +
+                    "COUNT (DISTINCT(METHOD . ID)) AS methodNum,\n" +
+                    "entity.create_date AS createDate,\n" +
+                    "entity.hierachy_date AS hierachyDate,\n" +
+                    "entity. VERSION AS VERSION\n" +
+                    "FROM\n" +
+                    "batman_entity entity\n" +
+                    "LEFT OUTER JOIN batman_relationship relationship ON entity. ID = relationship.main_entity_id\n" +
+                    "LEFT JOIN batman_field_relationship fieldRelationShip ON entity. ID = fieldRelationShip.main_entity_id\n" +
+                    "LEFT JOIN batman_module module ON entity.module_id = MODULE . ID\n" +
+                    "LEFT JOIN batman_search_method METHOD ON entity. ID = METHOD .entity_id\n" +
+                    "WHERE\n" +
+                    "\tentity.project_id = '"+id+"'\n" +
+                    "GROUP BY\n" +
+                    "\tentity. ID,\"module\".id";
+            logger.info(new StringBuilder("执行本地sql:").append(sql).toString());
+            List<Map<String,Object>> list = JdbcTemplate.queryForList(sql);
+
+            List<EntityListModel> resultList = new ArrayList();
+            list.stream().forEach(it->{
+                EntityListModel model2 = new EntityListModel();
+                model2.setId((String)it.get("id"));
+                model2.setName((String)it.get("name"));
+                model2.setDescription((String)it.get("description"));
+                model2.setModelId((String)it.get("modelId"));
+                model2.setModelDescription((String)it.get("modelDescription"));
+                model2.setTableNum((Long)it.get("tableNum"));
+                model2.setFieldNum((Long)it.get("fieldNum"));
+                model2.setMethodNum((Long)it.get("methodNum"));
+                model2.setCreateDate((Date)it.get("createDate"));
+                model2.setHierachyDate((Date)it.get("hierachyDate"));
+                model2.setVersion((Long)it.get("version"));
+                resultList.add(model2);
+            });
             model.addAttribute("project", project2);
+            model.addAttribute("entities",resultList);
             return "/page/entities-list";
         }else{
             return "error";
