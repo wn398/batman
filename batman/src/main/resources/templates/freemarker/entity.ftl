@@ -97,10 +97,10 @@ public Long version;
 <#--长度设置只对字符串类型有用-->
     <#if (field.dataType == "String" && field.size ?exists)>
 
-@Column(name="`${columnName}`",nullable = ${field.isNull ?string("true","false")},length=${field.size ?c}<#if field.isUnique>,unique = true</#if>)
+@Column(name="[${columnName}]",nullable = ${field.isNull ?string("true","false")},length=${field.size ?c}<#if field.isUnique>,unique = true</#if>)
     <#else>
 
-@Column(name="`${columnName}`",nullable = ${field.isNull ?string("true","false")}<#if field.isUnique>,unique = true</#if>)
+@Column(name="[${columnName}]",nullable = ${field.isNull ?string("true","false")}<#if field.isUnique>,unique = true</#if>)
     </#if>
 <#if (field.validMessage ?exists && field.validMessage ?length>0)>
     <#list field.validMessage ?split("||") as validMessage>

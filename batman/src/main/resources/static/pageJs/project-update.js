@@ -70,3 +70,42 @@ function deleteRemoteProjectDataSourceTr(id,obj) {
             layer.close();
         });
 }
+
+function testConnection(obj) {
+    var form = $(obj).parents("tr");
+    var dataBaseType = $(form).find("select[name='projectDataSources[][dataBaseType]']").val();
+    var dataBaseName = $(form).find("input[name='projectDataSources[][dataBaseName]']").val();
+    var username = $(form).find("input[name='projectDataSources[][username]']").val();
+    var password = $(form).find("input[name='projectDataSources[][password]']").val();
+    var hostName = $(form).find("input[name='projectDataSources[][hostName]']").val();
+    var port = $(form).find("input[name='projectDataSources[][port]']").val();
+
+    var data=new Object();
+    data["dataBaseType"]=dataBaseType;
+    data["dataBaseName"]=dataBaseName;
+    data["username"]=username;
+    data["password"]=password;
+    data["hostName"]=hostName;
+    data["port"]=port;
+
+    data = JSON.stringify(data);
+    $.ajax({
+        type: "POST",
+        url: getRootPath()+"/entitiesCtl/testDatabaseConnection",
+        async:false,
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            if(data.status=="SUCCESS") {
+                layerSuccessMsg("连接成功！")
+            }else{
+                layerFailMsg(data.info+":"+data.data);
+            }
+        },
+        error: function (msg) {
+            alert("失败"+msg.responseText);
+        }
+    });
+
+}

@@ -112,7 +112,7 @@
                                 <input type="text" class="form-control" name="projectDataSources[][username]" th:value="${projectDataSource.username}" placeholder="字母数字">
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="projectDataSources[][password]" th:value="${projectDataSource.password}" placeholder="字母数字">
+                                <input type="password" class="form-control" name="projectDataSources[][password]" th:value="${projectDataSource.password}" placeholder="字母数字">
                             </td>
                             <td>
                                 <select class="form-control" name="projectDataSources[][isMainDataSource]">
@@ -134,6 +134,9 @@
                             </td>
                             <td>
                                 <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteProjectDataSourceTr(\''+${projectDataSource.id}+'\','+this+');'">删除</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-large" onclick="testConnection(this)">测试连接</button>
                             </td>
                         </tr>
                         </tbody>
@@ -219,7 +222,7 @@
                 <input type="text" class="form-control" name="projectDataSources[][username]"  placeholder="字母数字">
             </td>
             <td>
-                <input type="text" class="form-control" name="projectDataSources[][password]"  placeholder="字母数字">
+                <input type="password" class="form-control" name="projectDataSources[][password]"  placeholder="字母数字">
             </td>
             <td>
                 <select class="form-control" name="projectDataSources[][isMainDataSource]">
@@ -238,6 +241,9 @@
             </td>
             <td>
                 <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="testConnection(this)">测试连接</button>
             </td>
         </tr>
         </tbody>
