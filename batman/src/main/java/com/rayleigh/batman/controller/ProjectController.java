@@ -129,20 +129,6 @@ public class ProjectController extends BaseController{
         return "/page/project-update";
     }
 
-    @RequestMapping(value = "/showAllProjectNames")
-    public String showAllProjectNames(Model model, HttpServletRequest request){
-        String userId = (String) request.getSession().getAttribute("userId");
-        SysUser sysUser = sysUserService.findOne(userId);
-        model.addAttribute("projects",sysUser.getProjects());
-        return "/page/project-entities";
-    }
-////    到服务页面
-//    @RequestMapping(value = "/showAllProjectNamesForMethod")
-//    public String showAllProjectNamesForMethod(Model model){
-//        model.addAttribute("projects",projectService.getAll());
-//        return "/page/project-entities-for-method";
-//    }
-
     @RequestMapping(value = "/getAll")
     @ResponseBody
     public ResultWrapper getAll(HttpServletRequest request){
@@ -207,16 +193,6 @@ public class ProjectController extends BaseController{
             return getFailureResultAndInfo(null,"工程id不能为空");
         }
     }
-//    @PostMapping(value = "/doUpdate")
-//    @ResponseBody
-//    public ResultWrapper update(@RequestBody Project project){
-//        if(null!=project&&!StringUtil.isEmpty(project.getId())) {
-//                Project project1 = preventCirculation(project);
-//            return getSuccessResult(project1);
-//        }else{
-//            return getFailureResultAndInfo(project,"工程id不能为空");
-//        }
-//    }
 
     @PostMapping(value = "/getByPage")
     @ResponseBody
@@ -287,33 +263,10 @@ public class ProjectController extends BaseController{
         }
     }
 
-//    @RequestMapping("/goEntitiesListForMethod/{id}")
-//    public String goEntityListForMethod(@PathVariable String id,Model model){
-//        if(!StringUtil.isEmpty(id)) {
-//            Project project2 = projectService.findOne(id);
-//            model.addAttribute("project", project2);
-//            return "/page/entities-list-method";
-//        }else{
-//            return "error";
-//        }
-//    }
-
     @RequestMapping("/goAddEntity/{id}")
     public String goAddEntity(@PathVariable String id,Model model){
         if(!StringUtil.isEmpty(id)) {
             Project project2 = projectService.findOne(id);
-//            List<ProjectDataSource> mainProjectDataSourceList = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==true).collect(Collectors.toList());
-//            ProjectDataSource mainProjectDataSource = null;
-//            if(null!=mainProjectDataSourceList&&mainProjectDataSourceList.size()>0){
-//                mainProjectDataSource = mainProjectDataSourceList.get(0);
-//                mainProjectDataSource.setDataSourceNickName(mainProjectDataSource.getDataSourceNickName()+"(主数据源)");
-//            }
-//            List<ProjectDataSource> otherProjectDataSource = null;
-//            if(null!=project2.getProjectDataSources()&&project2.getProjectDataSources().size()>0){
-//                otherProjectDataSource = project2.getProjectDataSources().parallelStream().filter(projectDataSource -> projectDataSource.getIsMainDataSource()==false).collect(Collectors.toList());
-//            }
-//            model.addAttribute("mainDataSource",mainProjectDataSource);
-//            model.addAttribute("otherDataSource",otherProjectDataSource);
             model.addAttribute("project", project2);
             return "/page/entities-add";
         }else{

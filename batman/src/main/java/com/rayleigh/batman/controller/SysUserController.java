@@ -1,17 +1,21 @@
 package com.rayleigh.batman.controller;
 
+import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.model.SysUser;
 import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,12 +28,21 @@ public class SysUserController extends BaseController {
     private SysUserService sysUserService;
 
     @PostMapping("/login")
-    public void login(SysUser sysUser, HttpServletRequest request,HttpServletResponse response)throws Exception{
+    public void login(SysUser sysUser, HttpServletRequest request, HttpServletResponse response, HttpServletRequest httpServletRequest)throws Exception{
         List<SysUser> list = sysUserService.findByNameAndPassword(sysUser.getName(),sysUser.getPassword());
 
         if(null !=list &&list.size()>0){
             request.getSession().setAttribute("userId",list.get(0).getId());
-           // request.getRequestDispatcher("/").forward(request,response);
+            SysUser sysUser2 = sysUserService.findOne(list.get(0).getId());
+            List<Project> projectList = new ArrayList();
+            sysUser2.getProjects().forEach(it->{
+                Project project = new Project();
+                project.setId(it.getId());
+                project.setDescription(it.getDescription());
+                project.setName(it.getName());
+                projectList.add(project);
+            });
+            httpServletRequest.getSession().setAttribute("projects",projectList);
             String root = request.getRequestURI().split("/")[1];
             response.sendRedirect(new StringBuilder("/").append(root).toString());
         }else{
