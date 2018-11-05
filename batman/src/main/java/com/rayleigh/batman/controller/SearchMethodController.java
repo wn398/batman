@@ -43,15 +43,11 @@ public class SearchMethodController extends BaseController {
 
             List<SearchCondition> realConditionList = new ArrayList<>();
             List<SearchResult> realResultList = new ArrayList<>();
-            //mark主要用于标记前端id,createDate和updateDate三个不在field表里的字段
+            
             for (SearchCondition condition : conditionList) {
                 if (null != condition.getField()) {
                     if (!StringUtil.isEmpty(condition.getField().getId())) {
- //                       if (!"mark".equals(condition.getField().getId())) {
                             condition.setField(fieldService.findOne(condition.getField().getId()));
-//                        } else {
-//                            condition.setField(null);
-//                        }
                     }
                     realConditionList.add(condition);
                 }
@@ -59,11 +55,7 @@ public class SearchMethodController extends BaseController {
             for (SearchResult result : results) {
                 if (null != result.getField()) {
                     if (!StringUtil.isEmpty(result.getField().getId())) {
- //                       if (!"mark".equals(result.getField().getId())) {
                             result.setField(fieldService.findOne(result.getField().getId()));
-//                        } else {
-//                            result.setField(null);
-//                        }
                     }
                     realResultList.add(result);
                 }
@@ -114,15 +106,11 @@ public class SearchMethodController extends BaseController {
         Entities entities = entityService.findOne(entityId);
         model.addAttribute("entity", entities);
         model.addAttribute("method", searchMethod);
-        // model.addAttribute("conditionNames", searchMethod.getConditionList().parallelStream().map(searchCondition -> searchCondition.getFieldName()).collect(Collectors.toList()));
         List<SearchCondition> conditions = searchMethod.getConditionList();
         List<SearchResult> results = searchMethod.getSearchResults();
         //先设置主对象
         Map<String, SearchConditionResult> mainMap = new LinkedHashMap<>();
-        //mainMap初始化
-//        mainMap.put(entities.getId() + "_id", new SearchConditionResult(entities.getName(), "id", DataType.String, "mark"));
-//        mainMap.put(entities.getId() + "_createDate", new SearchConditionResult(entities.getName(), "createDate", DataType.Date, "mark"));
-//        mainMap.put(entities.getId() + "_updateDate", new SearchConditionResult(entities.getName(), "updateDate", DataType.Date, "mark"));
+
         for (Field field : entities.getFields()) {
             mainMap.put(entities.getId() + "_" + field.getName(), new SearchConditionResult(entities.getName(), field.getName(), field.getDataType(), field.getId()));
         }
@@ -130,46 +118,6 @@ public class SearchMethodController extends BaseController {
         conditions.parallelStream().forEach(searchCondition -> conditionMap.put(searchCondition.getFieldName(),searchCondition));
         Map<String, SearchResult> searchMethodMap = new HashMap<>();
         results.parallelStream().forEach(searchResult -> searchMethodMap.put(searchResult.getFieldName(),searchResult));
-        //先对特殊对象id,createDate,updateDate进行设置
-//        String fieldId = entities.getId() + "_id";
-//        String fieldCreateDate = entities.getId()+"_createDate";
-//        String fieldUpdateDate = entities.getId()+"_updateDate";
-
-//        if(conditionMap.keySet().contains(fieldId)){
-//            mainMap.get(fieldId).setSearchCondition(conditionMap.get(fieldId));
-//        }else{
-//            mainMap.get(fieldId).setSearchCondition(new SearchCondition());
-//        }
-//
-//        if(conditionMap.keySet().contains(fieldCreateDate)){
-//            mainMap.get(fieldCreateDate).setSearchCondition(conditionMap.get(fieldCreateDate));
-//        }else{
-//            mainMap.get(fieldCreateDate).setSearchCondition(new SearchCondition());
-//        }
-//
-//        if(conditionMap.keySet().contains(fieldUpdateDate)){
-//            mainMap.get(fieldUpdateDate).setSearchCondition(conditionMap.get(fieldUpdateDate));
-//        }else{
-//            mainMap.get(fieldUpdateDate).setSearchCondition(new SearchCondition());
-//        }
-//
-//        if(searchMethodMap.keySet().contains(fieldId)){
-//            mainMap.get(fieldId).setSearchResult(searchMethodMap.get(fieldId));
-//        }else{
-//            mainMap.get(fieldId).setSearchResult(new SearchResult());
-//        }
-//
-//        if(searchMethodMap.keySet().contains(fieldCreateDate)){
-//            mainMap.get(fieldCreateDate).setSearchResult(searchMethodMap.get(fieldCreateDate));
-//        }else{
-//            mainMap.get(fieldCreateDate).setSearchResult(new SearchResult());
-//        }
-//
-//        if(searchMethodMap.keySet().contains(fieldUpdateDate)){
-//            mainMap.get(fieldUpdateDate).setSearchResult(searchMethodMap.get(fieldUpdateDate));
-//        }else{
-//            mainMap.get(fieldUpdateDate).setSearchResult(new SearchResult());
-//        }
 
         for (Field field : entities.getFields()) {
 
@@ -275,11 +223,7 @@ public class SearchMethodController extends BaseController {
             for (SearchCondition condition : conditionList) {
                 if (null != condition.getField()) {
                     if (!StringUtil.isEmpty(condition.getField().getId())) {
-                        //if (!"mark".equals(condition.getField().getId())) {
                             condition.setField(fieldService.findOne(condition.getField().getId()));
-//                        } else {
-//                            condition.setField(null);
-//                        }
                     }
                     realConditionList.add(condition);
                 }
@@ -287,11 +231,7 @@ public class SearchMethodController extends BaseController {
             for (SearchResult result : results) {
                 if (null != result.getField()) {
                     if (!StringUtil.isEmpty(result.getField().getId())) {
-                     //   if (!"mark".equals(result.getField().getId())) {
                             result.setField(fieldService.findOne(result.getField().getId()));
-//                        } else {
-//                            result.setField(null);
-//                        }
                     }
                     realResultList.add(result);
                 }
