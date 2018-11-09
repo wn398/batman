@@ -10,6 +10,10 @@ public class ProjectListModel {
     private String id;
     @ApiModelProperty("名称")
     private String name;
+    @ApiModelProperty("项目描述")
+    private String description;
+    @ApiModelProperty("项目基本路径")
+    private String packageName;
     @ApiModelProperty("模块数量")
     private Long moduleNum;
     @ApiModelProperty("实体数量")
@@ -77,5 +81,21 @@ public class ProjectListModel {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

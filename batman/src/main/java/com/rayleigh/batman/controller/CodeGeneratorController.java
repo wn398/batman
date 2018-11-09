@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,11 +39,13 @@ public class CodeGeneratorController extends BaseController{
     private Map<String, String> tempMap = new HashMap<>();
 
     @GetMapping("/goProjectCodeGenerator")
-    public String goCodeGenerator(HttpServletRequest request){
+    public String goCodeGenerator(HttpServletRequest request, Model model2){
         String userId = (String)request.getSession().getAttribute("userId");
         String sql = "SELECT\n" +
                 "  project.id as id,\n" +
                 "\tproject. NAME AS NAME,\n" +
+                "\tproject.description as description,\n"+
+                "\tproject.package_name as packageName,"+
                 "\tCOUNT (DISTINCT(\"module\". ID)) AS moduleNum,\n" +
                 "\tCOUNT (DISTINCT(entity. ID)) AS entityNum,\n" +
                 "\tproject.create_date AS createDate,\n" +
@@ -62,6 +65,8 @@ public class CodeGeneratorController extends BaseController{
         list.stream().forEach(it->{
             ProjectListModel model = new ProjectListModel();
             model.setId((String)it.get("id"));
+            model.setDescription((String)it.get("description"));
+            model.setPackageName((String)it.get("packageName"));
             model.setCreateDate((Date)it.get("createDate"));
             model.setHierachyDate((Date)it.get("hierachyDate"));
             model.setEntityNum((Long)it.get("entityNum"));
@@ -70,9 +75,9 @@ public class CodeGeneratorController extends BaseController{
             model.setName((String)it.get("name"));
             resultList.add(model);
         });
+        model2.addAttribute("projects",resultList);
 
-        request.setAttribute("projects",resultList);
-        return "/page/project-list-for-code-generator";
+        return "/page/project-list";
     }
 
     //生成standard部分代码

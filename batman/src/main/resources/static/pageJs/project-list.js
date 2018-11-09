@@ -26,27 +26,27 @@ $(document).ready(function () {
         "ordering": true,//排序操作在服务端进行，所以可以关了。
         "order": [[ 4, "desc" ]],//默认首次展示时从按第5列倒序展示
         "serverSide": false,//是否开启服务端
-        "ajax": {
-            url: getRootPath() + "/projectCtl/getAll",
-            dataSrc: 'data',
-            type: "POST"
-        },
-        //组织数据
-        "columns": [
-            {"data": "name"},
-            {"data": "description"},
-            {"data": "packageName"},
-            {"data": "createDate"},
-            {"data": "hierachyDate"},
-            {"data": "version"},
-            {
-                "data": function (e) {//这里给最后一列返回一个操作列表 e是得到的json数组中的一个item ，可以用于控制标签的属性。
-                    return '<a class="btn btn-success btn-xs" onclick=showUpdate("'+e.id+'",this)>更新</a>'+'&nbsp;&nbsp;'
-                        +'<a  class="btn btn-danger btn-xs" onclick=deleteById("'+e.id+'",this)>删除</a>'+'&nbsp;&nbsp;'
-                        +'<a class="btn btn-info btn-xs" href='+getRootPath()+'/projectCtl/goAllEntity/'+e.id+'>实体列表</a>';
-                }
-            }
-        ],
+        // "ajax": {
+        //     url: getRootPath() + "/projectCtl/getAll",
+        //     dataSrc: 'data',
+        //     type: "POST"
+        // },
+        // //组织数据
+        // "columns": [
+        //     {"data": "name"},
+        //     {"data": "description"},
+        //     {"data": "packageName"},
+        //     {"data": "createDate"},
+        //     {"data": "hierachyDate"},
+        //     {"data": "version"},
+        //     {
+        //         "data": function (e) {//这里给最后一列返回一个操作列表 e是得到的json数组中的一个item ，可以用于控制标签的属性。
+        //             return '<a class="btn btn-success btn-xs" onclick=showUpdate("'+e.id+'",this)>更新</a>'+'&nbsp;&nbsp;'
+        //                 +'<a  class="btn btn-danger btn-xs" onclick=deleteById("'+e.id+'",this)>删除</a>'+'&nbsp;&nbsp;'
+        //                 +'<a class="btn btn-info btn-xs" href='+getRootPath()+'/projectCtl/goAllEntity/'+e.id+'>实体列表</a>';
+        //         }
+        //     }
+        // ],
         "columnDefs":[
             {
                 //设置第4列不参与搜索

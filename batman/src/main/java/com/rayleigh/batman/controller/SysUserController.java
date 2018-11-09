@@ -2,6 +2,7 @@ package com.rayleigh.batman.controller;
 
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.model.SysUser;
+import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.batman.service.SysUserService;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.util.StringUtil;
@@ -26,6 +27,8 @@ import java.util.List;
 public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private ProjectService projectService;
 
     @PostMapping("/login")
     public void login(SysUser sysUser, HttpServletRequest request, HttpServletResponse response, HttpServletRequest httpServletRequest)throws Exception{
@@ -33,9 +36,9 @@ public class SysUserController extends BaseController {
 
         if(null !=list &&list.size()>0){
             request.getSession().setAttribute("userId",list.get(0).getId());
-            SysUser sysUser2 = sysUserService.findOne(list.get(0).getId());
+            List<Project> list2 = projectService.findByUserId(list.get(0).getId());
             List<Project> projectList = new ArrayList();
-            sysUser2.getProjects().forEach(it->{
+            list2.forEach(it->{
                 Project project = new Project();
                 project.setId(it.getId());
                 project.setDescription(it.getDescription());

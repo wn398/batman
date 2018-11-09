@@ -9,7 +9,7 @@
     </div>
 
     <div class="logo-icon text-center">
-        <a th:href="@{/templates/html/index.html}"><img th:src="@{/images/logo_icon.png}" alt=""></a>
+        <a th:href="@{https://www.jianshu.com/u/8d438632373c}"><img th:src="@{/images/logo_icon.png}" alt=""></a>
     </div>
     <!--logo and iconic logo end-->
 
@@ -37,14 +37,12 @@
         <ul class="nav nav-pills nav-stacked custom-nav">
             <li><a href="" onclick="divLoadUrl('content','/goFragment/sampleContent');return false"><i class="fa fa-home"></i> <span>首页</span></a>
             </li>
-            <li><a href="" onclick="divLoadUrl('content','/goPage/project-list');return false"><i class="fa fa-book"></i> <span>项目管理</span></a>
+            <li><a href="" onclick="divLoadUrl('content','/codeGeneratorCtl/goProjectCodeGenerator');return false"><i class="fa fa-book"></i> <span>项目管理</span></a>
             </li>
             <li class="menu-list"><a href="" onclick="return false"><i class="fa fa-cogs"></i> <span>实体管理</span></a>
                 <ul class="sub-menu-list" >
                     <li th:each="project:${session.projects}"><a href="" th:onclick="|divLoadUrl('content','/projectCtl/goEntitiesList/${project.id}');return false;|" th:text="|${project.description}|"></a></li>
                 </ul>
-            </li>
-            <li><a href="" onclick="divLoadUrl('content','/codeGeneratorCtl/goProjectCodeGenerator');return false"><i class="fa fa-code"></i> <span>代码生成</span></a>
             </li>
 
             <li><a th:href="@{/goLogin}"><i class="fa fa-sign-out"></i> <span>退出</span></a></li>

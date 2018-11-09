@@ -21,16 +21,39 @@
                         <table class="display table table-bordered table-striped" id="projectTable" width="100%">
                             <thead>
                             <tr>
-                                <th>项目名称</th>
-                                <th>项目描述</th>
-                                <th>基本包路径</th>
+                                <th>名称</th>
+                                <th>描述</th>
+                                <th>包路径</th>
+                                <th>模块数</th>
+                                <th>实体数</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
-                                <th>版本号</th>
+                                <th>版本</th>
                                 <th>操作</th>
+                                <th>下载</th>
                             </tr>
                             </thead>
-
+                            <tbody>
+                            <tr th:each="project:${projects}">
+                                <td th:text="${project.name}"></td>
+                                <td th:text="${project.description}"></td>
+                                <td th:text="${project.packageName}"></td>
+                                <td th:text="${project.moduleNum}"></td>
+                                <td th:text="${project.entityNum}"></td>
+                                <td th:text="${#dates.format(project.createDate,'yyyy-MM-dd hh:mm:ss')}"></td>
+                                <td th:text="${#dates.format(project.hierachyDate,'yyyy-MM-dd hh:mm:ss')}"></td>
+                                <td th:text="${project.version}"></td>
+                                <td>
+                                    <a class="btn btn-success btn-xs" th:onclick="|showUpdate('${project.id}',this)|">更新</a>
+                                    <a  class="btn btn-danger btn-xs" th:onclick="|deleteById('${project.id}',this)|">删除</a>
+                                    <a class="btn btn-info btn-xs" th:href="@{'/projectCtl/goAllEntity/'+${project.id}}">实体列表</a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-success btn-xs" th:href="@{'/codeGeneratorCtl/generateProject/'+${project.id}}">下载代码</a>
+                                    <a class="btn btn-success btn-xs" th:href="@{'/codeGeneratorCtl/generateProjectWithStandJar/'+${project.id}}">下载代码2</a>
+                                </td>
+                            </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
