@@ -3,8 +3,8 @@ package com.rayleigh.batman.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -25,28 +25,28 @@ import java.util.List;
 @Entity
 @Table(name = "batman_project")
 public class Project extends BaseModel {
-    @FieldInfo("工程名字")
+    @ApiModelProperty("工程名字")
     @Column
     @NotEmpty(message = "工程名不能为空")
     @Pattern(regexp = "^[A-Za-z0-9_]+$",message = "工程名不符合规则,数字下划线")
     private String name;
 
-    @FieldInfo("工程描述")
+    @ApiModelProperty("工程描述")
     @Column
     @NotEmpty(message = "工程描述不能为空")
     private String description;
 
-    @FieldInfo("基本包路径名")
+    @ApiModelProperty("基本包路径名")
     @Column
     @NotEmpty(message = "基本包路径名不能为空")
     private String packageName;
 
-    @FieldInfo("启动端口")
+    @ApiModelProperty("启动端口")
     @Column
     @NotEmpty(message = "启动端口不能为空")
     private String port;
 
-    @FieldInfo("数据源加密")
+    @ApiModelProperty("数据源加密")
     @Column
     private Boolean isEncodeDataSource;
 
@@ -54,7 +54,7 @@ public class Project extends BaseModel {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Column
-    @FieldInfo("层级更新日期,主要用于标示下面属性变化")
+    @ApiModelProperty("层级更新日期,主要用于标示下面属性变化")
     private Date hierachyDate;
 
     @Valid

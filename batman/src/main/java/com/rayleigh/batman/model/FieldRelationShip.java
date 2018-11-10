@@ -1,8 +1,8 @@
 package com.rayleigh.batman.model;
 
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.RelationType;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -18,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "batman_field_relationship")
 public class FieldRelationShip extends BaseModel {
 
-    @FieldInfo("映射关系")
+    @ApiModelProperty("映射关系")
     @Enumerated(EnumType.STRING)
     @Column
     private RelationType relationType;

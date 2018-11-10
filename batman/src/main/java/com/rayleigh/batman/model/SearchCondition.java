@@ -1,12 +1,12 @@
 package com.rayleigh.batman.model;
 
 import com.rayleigh.batman.util.SearchDBUtil;
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.LogicOperation;
 import com.rayleigh.core.enums.Operation;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.SearchMethodConditionModel;
 import com.rayleigh.core.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -21,27 +21,27 @@ public class SearchCondition extends BaseModel{
 
 
 
-    @FieldInfo("优先级别")
+    @ApiModelProperty("优先级别")
     @Column
     private Integer priority = 0;
 
-    @FieldInfo("逻辑操作符")
+    @ApiModelProperty("逻辑操作符")
     @Enumerated(EnumType.STRING)
     @Column
     private LogicOperation logicOperation = LogicOperation.and;
 
-    @FieldInfo("属性")
+    @ApiModelProperty("属性")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "field_id")
     private Field field;
 
     //因为id,createDate,updateDate都是通过继承得到的，在属性里拿不到，所以要用此字段来表示，当然此时属性id就不存在，结果用（实体id_createDate类似表示）
-    @FieldInfo("属性名字,此属性只适用于id,createDate,updateDate,现在全部属性放在数据库了，保留字段")
+    @ApiModelProperty("属性名字,此属性只适用于id,createDate,updateDate,现在全部属性放在数据库了，保留字段")
     @Column
     @NotEmpty
     private String fieldName;
 
-    @FieldInfo("操作符")
+    @ApiModelProperty("操作符")
     @Enumerated(EnumType.STRING)
     @Column
     @NotNull

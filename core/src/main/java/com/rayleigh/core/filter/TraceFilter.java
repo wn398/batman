@@ -26,7 +26,7 @@ public class TraceFilter implements Filter {
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        LOGGER.info("初始化LoggerFilter过滤器");
+        LOGGER.info("初始化TraceFilter过滤器");
     }
 
     @Override
@@ -133,6 +133,6 @@ public class TraceFilter implements Filter {
 
     @Override
     public void destroy() {
-        LOGGER.info("销毁LoggerFilter过滤器");
+        LOGGER.info("销毁TraceFilter过滤器");
     }
 }

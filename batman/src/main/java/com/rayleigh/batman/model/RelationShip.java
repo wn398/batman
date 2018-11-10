@@ -1,9 +1,9 @@
 package com.rayleigh.batman.model;
 
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.MappingDirection;
 import com.rayleigh.core.enums.RelationType;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -19,20 +19,20 @@ import javax.persistence.*;
 @Table(name = "batman_relationship")
 public class RelationShip extends BaseModel {
 
-    @FieldInfo("映射关系")
+    @ApiModelProperty("映射关系")
     @Enumerated(EnumType.STRING)
     @Column
     private RelationType relationType;
 
-    @FieldInfo("是否级联删除")
+    @ApiModelProperty("是否级联删除")
     @Column
     private Boolean isCascadeDelete = false;
 // 删除，默认级联更新
-//    @FieldInfo("是否级联更新")
+//    @ApiModelProperty("是否级联更新")
 //    @Column
 //    private Boolean isCascadeUpdate;
 
-    @FieldInfo("是否懒加载")
+    @ApiModelProperty("是否懒加载")
     @Column
     private Boolean isLazyFetch;
 

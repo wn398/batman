@@ -1,8 +1,7 @@
 package com.rayleigh.batman.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -22,12 +21,12 @@ import java.util.Set;
 @Entity
 @Table(name = "batman_module")
 public class Module extends BaseModel {
-    @FieldInfo("模块名字")
+    @ApiModelProperty("模块名字")
     @Column
     @NotEmpty(message = "模块名字(name)不能为空")
     private String name;
 
-    @FieldInfo("模块描述")
+    @ApiModelProperty("模块描述")
     @Column
     @NotEmpty(message = "模块描述(description)不能为空")
     private String description;

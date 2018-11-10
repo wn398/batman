@@ -1,7 +1,7 @@
 package com.rayleigh.batman.model;
 
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -23,17 +23,17 @@ import java.util.Set;
 @Entity
 @Table(name = "batman_sys_user")
 public class SysUser extends BaseModel {
-    @FieldInfo("用户名")
+    @ApiModelProperty("用户名")
     @Column
     @NotNull
     private String name;
 
-    @FieldInfo("密码")
+    @ApiModelProperty("密码")
     @Column
     @NotNull
     private String password;
 
-    @FieldInfo("电子邮件")
+    @ApiModelProperty("电子邮件")
     @Column
     @NotNull
     private String email;

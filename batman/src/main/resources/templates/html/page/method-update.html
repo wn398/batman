@@ -9,7 +9,10 @@
         <div class="row">
             <section class="panel panel-info">
                 <header class="panel-heading">
-                    <h3 class="panel-title">更新服务方法信息</h3>
+                    <h3 class="panel-title" style="display: inline">更新服务方法信息</h3>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
                 </header>
                 <input type="hidden" th:value="${entity.Id}" name="entities[id]">
                 <input type="hidden" th:value="${method.id}" name="id">

@@ -1,9 +1,9 @@
 package com.rayleigh.batman.model;
 
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.StringUtil;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,37 +20,37 @@ import java.util.List;
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_field")
 public class Field extends BaseModel{
-    @FieldInfo("名称")
+    @ApiModelProperty("名称")
     @Column
     @NotEmpty
     private String name;
 
-    @FieldInfo("属性描述")
+    @ApiModelProperty("属性描述")
     @Column
     private String description;
 
-    @FieldInfo("数据类型")
+    @ApiModelProperty("数据类型")
     @Enumerated(EnumType.STRING)
     @Column
     private DataType dataType;
 
-    @FieldInfo("长度")
+    @ApiModelProperty("长度")
     @Column
     private Integer size;
 
-    @FieldInfo("默认值")
+    @ApiModelProperty("默认值")
     @Column
     private String defaultValue;
 
-    @FieldInfo("是否非空")
+    @ApiModelProperty("是否非空")
     @Column(length = 1)
     private boolean isNull = true;
 
-    @FieldInfo("是否唯一")
+    @ApiModelProperty("是否唯一")
     @Column
     private boolean isUnique = false;
 
-    @FieldInfo("是否索引")
+    @ApiModelProperty("是否索引")
     @Column
     private boolean isIndex = false;
 
@@ -58,7 +58,7 @@ public class Field extends BaseModel{
     @JoinColumn(name = "entity_id")
     private Entities entities;
 
-    @FieldInfo("字段验证信息，用||隔开")
+    @ApiModelProperty("字段验证信息，用||隔开")
     @Column
     private String validMessage;
     //为了在删除一个字段时，同时把对应的条件和结果都删除掉，级联删除

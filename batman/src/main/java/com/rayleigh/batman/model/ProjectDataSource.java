@@ -1,8 +1,8 @@
 package com.rayleigh.batman.model;
 
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.DataBaseType;
 import com.rayleigh.core.model.BaseModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -16,40 +16,40 @@ import java.util.List;
 @javax.persistence.Table(name = "batman_project_data_source")
 public class ProjectDataSource extends BaseModel{
 
-    @FieldInfo("数据库类型")
+    @ApiModelProperty("数据库类型")
     @Column
     @Enumerated(EnumType.STRING)
     private DataBaseType  dataBaseType;
 
-    @FieldInfo("数据源名称")
+    @ApiModelProperty("数据源名称")
     @Column
     private String  dataSourceNickName;
 
-    @FieldInfo("机器名")
+    @ApiModelProperty("机器名")
     @Column
     private String hostName;
 
-    @FieldInfo("端口号")
+    @ApiModelProperty("端口号")
     @Column
     private Integer port;
 
-    @FieldInfo("数据库名")
+    @ApiModelProperty("数据库名")
     @Column
     private String dataBaseName;
 
-    @FieldInfo("是否是主数据源")
+    @ApiModelProperty("是否是主数据源")
     @Column
     private boolean isMainDataSource=false;
 
-    @FieldInfo("备注")
+    @ApiModelProperty("备注")
     @Column
     private String markup;
 
-    @FieldInfo("用户名")
+    @ApiModelProperty("用户名")
     @Column
     private String username;
 
-    @FieldInfo("密码")
+    @ApiModelProperty("密码")
     @Column
     private String password;
 

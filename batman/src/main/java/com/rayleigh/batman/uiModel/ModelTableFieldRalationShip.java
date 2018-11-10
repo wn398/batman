@@ -2,7 +2,6 @@ package com.rayleigh.batman.uiModel;
 
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.RelationType;
 import com.rayleigh.core.model.BaseModel;
 

@@ -1,10 +1,10 @@
 package com.rayleigh.batman.model;
 
 import com.rayleigh.batman.util.SearchDBUtil;
-import com.rayleigh.core.annotation.FieldInfo;
 import com.rayleigh.core.enums.OrderBy;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.SearchMethodResultModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -16,26 +16,26 @@ import javax.persistence.*;
 @Table(name = "batman_search_result")
 public class SearchResult extends BaseModel{
 
-    @FieldInfo("查询结果名字，主要用于id,createDate,updateDate,用(实体id_属性名)表示")
+    @ApiModelProperty("查询结果名字，主要用于id,createDate,updateDate,用(实体id_属性名)表示")
     @Column
     @NotEmpty
     private String fieldName;
 
-    @FieldInfo("排序优先级别,默认0，默认按主对象的updateDate倒序")
+    @ApiModelProperty("排序优先级别,默认0，默认按主对象的updateDate倒序")
     @Column
     private Integer orderByNum = 0;
 
-    @FieldInfo("排序类型")
+    @ApiModelProperty("排序类型")
     @Enumerated(EnumType.STRING)
     @Column
     private OrderBy orderByType;
 
-    @FieldInfo("存放字段")
+    @ApiModelProperty("存放字段")
     @ManyToOne
     @JoinColumn(name = "field_id")
     private Field field;
 
-    @FieldInfo("那个查询方法上的结果")
+    @ApiModelProperty("那个查询方法上的结果")
     @ManyToOne
     @JoinColumn(name = "search_method_id")
     private SearchMethod searchMethod;
