@@ -144,7 +144,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
          nameValueTypeList.stream().forEach(it->{
             names.append(StringUtil.humpToUnderline(it.getName())).append(",");
                 if(it.getDataType()== DataType.String) {
-                    values.append("\'").append(it.getValue().replaceAll("\'","\'\'")).append("\'").append(",");
+                    values.append("\'").append(((String)it.getValue()).replaceAll("\'","\'\'")).append("\'").append(",");
                 }else if(it.getDataType() == DataType.Date){
                     values.append("\'").append(StringUtil.dateToDbString((Date)it.getValue())).append("\'").append(",");
                 }else if(it.getDataType() == DataType.Integer || it.getDataType() == DataType.Double || it.getDataType() == DataType.BigDecimal || it.getDataType() == DataType.Long){
@@ -179,7 +179,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
                 DataType dataType = ${entity.name}Util.getPropertyDataType(name);
                 if(dataType== DataType.String) {
                     if(null != nameValues.get(name)){
-                        value.append("\'").append(nameValues.get(name).replaceAll("\'","\'\'")).append("\'").append(",");
+                        value.append("\'").append(((String)nameValues.get(name)).replaceAll("\'","\'\'")).append("\'").append(",");
                     }else{
                         value.append("NULL").append(" ,");
                     }
