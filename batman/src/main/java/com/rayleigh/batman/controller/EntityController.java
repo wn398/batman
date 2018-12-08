@@ -8,9 +8,11 @@ import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.batman.service.ProjectService;
 import com.rayleigh.batman.uiModel.DataBaseConnectionModel;
+import com.rayleigh.batman.uiModel.DataBaseConnectionWithEntityModel;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.enums.DataBaseType;
 import com.rayleigh.core.enums.DataType;
+import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
@@ -18,6 +20,7 @@ import com.rayleigh.core.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.undertow.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,6 +262,17 @@ public class EntityController extends BaseController{
         return "/page/entities-config";
     }
 
+    //方法增加页面
+    @RequestMapping("/showConfigList/{id}")
+    public String goConfigList(Model model,@PathVariable("id") String projectId){
+        Project project = projectService.findOne(projectId);
+        List<ProjectDataSource> dataSources = project.getProjectDataSources();
+        List<Module> modules = project.getModules();
+        model.addAttribute("dataSources",dataSources);
+        model.addAttribute("modules",modules);
+        return "/page/entities-config-list";
+    }
+
     @ApiOperation("测试数据库连接功能!")
     @PostMapping("testDatabaseConnection")
     @ResponseBody
@@ -305,6 +319,77 @@ public class EntityController extends BaseController{
         }
     }
 
+    @ApiOperation("获取数据源表名及注释!")
+    @PostMapping("getTableNamesAndComments")
+    @ResponseBody
+    public ResultWrapper getTableNamesComment(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
+        try (Connection connection = getConn(dataBaseConnectionModel)) {
+            String sql = null;
+            if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.MySQL)){
+                sql = "select table_name as tablename,TABLE_COMMENT as comment from information_schema.tables where table_schema='"+dataBaseConnectionModel.getDataBaseName()+"' and table_type='base table'";
+            }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.PostgreSql)){
+                sql = "select relname as tablename,cast(obj_description(relfilenode,'pg_class') as varchar) as comment from pg_class c where  relkind = 'r' and relname not like 'pg_%' and relname not like 'sql_%' order by relname";
+            }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.Oracle)){
+                //todo
+            }
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<Entities> entities = new ArrayList<>();
+            while (rs.next()) {
+                Entities entity = new Entities();
+                entity.setName(StringUtil.capFirst(StringUtil.underlineToHump(rs.getString(1))));
+                entity.setTableName(rs.getString(1));
+                if(StringUtil.isEmpty(rs.getString(2))){
+                    entity.setDescription("");
+                }else {
+                    entity.setDescription(rs.getString(2));
+                }
+                entities.add(entity);
+            }
+            return getSuccessResult(entities);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return getFailureResultAndInfo(e.getMessage(), "连接失败!");
+
+        }
+    }
+
+
+    @ApiOperation("增加选定的表实体")
+    @PostMapping("addMoreEntities")
+    @ResponseBody
+    public ResultWrapper addMoreEntities(@RequestBody DataBaseConnectionWithEntityModel dataBaseConnectionWithEntityModel){
+        List<Entities> entitiesList = dataBaseConnectionWithEntityModel.getEntity();
+        entitiesList.stream().forEach(it-> {
+                    dataBaseConnectionWithEntityModel.setTableName(it.getTableName());
+                    List<Field> fieldList = (List<Field>)getTableColums(dataBaseConnectionWithEntityModel).getData();
+                    it.setProject(moduleService.findOne(it.getModule().getId()).getProject());
+                    it.setModule(moduleService.findOne(it.getModule().getId()));
+                    for(Field field:fieldList){
+                        if(field.getName().equals("id")){
+                            if(field.getDataType().equals(DataType.String)){
+                                it.setPrimaryKeyType(PrimaryKeyType.String);
+                                break;
+                            }else if(field.getDataType().equals(DataType.Long)){
+                                it.setPrimaryKeyType(PrimaryKeyType.Long);
+                                break;
+                            }
+                        }
+                    }
+                    //如果主键类型还为空，说明原实体中不存在id字段
+                    if(null==it.getPrimaryKeyType()){
+                        it.setPrimaryKeyType(PrimaryKeyType.String);
+                    }
+                    it.setPrimaryKeyType(PrimaryKeyType.String);
+                    it.setHierachyDate(new Date());
+                    it.setFields(fieldList);
+                    entityService.save(it);
+                }
+                );
+
+        return getSuccessResult("新增成功!");
+    }
+
 
     @ApiOperation("获取表字段!")
     @PostMapping("getTableColums")
@@ -325,7 +410,7 @@ public class EntityController extends BaseController{
 
             }else if(dataBaseType.equals(DataBaseType.PostgreSql)){
 
-                sql = "SELECT a.attname as name, col_description(a.attrelid,a.attnum) as description, format_type(a.atttypid,a.atttypmod) as dataType  FROM pg_class as c,pg_attribute as a where c.relname = ? and a.attrelid = c.oid and a.attnum>0";
+                sql = "SELECT a.attname as name, col_description(a.attrelid,a.attnum) as description, format_type(a.atttypid,a.atttypmod) as dataType  FROM pg_class as c,pg_attribute as a where c.relname = ? and a.attrelid = c.oid and a.attnum>0 and a.attname not like '%pg.%'";
                 ps = connection.prepareStatement(sql);
                 ps.setString(1,dataBaseConnectionModel.getTableName());
 

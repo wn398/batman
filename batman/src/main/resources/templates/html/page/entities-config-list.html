@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="config" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title">获取表配置</h3>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">选择数据源</label>
+                            </td>
+                            <td>
+                                <select name="datasource" class="form-control" onchange="changeValue(this)" id="datasource">
+                                    <option></option>
+                                    <option th:each="datasource:${dataSources}" th:text="${datasource.dataSourceNickName}" th:id="${datasource.dataBaseType}" th:value="${datasource.dataBaseType+'||'+datasource.hostName+'||'+datasource.port+'||'+datasource.username+'||'+datasource.password+'||'+datasource.dataBaseName}" ></option>
+                                </select>
+                            </td>
+                            <!--<td>-->
+                                <!--<label class="control-label">数据库表名</label>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--&lt;!&ndash;<input type="text" class="form-control" th:name="tableName" placeholder="字母">&ndash;&gt;-->
+                                <!--<select name="tableName" class="form-control" id ="tableName">-->
+                                    <!--<option></option>-->
+                                <!--</select>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<button class="btn btn-success" th:alt-title="实体属性" onclick="getTables(this)">获取表名</button>-->
+                            <!--</td>-->
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">数据库类型</label>
+                            </td>
+                            <td>
+                                <select class="form-control" name="dataBaseType" id="dataBaseType">
+                                    <option th:value="MySQL" th:text="MySQL"></option>
+                                    <option th:value="PostgreSql" th:text="PostgreSql"></option>
+                                    <option th:value="Oracle " th:text="Oracle"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">主机名</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="hostName" id="hostName" placeholder="主机名或IP" value="localhost">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">端口号</label>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" th:name="port" placeholder="端口号" id="port">
+                            </td>
+                            <td>
+                            <label  class="control-label">数据库名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="dataBaseName" placeholder="数据库名" id="dataBaseName">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">用户名</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="username" placeholder="用户名" id="username">
+                            </td>
+                            <td>
+                                <label  class="control-label">密码</label>
+                            </td>
+                            <td>
+                                <input type="password" class="form-control" th:name="password" placeholder="密码" id="password">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    <button class="btn btn-success" th:alt-title="实体属性" onclick="getDataBaseTables('moduleTable','demoTr')">批量加表</button>
+                    <button class="btn btn-success" th:alt-title="实体属性" onclick="addTr('moduleTable','demoTr')">获取表</button>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table  table-hover general-table" id="moduleTable">
+                        <thead>
+                        <tr>
+                            <th>实体名字</th>
+                            <th>数据库表名</th>
+                            <th>实体描述</th>
+                            <th>所属模块</th>
+                            <th>数据源</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!--<tr>-->
+                            <!--<td>-->
+                                <!--<input type="text" class="form-control" name="entity[][name]" required="required">-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<input type="text" class="form-control" name="entity[][tableName]"  readonly>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<input type="text" class="form-control" name="entity[][description]" required="required"  th:value="描述" >-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<select name="entity[][module][id]" class="form-control" >-->
+                                    <!--<option th:each="module:${modules}" th:text="${module.description}" th:value="${module.id}" ></option>-->
+                                <!--</select>-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<input type="text" class="form-control" name="entity[][dataSourceName]"  placeholder="数据源">-->
+                            <!--</td>-->
+                            <!--<td>-->
+                                <!--<button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>-->
+                            <!--</td>-->
+                        <!--</tr>-->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<div hidden="true" >
+    <table id="demoTr">
+        <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="entity[][name]" required="required">
+            </td>
+            <td>
+                <input type="text" class="form-control" name="entity[][tableName]"  readonly>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="entity[][description]" required="required"  th:value="描述" >
+            </td>
+            <td>
+                <select name="entity[][module][id]" class="form-control" >
+                    <option th:each="module:${modules}" th:text="${module.description}" th:value="${module.id}" ></option>
+                </select>
+            </td>
+            <td>
+                <input type="text" class="form-control" name="entity[][dataSourceName]"  placeholder="数据源">
+            </td>
+            <td>
+                <button class="btn btn-danger btn-large" onclick="deleteTr(this)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--</section>-->
+<script language="JavaScript">
+    function changeValue(obj) {
+        var value = $(obj).val();
+        if(value!=null) {
+            $("#tableName").empty();
+            var values = value.split("||");
+            //$("#datasource").find("option[text='"+values[0]+"']").attr("selected", "selected");
+            $("#dataBaseType").find("option:selected").attr("selected",false);
+            //$("'#"+values[0]+"'").attr("selected", "selected");
+            $("#dataBaseType option[value='"+values[0]+"']").attr("selected", true);
+            $("#hostName").val(values[1]);
+            $("#port").val(values[2]);
+            $("#username").val(values[3]);
+            $("#password").val(values[4]);
+            $("#dataBaseName").val(values[5]);
+        }
+    }
+
+    function getDataBaseTables(tableId,demoTableId) {
+
+        var moduleOptionHtml =$("#"+demoTableId+" select").html() ;
+        var data = $("#config").serializeJSON();//把表单数据转化成json数据
+        $.ajax({
+            type: "POST",
+            url: getRootPath()+"/entitiesCtl/getTableNamesAndComments",
+            async:false,
+            data: data,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if(data.status=="SUCCESS") {
+                    var value = data.data;
+                    $("#"+tableId+ " tbody").empty();
+
+                    for(var i=0;i<value.length;i++){
+                        $("#"+tableId+ " tbody").append(
+                            "<tr>\n" +
+                            "            <td>\n" +
+                            "                <input type=\"text\" class=\"form-control\" name=\"entity[][name]\" required=\"required\" value="+value[i].name+">\n" +
+                            "            </td>\n" +
+                            "            <td>\n" +
+                            "                <input type=\"text\" class=\"form-control\" name=\"entity[][tableName]\" value='"+value[i].tableName+"'  readonly>\n" +
+                            "            </td>\n" +
+                            "            <td>\n" +
+                            "                <input type=\"text\" class=\"form-control\" name=\"entity[][description]\" value='"+value[i].description+"' required=\"required\" >\n" +
+                            "            </td>\n" +
+                            "            <td>\n" +
+                            "                <select name=\"entity[][module][id]\" class=\"form-control\" >\n" +
+                                                    moduleOptionHtml +
+                            "                </select>\n" +
+                            "            </td>\n" +
+                            "            <td>\n" +
+                            "                <input type=\"text\" class=\"form-control\" name=\"entity[][dataSourceName]\"  placeholder=\"数据源\">\n" +
+                            "            </td>\n" +
+                            "            <td>\n" +
+                            "                <button class=\"btn btn-danger btn-large\" onclick=\"deleteTr(this)\">删除</button>\n" +
+                            "            </td>\n" +
+                            "        </tr>"
+                        );
+                    }
+                }else{
+                    layerFailMsg(data.info+":"+data.data);
+                }
+            },
+            error: function (msg) {
+                alert("失败"+msg.responseText);
+            }
+        });
+    }
+</script>
+<script th:replace="fragment/script"></script>
+</body>
+</html>

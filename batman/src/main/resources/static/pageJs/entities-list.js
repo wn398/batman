@@ -306,3 +306,116 @@ function showMethodList(entityId) {
         // }
     });
 }
+
+//到增加批量配置的页面
+function goAddEntitiesList(projectId) {
+    layer.open({
+        type: 2,
+        title: '批量增加实体',
+        shade: 0.8,
+        maxmin:true,
+        area: ['60%', '60%'],
+        shadeClose: false, //点击遮罩关闭
+        content: getRootPath()+'/entitiesCtl/showConfigList/'+projectId,
+        btn: ['确认','测试连接','关闭'], //只是为了演示
+        btn1: function(index,layero){
+            var form = layer.getChildFrame('form', index);//父页面获取子frame中DOM元素
+            var data = $(form).serializeJSON();//把表单数据转化成json数据
+            addTableEntities(index,getRootPath()+"/entitiesCtl/addMoreEntities",data);
+
+        },
+        btn2: function (index,layero) {
+            var form = layer.getChildFrame('form',index);//父页面获取子frame中DOM元素
+            var data = $(form).serializeJSON();//把表单数据转化成json数据
+            testDataBaseConnection(index,getRootPath()+"/entitiesCtl/testDatabaseConnection",data);
+            return false;
+        },
+        btn3: function (index,layero) {
+            layer.close(index);
+        }
+    });
+}
+
+
+
+
+//测试数据库连接
+function testDataBaseConnection(index,url,data) {
+    $.ajax({
+        type: "POST",
+        url: url,
+        async:false,
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            if(data.status=="SUCCESS") {
+                layerSuccessMsg("连接成功！")
+            }else{
+                layerFailMsg(data.info+":"+data.data);
+            }
+        },
+        error: function (msg) {
+            alert("失败"+msg.responseText);
+        }
+    });
+}
+
+
+//获取表信息
+function getTableColums(index,url,data) {
+    $.ajax({
+        type: "POST",
+        url: url,
+        async:false,
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            if(data.status=="SUCCESS") {
+
+                for(var i=0;i<data.data.length;i++){
+                    var field=data.data[i];
+                    var html = $("#demoTr tbody").html();
+
+                    html = html.replace('name="fields[][name]"','name="fields[][name]" value="'+field.name+'" ');
+                    if(field.description!=null) {
+                        html = html.replace('name="fields[][description]"', 'name="fields[][description]" value="' + field.description + '" ');
+                    }
+                    html = html.replace('option value="'+field.dataType+'"','option value="'+field.dataType+'" selected="selected" ');
+                    $("#moduleTable tbody").append(html);
+                }
+                layer.close(index);
+            }else{
+                layerFailMsg(data.info+":"+data.data);
+            }
+        },
+        error: function (msg) {
+            alert("失败"+msg.responseText);
+        }
+    });
+}
+
+
+//增加数据多个表信息为实体
+function addTableEntities(index,url,data) {
+    $.ajax({
+        type: "POST",
+        url: url,
+        async:false,
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            if(data.status=="SUCCESS") {
+
+                layer.close(index);
+            }else{
+                layerFailMsg(data.info+":"+data.data);
+            }
+        },
+        error: function (msg) {
+            alert("失败"+msg.responseText);
+        }
+    });
+}

@@ -36,7 +36,6 @@ public class Entities extends BaseModel {
 
     @ApiModelProperty("实体描述")
     @Column
-    @NotEmpty(message = "实体名字不能空")
     private String description;
 
     @ApiModelProperty("主键类型")

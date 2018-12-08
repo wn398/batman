@@ -17,6 +17,7 @@
                 <div class="panel-body">
                     <div class="adv-table">
                         <div><button type="button" class="btn btn-success" th:onclick="|goAddEntities('${project.id}')|">&nbsp;&nbsp;&nbsp;新增实体&nbsp;&nbsp;&nbsp;</button>
+                              <button type="button" class="btn btn-success" th:onclick="|goAddEntitiesList('${project.id}')|">&nbsp;&nbsp;&nbsp;批量新增&nbsp;&nbsp;&nbsp;</button>
                         </div>
                         <table class="display table table-bordered table-striped" id="entityTable" width="100%">
                             <thead>
