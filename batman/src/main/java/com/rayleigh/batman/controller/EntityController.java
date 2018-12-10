@@ -365,22 +365,34 @@ public class EntityController extends BaseController{
                     List<Field> fieldList = (List<Field>)getTableColums(dataBaseConnectionWithEntityModel).getData();
                     it.setProject(moduleService.findOne(it.getModule().getId()).getProject());
                     it.setModule(moduleService.findOne(it.getModule().getId()));
+                    String entityDescription = it.getDescription();
+                    entityDescription = entityDescription.replaceAll("\r\n", " ").replaceAll("\r"," ").replaceAll("\n"," ").replaceAll("\t"," ").replaceAll("\"","'").replaceAll("/","-");
+                    it.setDescription(entityDescription);
+                    boolean isHaveId = false;
                     for(Field field:fieldList){
-                        if(field.getName().equals("id")){
-                            if(field.getDataType().equals(DataType.String)){
+                        if(field.getName().equalsIgnoreCase("id")){
+                            isHaveId = true;
+                            if(field.getDataType().name().equals(DataType.String.name())){
                                 it.setPrimaryKeyType(PrimaryKeyType.String);
                                 break;
-                            }else if(field.getDataType().equals(DataType.Long)){
+                            }else if(field.getDataType().name().equals(DataType.Long.name())){
                                 it.setPrimaryKeyType(PrimaryKeyType.Long);
                                 break;
                             }
                         }
                     }
+                    //如果不包含id，则需要创建一个id字段
+                    if(false == isHaveId){
+                        Field field = new Field();
+                        field.setDataType(DataType.String);
+                        field.setDescription("生成程序创建的主键id");
+                        field.setName("id");
+                        fieldList.add(field);
+                    }
                     //如果主键类型还为空，说明原实体中不存在id字段
                     if(null==it.getPrimaryKeyType()){
                         it.setPrimaryKeyType(PrimaryKeyType.String);
                     }
-                    it.setPrimaryKeyType(PrimaryKeyType.String);
                     it.setHierachyDate(new Date());
                     it.setFields(fieldList);
                     entityService.save(it);
@@ -419,7 +431,7 @@ public class EntityController extends BaseController{
             }
 
             ResultSet rs = ps.executeQuery();
-            String[] stringArray = {"varchar","char","text","json","character"};
+            String[] stringArray = {"varchar","char","text","json","character","mediumtext"};
             List<String> stringList = Collections.arrayToList(stringArray);
 
             String[] integerArray = {"tinyint","smallint","mediumint","int","bit"};
@@ -446,6 +458,7 @@ public class EntityController extends BaseController{
                 //下划线转驼峰
                 String name = StringUtil.underlineToHump(rs.getString(1));
                 String description = rs.getString(2);
+                description= description.replaceAll("\r\n", " ").replaceAll("\r"," ").replaceAll("\n"," ").replaceAll("\t"," ").replaceAll("\"","'");
                 String dataType = rs.getString(3).toLowerCase();
                 //获取pg前面的字符串
                 dataType = dataType.split(" ")[0];
@@ -465,6 +478,10 @@ public class EntityController extends BaseController{
                     field.setDataType(DataType.BigDecimal);
                 }else if(longList.contains(dataType)){
                     field.setDataType(DataType.Long);
+                }
+                //如果判断不出来，默认给string类型
+                if(null == field.getDataType()){
+                    field.setDataType(DataType.String);
                 }
                 fieldsList.add(field);
             }

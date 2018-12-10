@@ -22,7 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.*;
 
-@ApiModel("${entity.description}")
+@ApiModel(<#if (entity.description ?exists && entity.description ?length >0)>"${entity.description}"<#else>"${entity.name}"</#if>)
 @Entity
 @DynamicInsert
 @DynamicUpdate
@@ -81,14 +81,14 @@ public Date createDate;
 @LastModifiedDate
 @Column(nullable = false)
 public Date updateDate;
-    <#elseif fieldName == "version">
+    <#elseif fieldName == "version" && fieldType = "Long">
 
 @ApiModelProperty("版本号")
 @Version
 public Long version;
     <#else>
 <#--处理id,createDate,updateDate,version特殊字段结束-->
-@ApiModelProperty("${field.description}")
+@ApiModelProperty(<#if (field.description ?exists && field.description ?length>0)>"${field.description}"<#else>"${field.name}"</#if>)
     <#if field.dataType == "Date">
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

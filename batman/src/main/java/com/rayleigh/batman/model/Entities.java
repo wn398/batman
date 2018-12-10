@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.model.BaseModel;
+import com.rayleigh.core.util.StringUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
@@ -149,7 +150,11 @@ public class Entities extends BaseModel {
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        if(StringUtil.isEmpty(description)){
+            this.description = "没有描述!";
+        }else {
+            this.description = description;
+        }
     }
 
     public List<Field> getFields() {

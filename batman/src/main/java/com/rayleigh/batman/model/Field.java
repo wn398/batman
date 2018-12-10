@@ -98,7 +98,7 @@ public class Field extends BaseModel{
 
     public void setDescription(String description) {
         if(StringUtil.isEmpty(description)){
-            this.description = null;
+            this.description = "没有描述!";
         }else {
             this.description = description;
         }

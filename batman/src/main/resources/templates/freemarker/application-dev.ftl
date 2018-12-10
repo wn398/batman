@@ -90,7 +90,7 @@ logging.file=../logs/${module.name}.log
 spring.jpa.show-sql = false
 
 # Hibernate ddl auto (create, create-drop, update)
-spring.jpa.hibernate.ddl-auto = update
+spring.jpa.hibernate.ddl-auto = none
 spring.jpa.properties.hibernate.format_sql=true
 
 spring.jackson.time-zone=GMT+8
