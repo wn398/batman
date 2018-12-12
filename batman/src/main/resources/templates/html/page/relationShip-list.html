@@ -76,7 +76,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-large" th:onclick="|javascript:deleteRemoteTr('${relationShip.id}','${relationShip.mainEntity.id}','${relationShip.otherEntity.id}',this);|">删除</button>
+                                    <button class="btn btn-danger btn-large" th:onclick="javascript:deleteRemoteTr('[(${relationShip.id})]','[(${relationShip.mainEntity.id})]','[(${relationShip.otherEntity.id})]',this);">删除</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -148,7 +148,7 @@
                                 </select>
                             </td>
                             <td>
-                                <button class="btn btn-danger btn-large" th:onclick="|javascript:deleteFieldRemoteTr('${fieldRelationShip.id}','${fieldRelationShip.mainEntity.id}','${fieldRelationShip.otherEntity.id}',this);|">删除</button>
+                                <button class="btn btn-danger btn-large" th:onclick="javascript:deleteFieldRemoteTr('[(${fieldRelationShip.id})]','[(${fieldRelationShip.mainEntity.id})]','[(${fieldRelationShip.otherEntity.id})]',this);|">删除</button>
                             </td>
                         </tr>
                         </tbody>
@@ -254,4 +254,4 @@
 </body>
 </html>
 
-<script type="text/javascript" th:src="@{/pageJs/relationShip-list.js}"/>
+<script type="text/javascript" th:src="@{/pageJs/relationShip-list.js}"></script>

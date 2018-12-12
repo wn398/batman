@@ -40,8 +40,8 @@
             <li><a href="" onclick="divLoadUrl('content','/codeGeneratorCtl/goProjectCodeGenerator');return false"><i class="fa fa-book"></i> <span>项目管理</span></a>
             </li>
             <li class="menu-list"><a href="" onclick="return false"><i class="fa fa-cogs"></i> <span>实体管理</span></a>
-                <ul class="sub-menu-list" >
-                    <li th:each="project:${session.projects}"><a href="" th:onclick="|divLoadUrl('content','/projectCtl/goEntitiesList/${project.id}');return false;|" th:text="|${project.description}|"></a></li>
+                <ul class="sub-menu-list">
+                    <li th:each="project:${session.projects}"><a href="" th:onclick="divLoadUrl('content','/projectCtl/goEntitiesList/[(${project.id})]'); return false;" th:text="|${project.description}|"></a></li>
                 </ul>
             </li>
 

@@ -1,7 +1,6 @@
 package com.rayleigh.batman.repository;
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.FieldRelationShip;
-import com.rayleigh.batman.model.RelationShip;
 import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

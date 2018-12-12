@@ -1,19 +1,13 @@
 package com.rayleigh.core.customQuery;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
-import org.hibernate.SessionFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
@@ -26,11 +20,6 @@ public class CustomRepositoryImpl <T, ID extends Serializable>
 	public CustomRepositoryImpl(Class<T> domainClass, EntityManager entityManager) {
 		super(domainClass, entityManager);
 		this.entityManager = entityManager;
-	}
-
-	@Override
-	public Page<T> findByAuto(T example, Pageable pageable) {
-		return findAll(CustomerSpecs.byAuto(entityManager, example),pageable);
 	}
 
 	@Override
@@ -96,7 +85,6 @@ public class CustomRepositoryImpl <T, ID extends Serializable>
 		criteriaQuery.orderBy(Collections.emptyList());
 		return entityManager.createQuery(criteriaQuery).getSingleResult();
 	}
-
 
 
 }

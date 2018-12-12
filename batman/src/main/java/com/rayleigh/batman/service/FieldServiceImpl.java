@@ -18,12 +18,12 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public void deleteById(String id) {
-        fieldRepository.delete(id);
+        fieldRepository.deleteById(id);
     }
 
     @Override
     public Field findOne(String id) {
-        return fieldRepository.findOne(id);
+        return fieldRepository.findById(id).get();
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.SysUser;
 import com.rayleigh.batman.repository.SysUserRepository;
-import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public SysUser findOne(String id) {
-        return sysUserRepository.findOne(id);
+        return sysUserRepository.findById(id).get();
     }
 
     @Override

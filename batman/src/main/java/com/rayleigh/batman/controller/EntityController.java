@@ -458,7 +458,9 @@ public class EntityController extends BaseController{
                 //下划线转驼峰
                 String name = StringUtil.underlineToHump(rs.getString(1));
                 String description = rs.getString(2);
-                description= description.replaceAll("\r\n", " ").replaceAll("\r"," ").replaceAll("\n"," ").replaceAll("\t"," ").replaceAll("\"","'");
+                if(null!=description) {
+                    description = description.replaceAll("\r\n", " ").replaceAll("\r", " ").replaceAll("\n", " ").replaceAll("\t", " ").replaceAll("\"", "'");
+                }
                 String dataType = rs.getString(3).toLowerCase();
                 //获取pg前面的字符串
                 dataType = dataType.split(" ")[0];
@@ -508,7 +510,7 @@ public class EntityController extends BaseController{
             url = new StringBuilder("jdbc:postgresql://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).toString();
         }else if(dataBaseType.equals(DataBaseType.MySQL)){
             driverClassName = "com.mysql.jdbc.Driver";
-            url = new StringBuilder("jdbc:mysql://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).toString();
+            url = new StringBuilder("jdbc:mysql://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).append("?serverTimezone=GMT%2B8").toString();
         }else if(dataBaseType.equals(DataBaseType.Oracle)){
             driverClassName = "oracle.jdbc.driver.OracleDriver";
             url = new StringBuilder("jdbc:oracle://").append(dataBaseConnectionModel.getHostName()).append(":").append(dataBaseConnectionModel.getPort()).append("/").append(dataBaseConnectionModel.getDataBaseName()).toString();

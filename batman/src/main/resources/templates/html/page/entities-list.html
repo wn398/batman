@@ -16,8 +16,8 @@
                 </header>
                 <div class="panel-body">
                     <div class="adv-table">
-                        <div><button type="button" class="btn btn-success" th:onclick="|goAddEntities('${project.id}')|">&nbsp;&nbsp;&nbsp;新增实体&nbsp;&nbsp;&nbsp;</button>
-                              <button type="button" class="btn btn-success" th:onclick="|goAddEntitiesList('${project.id}')|">&nbsp;&nbsp;&nbsp;批量新增&nbsp;&nbsp;&nbsp;</button>
+                        <div><button type="button" class="btn btn-success" th:onclick="goAddEntities('[(${project.id})]')">&nbsp;&nbsp;&nbsp;新增实体&nbsp;&nbsp;&nbsp;</button>
+                              <button type="button" class="btn btn-success" th:onclick="goAddEntitiesList('[(${project.id})]')">&nbsp;&nbsp;&nbsp;批量新增&nbsp;&nbsp;&nbsp;</button>
                         </div>
                         <table class="display table table-bordered table-striped" id="entityTable" width="100%">
                             <thead>
@@ -46,10 +46,10 @@
                                     <td th:text="${#dates.format(entity.hierachyDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                                     <td th:text="${entity.version}"></td>
                                     <td>
-                                        <a class="btn btn-success btn-xs" th:onclick="|showUpdate('${entity.id}',this,'${project.id}')|">更新</a>
-                                        <a class="btn btn-danger btn-xs" th:onclick="|deleteById('${entity.id}',this,'${project.id}')|">删除</a>
-                                        <a class="btn btn-info btn-xs" th:onclick="|showAddRelation('${entity.id}',this,'${entity.modelId}','${project.id}')|">关联</a>
-                                        <a class="btn btn-info btn-xs" th:onclick="|showMethodList('${entity.id}')|">方法服务</a>
+                                        <a class="btn btn-success btn-xs" th:onclick="showUpdate([[${entity.id}]],this,[[${project.id}]])">更新</a>
+                                        <a class="btn btn-danger btn-xs" th:onclick="deleteById([[${entity.id}]],this,[[${project.id}]])">删除</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="showAddRelation([[${entity.id}]],this,[[${entity.modelId}]],[[${project.id}]])">关联</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="showMethodList([[${entity.id}]])">方法服务</a>
                                     </td>
 
                                 </tr>
@@ -66,4 +66,4 @@
 <script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
 <script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
 <!--<script type="text/javascript" th:src="@{/js/data-tables/DT_bootstrap.js/}"></script>-->
-<script type="text/javascript" th:src="@{/pageJs/entities-list.js}"/>
+<script th:src="@{/pageJs/entities-list.js}"></script>

@@ -182,7 +182,7 @@
 </div>
 
 <script th:replace="fragment/script"></script>
-<script>
+<script type="text/javascript">
     function testConnection(obj) {
         var form = $(obj).parents("tr");
         var dataBaseType = $(form).find("select[name='projectDataSources[][dataBaseType]']").val();

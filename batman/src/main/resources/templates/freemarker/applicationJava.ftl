@@ -3,6 +3,7 @@ package ${project.packageName};
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.WebApplicationType;
 import com.rayleigh.core.application.BaseApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 
@@ -17,7 +18,7 @@ public class ${module.name ?cap_first}Application extends BaseApplication{
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(${module.name ?cap_first}Application.class)
-        .web(true)
+        .web(WebApplicationType.SERVLET)
         .run(args);
     }
 

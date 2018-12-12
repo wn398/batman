@@ -58,7 +58,7 @@
         <br/>
         <div class="panel" th:each="modules,modulesStat:${project.modules}">
             <header class="panel-heading">
-                <button class="btn btn-success" th:text="|${modulesStat.index+1}>>${modules.description}模块(${modules.name})|" class="button" disabled></button>
+                <button  th:text="|${modulesStat.index+1}>>${modules.description}模块(${modules.name})|" class="button" disabled></button>
                 <span class="tools pull-right">
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                     </span>
@@ -66,8 +66,8 @@
 
             <div class="panel" th:each="entities,entitieStat:${modules.entities}">
             <header class="panel-heading">
-                <button class="btn btn-success" th:text="|${entitieStat.index+1}>>${entities.description}表(${entities.name})|" class="button" disabled></button>
-                <button class="btn btn-success" th:if="${entities.dataSourceName}" th:text="|数据源>> ${entities.dataSourceName}|" class="button" disabled></button>
+                <button th:text="|${entitieStat.index+1}>>${entities.description}表(${entities.name})|" class="button" disabled></button>
+                <button  th:if="${entities.dataSourceName}" th:text="|数据源>> ${entities.dataSourceName}|" class="button" disabled></button>
                 <span class="tools pull-right">
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                     </span>

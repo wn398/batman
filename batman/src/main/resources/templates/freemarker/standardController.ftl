@@ -140,7 +140,7 @@ public ResultWrapper<${entity.name}> saveWithAssignedId(@RequestBody ${entity.na
     if(${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdBefore(${entity.name ?uncap_first}).getStatus()!=ResultStatus.SUCCESS){
         return ${entity.name ?uncap_first}MethodIntercept.saveWithAssignedIdBefore(${entity.name ?uncap_first});
     }
-    if(null != ${entity.name ?uncap_first}.getId()){
+    if(null == ${entity.name ?uncap_first}.getId()){
         return getFailureResultAndInfo(${entity.name ?uncap_first},"id不能为空!");
     }
     <#if isCreateDate == true>

@@ -2,11 +2,7 @@ package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.repository.EntitiesRepository;
-import com.rayleigh.core.customQuery.CustomRepository;
-import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.BaseModelUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,12 +43,12 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Entities findOne(String id) {
-        return entityRepository.findOne(id);
+        return entityRepository.findById(id).get();
     }
 
     @Override
     public void deleteOne(Entities entities) {
-        entityRepository.delete(entities.getId());
+        entityRepository.deleteById(entities.getId());
     }
 
     @Override

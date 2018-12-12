@@ -63,12 +63,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project findOne(String id) {
-        return projectRepository.findOne(id);
+        return projectRepository.findById(id).get();
     }
 
     @Override
     public void deleteOne(Project project) {
-        projectRepository.delete(project.getId());
+        projectRepository.deleteById(project.getId());
     }
 
     @Override

@@ -1,8 +1,11 @@
 spring.application.name=${module.name}
 server.port=${project.port}
-server.context-path=/api
+server.servlet.context-path=/api
 swagger.basePackage=${project.packageName}
 batman.encodeDataSource=${project.isEncodeDataSource ?string('true','false')}
+
+spring.main.allow-bean-definition-overriding=true
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults = false
 
 <#--#发送数据压缩-->
 server.compression.enabled=true
@@ -37,7 +40,7 @@ spring.datasource.name=main
         <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
         <#assign driverclassname = "com.mysql.jdbc.Driver">
     </#if>
-spring.datasource.url = jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
+spring.datasource.url = jdbc:${databaseType}://${hostname}:${port}/${mainDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false&serverTimezone=GMT%2B8</#if>
 spring.datasource.username = ${mainDataSource.username}
 spring.datasource.password = ${mainDataSource.password}
 spring.datasource.driverClassName =${driverclassname}
@@ -58,7 +61,7 @@ custom.datasource.names=${otherDataSourceNames}
                 <#assign dialect = "org.hibernate.dialect.MySQL5Dialect">
                 <#assign driverclassname = "com.mysql.jdbc.Driver">
             </#if>
-custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false</#if>
+custom.datasource.${otherDataSourceNickName}.url=jdbc:${databaseType}://${hostname}:${port}/${otherDataSource.dataBaseName}?characterEncoding=UTF-8<#if databaseType == "mysql">&useSSL=false&serverTimezone=GMT%2B8</#if>
 custom.datasource.${otherDataSourceNickName}.driverClassName =${driverclassname}
 custom.datasource.${otherDataSourceNickName}.username=${otherDataSource.username}
 custom.datasource.${otherDataSourceNickName}.password=${otherDataSource.password}
@@ -112,7 +115,7 @@ spring.datasource.testOnReturn=false
 spring.datasource.poolPreparedStatements=true
 spring.datasource.maxPoolPreparedStatementPerConnectionSize=20
 <#--# 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙-->
-spring.datasource.filters=stat,slf4j
+spring.datasource.filters=stat,slf4j,wall
 <#--# 通过connectProperties属性来打开mergeSql功能；慢SQL记录-->
 spring.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
 <#--# 合并多个DruidDataSource的监控数据-->

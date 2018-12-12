@@ -20,7 +20,7 @@ public class FieldRelationShipServiceImpl implements FieldRelationShipService {
 
     @Override
     public List<FieldRelationShip> save(List<FieldRelationShip> relationShipList) {
-        return fieldRelationShipRepository.save(relationShipList);
+        return fieldRelationShipRepository.saveAll(relationShipList);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class FieldRelationShipServiceImpl implements FieldRelationShipService {
 
     @Override
     public void delete(String id) {
-        fieldRelationShipRepository.delete(id);
+        fieldRelationShipRepository.deleteById(id);
     }
 
     @Override

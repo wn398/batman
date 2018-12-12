@@ -1,6 +1,5 @@
 package com.rayleigh.batman.repository;
 
-import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
 import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.data.jpa.repository.Query;

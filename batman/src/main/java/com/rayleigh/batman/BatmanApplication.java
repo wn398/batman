@@ -6,10 +6,11 @@ import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.rayleigh.core.dynamicDataSource.EnableDynamicDataSource;
 import com.rayleigh.core.annotation.EnableCustomRepository;
 import org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -19,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableCustomRepository
 @EnableDynamicDataSource
 @EnableAsync
-public class BatmanApplication  extends SpringBootServletInitializer{
+public class BatmanApplication  extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -29,7 +30,7 @@ public class BatmanApplication  extends SpringBootServletInitializer{
 	public static void main(String[] args) {
 		//SpringApplication.run(BatmanApplication.class, args);
 		new SpringApplicationBuilder(BatmanApplication.class)
-				.web(true)
+				.web(WebApplicationType.SERVLET)
 				.run(args);
 
 	}

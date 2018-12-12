@@ -94,7 +94,7 @@
                     </span>
 
 
-                    <th:button class="btn btn-success" th:alt-title="自动获取表信息" th:onclick="|showConfig('${project.id}')|">自动获取表信息</th:button>
+                    <th:button class="btn btn-success" th:alt-title="自动获取表信息" th:onclick="showConfig('[(${project.id})]')">自动获取表信息</th:button>
 
                 </header>
                 <div class="panel-body">
@@ -313,6 +313,6 @@
     }
 </script>
 <script th:replace="fragment/script"></script>
-<script type="text/javascript" th:src="@{/pageJs/entities-add.js}"/>
+<script th:src="@{/pageJs/entities-add.js}"></script>
 </body>
 </html>

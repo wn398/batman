@@ -5,7 +5,6 @@ import com.rayleigh.batman.model.FieldRelationShip;
 import com.rayleigh.batman.model.RelationShip;
 import com.rayleigh.batman.repository.FieldRelationShipRepository;
 import com.rayleigh.batman.repository.RelationShipRepository;
-import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class RelationShipServiceImpl implements RelationShipService {
 
     @Override
     public List<RelationShip> save(List<RelationShip> relationShipList) {
-        return relationShipRepository.save(relationShipList);
+        return relationShipRepository.saveAll(relationShipList);
     }
 
     @Override
@@ -35,7 +34,7 @@ public class RelationShipServiceImpl implements RelationShipService {
 
     @Override
     public void delete(String id) {
-        relationShipRepository.delete(id);
+        relationShipRepository.deleteById(id);
     }
 
     @Override
@@ -47,10 +46,10 @@ public class RelationShipServiceImpl implements RelationShipService {
     @Transactional
     public void saveRelationShipListAndFieldRelationShip(List<RelationShip> relationShipList, List<FieldRelationShip> fieldRelationShipList) {
         if(null!=relationShipList&&relationShipList.size()>0) {
-            relationShipRepository.save(relationShipList);
+            relationShipRepository.saveAll(relationShipList);
         }
         if(null!=fieldRelationShipList&&fieldRelationShipList.size()>0) {
-            fieldRelationShipRepository.save(fieldRelationShipList);
+            fieldRelationShipRepository.saveAll(fieldRelationShipList);
         }
     }
 }

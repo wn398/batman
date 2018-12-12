@@ -103,7 +103,7 @@
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                     </span>
 
-                    <th:button class="btn btn-success" th:alt-title="自动获取表信息" th:onclick="|showConfig('${entities.project.id}')|">自动获取表信息</th:button>
+                    <th:button class="btn btn-success" th:alt-title="自动获取表信息" th:onclick="showConfig('[(${entities.project.id})]')">自动获取表信息</th:button>
                 </header>
                 <div class="panel-body">
                     <table class="table  table-hover general-table" id="moduleTable">
@@ -155,7 +155,7 @@
                             </td>
                             <td>
                                 <button class="btn btn-danger btn-large" th:if="${field.name eq 'id'}" disabled>主键</button>
-                                <button class="btn btn-danger btn-large" th:unless="${field.name eq 'id'}" th:onclick="|deleteRemoteTr('${field.id}',this)|">删除</button>
+                                <button class="btn btn-danger btn-large" th:unless="${field.name eq 'id'}" th:onclick="deleteRemoteTr('[(${field.id})]',this)">删除</button>
                             </td>
                         </tr>
                          <tr th:each="field:${entities.fields}" th:unless="${field.name eq 'id' || field.name eq 'createDate' || field.name eq 'updateDate' || field.name eq 'version'}">
@@ -223,7 +223,7 @@
                                 <input type="text" class="form-control" name="fields[][validMessage]" th:value="${field.validMessage}" placeholder="验证表达式">
                             </td>
                             <td>
-                                <button class="btn btn-danger btn-large" th:onclick="|deleteRemoteTr('${field.id}',this)|">删除</button>
+                                <button class="btn btn-danger btn-large" th:onclick="deleteRemoteTr('[(${field.id})]',this)">删除</button>
                             </td>
                         </tr>
                         </tbody>
@@ -297,6 +297,6 @@
     }
 </script>
 <script th:replace="fragment/script"></script>
-<script type="text/javascript" th:src="@{/pageJs/entities-update.js}"/>
+<script th:src="@{/pageJs/entities-update.js}"></script>
 </body>
 </html>

@@ -22,7 +22,7 @@
                 <div class="panel-body">
                     <div class="adv-table">
                         <input type="hidden" id="entityId" th:value="${entity.id}">
-                        <div><button type="button" class="btn btn-success" th:onclick="|showAddMethod('${entity.id}')|">&nbsp;&nbsp;&nbsp;新增方法服务&nbsp;&nbsp;&nbsp;</button>
+                        <div><button type="button" class="btn btn-success" th:onclick="showAddMethod('[(${entity.id})]')|">&nbsp;&nbsp;&nbsp;新增方法服务&nbsp;&nbsp;&nbsp;</button>
                         </div>
                         <table class="display table table-bordered table-striped" id="methodTable" width="100%">
                             <thead>

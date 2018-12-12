@@ -18,11 +18,11 @@ public class ProjectDataSourceServiceImpl implements ProjectDataSourceService {
 
     @Override
     public void deleteById(String id) {
-        projectDataSourceRepository.delete(id);
+        projectDataSourceRepository.deleteById(id);
     }
 
     @Override
     public ProjectDataSource findOne(String id) {
-        return projectDataSourceRepository.findOne(id);
+        return projectDataSourceRepository.findById(id).get();
     }
 }

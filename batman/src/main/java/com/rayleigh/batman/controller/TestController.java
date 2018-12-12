@@ -5,6 +5,7 @@ import com.rayleigh.batman.model.Module;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.repository.EntitiesRepository;
 import com.rayleigh.batman.service.ProjectService;
+import com.rayleigh.batman.service.TestService;
 import com.rayleigh.batman.util.BuildProjectDirUtil;
 import com.rayleigh.batman.util.GeneratorStringUtil;
 import com.rayleigh.core.async.AsyncServiceUtil;
@@ -75,7 +76,7 @@ public class TestController extends BaseController{
         map.put("projectName","testProject");
         map.put("moduleName","testModel");
         //map.put("basePackage","com.test");
-        map.put("springBootVersion","1.5.2.RELEASE");
+        //map.put("springBootVersion","1.5.2.RELEASE");
 
         templateProcess(map, template);
 
@@ -321,5 +322,15 @@ public class TestController extends BaseController{
 
 
     }
+    @Autowired
+    private TestService testService;
+
+    @GetMapping("/testMoreDataBases")
+    @ResponseBody
+    public ResultWrapper testMoreDataBases(){
+        return getSuccessResult(testService.test());
+    }
+
+
 
 }

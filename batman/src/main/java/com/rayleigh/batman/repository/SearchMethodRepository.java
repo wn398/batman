@@ -1,6 +1,5 @@
 package com.rayleigh.batman.repository;
 
-import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.SearchMethod;
 import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.stereotype.Repository;

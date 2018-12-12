@@ -10,8 +10,6 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.boot.bind.RelaxedDataBinder;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.convert.ConversionService;
@@ -20,7 +18,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -28,7 +25,7 @@ import java.util.Properties;
 public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar, EnvironmentAware {
     private Logger logger = LoggerFactory.getLogger("DynamicDataSource");
     //如配置文件中未指定数据源类型，使用该默认值
-    private static final Object DATASOURCE_TYPE_DEFAULT = "org.apache.tomcat.jdbc.pool.DataSource";
+    private static final Object DATASOURCE_TYPE_DEFAULT = "com.zaxxer.hikari.HikariDataSource";
     private ConversionService conversionService = new DefaultConversionService();
     private PropertyValues dataSourcePropertyValues;
 
@@ -56,40 +53,39 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
     private void initDefaultDataSource(Environment env){
         boolean isEncodeDatasource = false;
         try {
-            RelaxedPropertyResolver propertyResolver2 = new RelaxedPropertyResolver(env, "batman.");
-            isEncodeDatasource = Boolean.parseBoolean(propertyResolver2.getProperty("encodeDataSource"));
+            isEncodeDatasource = Boolean.parseBoolean(env.getProperty("batman.encodeDataSource"));
         }catch (Exception e){
             logger.error("解析出错batmam.encodeDataSource出错!");
             e.printStackTrace();
         }
         // 读取主数据源
-        RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "spring.datasource.");
+
         Map<String, Object> dsMap = new HashMap<String, Object>();
-        dsMap.put("type", propertyResolver.getProperty("type"));
-        dsMap.put("driverClassName", propertyResolver.getProperty("driverClassName"));
-        dsMap.put("url", propertyResolver.getProperty("url"));
+        dsMap.put("type", env.getProperty("spring.datasource.type"));
+        dsMap.put("driverClassName", env.getProperty("spring.datasource.driverClassName"));
+        dsMap.put("url", env.getProperty("spring.datasource.url"));
         if(isEncodeDatasource){
-            dsMap.put("username", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty("username")));
-            dsMap.put("password", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty("password")));
+            dsMap.put("username", AESEncoderUtil.AESDecode(sourceRule, env.getProperty("spring.datasource.username")));
+            dsMap.put("password", AESEncoderUtil.AESDecode(sourceRule, env.getProperty("spring.datasource.password")));
         }else {
-            dsMap.put("username", propertyResolver.getProperty("username"));
-            dsMap.put("password", propertyResolver.getProperty("password"));
+            dsMap.put("username", env.getProperty("spring.datasource.username"));
+            dsMap.put("password", env.getProperty("spring.datasource.password"));
         }
-        sourcePoolMap.put("initialSize",propertyResolver.getProperty("initialSize"));
-        sourcePoolMap.put("minIdle",propertyResolver.getProperty("minIdle"));
-        sourcePoolMap.put("maxActive",propertyResolver.getProperty("maxActive"));
-        sourcePoolMap.put("maxWait",propertyResolver.getProperty("maxWait"));
-        sourcePoolMap.put("timeBetweenEvictionRunsMillis",propertyResolver.getProperty("timeBetweenEvictionRunsMillis"));
-        sourcePoolMap.put("minEvictableIdleTimeMillis", propertyResolver.getProperty("minEvictableIdleTimeMillis"));
-        sourcePoolMap.put("validationQuery", propertyResolver.getProperty("validationQuery"));
-        sourcePoolMap.put("testWhileIdle", propertyResolver.getProperty("testWhileIdle"));
-        sourcePoolMap.put("testOnBorrow", propertyResolver.getProperty("testOnBorrow"));
-        sourcePoolMap.put("testOnReturn",propertyResolver.getProperty("testOnReturn"));
-        sourcePoolMap.put("poolPreparedStatements", propertyResolver.getProperty("poolPreparedStatements"));
-        sourcePoolMap.put("maxPoolPreparedStatementPerConnectionSize", propertyResolver.getProperty("maxPoolPreparedStatementPerConnectionSize"));
-        sourcePoolMap.put("filters",propertyResolver.getProperty("filters"));
-        sourcePoolMap.put("connectionProperties",propertyResolver.getProperty("connectionProperties"));
-        sourcePoolMap.put("useGlobalDataSourceStat",propertyResolver.getProperty("useGlobalDataSourceStat"));
+        sourcePoolMap.put("initialSize",env.getProperty("spring.datasource.initialSize"));
+        sourcePoolMap.put("minIdle",env.getProperty("spring.datasource.minIdle"));
+        sourcePoolMap.put("maxActive",env.getProperty("spring.datasource.maxActive"));
+        sourcePoolMap.put("maxWait",env.getProperty("spring.datasource.maxWait"));
+        sourcePoolMap.put("timeBetweenEvictionRunsMillis",env.getProperty("spring.datasource.timeBetweenEvictionRunsMillis"));
+        sourcePoolMap.put("minEvictableIdleTimeMillis", env.getProperty("spring.datasource.minEvictableIdleTimeMillis"));
+        sourcePoolMap.put("validationQuery", env.getProperty("spring.datasource.validationQuery"));
+        sourcePoolMap.put("testWhileIdle", env.getProperty("spring.datasource.testWhileIdle"));
+        sourcePoolMap.put("testOnBorrow", env.getProperty("spring.datasource.testOnBorrow"));
+        sourcePoolMap.put("testOnReturn",env.getProperty("spring.datasource.testOnReturn"));
+        sourcePoolMap.put("poolPreparedStatements", env.getProperty("spring.datasource.poolPreparedStatements"));
+        sourcePoolMap.put("maxPoolPreparedStatementPerConnectionSize", env.getProperty("spring.datasource.maxPoolPreparedStatementPerConnectionSize"));
+        sourcePoolMap.put("filters",env.getProperty("spring.datasource.filters"));
+        sourcePoolMap.put("connectionProperties",env.getProperty("spring.datasource.connectionProperties"));
+        sourcePoolMap.put("useGlobalDataSourceStat",env.getProperty("spring.datasource.useGlobalDataSourceStat"));
 
         dsMap.putAll(sourcePoolMap);
         //创建数据源;
@@ -103,27 +99,25 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
     private void initCustomDataSources(Environment env) {
         boolean isEncodeDatasource = false;
         try {
-            RelaxedPropertyResolver propertyResolver2 = new RelaxedPropertyResolver(env, "batman.");
-            isEncodeDatasource = Boolean.parseBoolean(propertyResolver2.getProperty("encodeDataSource"));
+            isEncodeDatasource = Boolean.parseBoolean(env.getProperty("batman.encodeDataSource"));
         }catch (Exception e){
             logger.error("解析出错batmam.encodeDataSource出错!");
             e.printStackTrace();
         }
         // 读取配置文件获取更多数据源，也可以通过defaultDataSource读取数据库获取更多数据源
-        RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "custom.datasource.");
-        String dsPrefixs = propertyResolver.getProperty("names");
+        String dsPrefixs = env.getProperty("custom.datasource.names");
         if(!StringUtil.isEmpty(dsPrefixs)){
             for (String dsPrefix : dsPrefixs.split(",")) {// 多个数据源
                 Map<String, Object> dsMap = new HashMap<>();
                 //dsMap = propertyResolver.getSubProperties(dsPrefix + ".");
-                dsMap.put("driverClassName", propertyResolver.getProperty(dsPrefix+".driverClassName"));
-                dsMap.put("url", propertyResolver.getProperty(dsPrefix+".url"));
+                dsMap.put("driverClassName", env.getProperty("custom.datasource."+dsPrefix+".driverClassName"));
+                dsMap.put("url", env.getProperty("custom.datasource."+dsPrefix+".url"));
                 if(isEncodeDatasource){
-                    dsMap.put("username", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty(dsPrefix+".username")));
-                    dsMap.put("password", AESEncoderUtil.AESDecode(sourceRule, propertyResolver.getProperty(dsPrefix+".password")));
+                    dsMap.put("username", AESEncoderUtil.AESDecode(sourceRule, env.getProperty("custom.datasource."+dsPrefix+".username")));
+                    dsMap.put("password", AESEncoderUtil.AESDecode(sourceRule, env.getProperty("custom.datasource."+dsPrefix+".password")));
                 }else {
-                    dsMap.put("username", propertyResolver.getProperty(dsPrefix+".username"));
-                    dsMap.put("password", propertyResolver.getProperty(dsPrefix+".password"));
+                    dsMap.put("username", env.getProperty("custom.datasource."+dsPrefix+".username"));
+                    dsMap.put("password", env.getProperty("custom.datasource."+dsPrefix+".password"));
                 }
                 dsMap.putAll(sourcePoolMap);
                 DataSource ds = buildDataSource(dsMap);
@@ -209,24 +203,29 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
      * @param env
      */
     private void dataBinder(DataSource dataSource, Environment env){
-        RelaxedDataBinder dataBinder = new RelaxedDataBinder(dataSource);
-        dataBinder.setConversionService(conversionService);
-        dataBinder.setIgnoreNestedProperties(false);//false
-        dataBinder.setIgnoreInvalidFields(false);//false
-        dataBinder.setIgnoreUnknownFields(true);//true
+//        RelaxedDataBinder dataBinder = new RelaxedDataBinder(dataSource);
+//        dataBinder.setConversionService(conversionService);
+//        dataBinder.setIgnoreNestedProperties(false);//false
+//        dataBinder.setIgnoreInvalidFields(false);//false
+//        dataBinder.setIgnoreUnknownFields(true);//true
+//
+//
+//
+//        if(dataSourcePropertyValues == null){
+//            Map<String, Object> rpr = new RelaxedPropertyResolver(env, "spring.datasource").getSubProperties(".");
+//            PropertyResolver propertyResolver;
+//            Map<String, Object> values = new HashMap<>(rpr);
+//            // 排除已经设置的属性
+//            values.remove("type");
+//            values.remove("driverClassName");
+//            values.remove("url");
+//            values.remove("username");
+//            values.remove("password");
+//            dataSourcePropertyValues = new MutablePropertyValues(values);
+//        }
+//        dataBinder.bind(dataSourcePropertyValues);
 
-        if(dataSourcePropertyValues == null){
-            Map<String, Object> rpr = new RelaxedPropertyResolver(env, "spring.datasource").getSubProperties(".");
-            Map<String, Object> values = new HashMap<>(rpr);
-            // 排除已经设置的属性
-            values.remove("type");
-            values.remove("driverClassName");
-            values.remove("url");
-            values.remove("username");
-            values.remove("password");
-            dataSourcePropertyValues = new MutablePropertyValues(values);
-        }
-        dataBinder.bind(dataSourcePropertyValues);
+       // Binder.get(env).bind(ConfigurationPropertyName.EMPTY);
 
     }
 

@@ -2,7 +2,6 @@ package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.Module;
 import com.rayleigh.batman.repository.ModuleRepository;
-import com.rayleigh.core.customQuery.CustomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +23,12 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Override
     public void deleteById(String id) {
-        moduleRepository.delete(id);
+        moduleRepository.deleteById(id);
     }
 
     @Override
     public Module findOne(String id) {
-        return moduleRepository.findOne(id);
+        return moduleRepository.findById(id).get();
     }
 
     @Override

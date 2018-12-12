@@ -78,7 +78,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> save(List<${entity.name}> ${entity.name ?uncap_first}s){
-        return ${entity.name ?uncap_first}Repository.save(${entity.name ?uncap_first}s);
+        return ${entity.name ?uncap_first}Repository.saveAll(${entity.name ?uncap_first}s);
     }
 
 <#if (entity.mainEntityRelationShips ?size >0)>
@@ -99,7 +99,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation){
-    ${entity.name} ${entity.name ?uncap_first} = ${entity.name ?uncap_first}Repository.findOne(${entity.name ?uncap_first}$Relation.getId());
+    ${entity.name} ${entity.name ?uncap_first} = ${entity.name ?uncap_first}Repository.findById(${entity.name ?uncap_first}$Relation.getId()).get();
     <#list entity.mainEntityRelationShips as mainR>
         <#if mainR.relationType == "OneToMany" || mainR.relationType == "ManyToMany">
                 if(${entity.name ?uncap_first}$Relation.get${mainR.otherEntity.name}List()){
@@ -213,17 +213,17 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public void deleteByIds(List<${entityIdType}> ids){
-        ids.parallelStream().forEach(id->${entity.name ?uncap_first}Repository.delete(id));
+        ids.parallelStream().forEach(id->${entity.name ?uncap_first}Repository.deleteById(id));
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public void deleteById(${entityIdType} id){
-        ${entity.name ?uncap_first}Repository.delete(id);
+        ${entity.name ?uncap_first}Repository.deleteById(id);
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public List<${entity.name}> findByIds(List<${entityIdType}> ids){
-        return  ${entity.name ?uncap_first}Repository.findAll(ids);
+        return  ${entity.name ?uncap_first}Repository.findAllById(ids);
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
@@ -256,7 +256,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public ${entity.name} findOne(${entityIdType} id){
-        return   ${entity.name ?uncap_first}Repository.findOne(id);
+        return   ${entity.name ?uncap_first}Repository.findById(id).get();
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
@@ -451,7 +451,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         tupleCriteriaQuery.multiselect(selectionList);
         TypedQuery<Tuple> tupleTypedQuery = entityManager.createQuery(tupleCriteriaQuery);
         if(null !=pageable){
-            tupleTypedQuery.setFirstResult(pageable.getOffset());
+            tupleTypedQuery.setFirstResult((int)pageable.getOffset());
             tupleTypedQuery.setMaxResults(pageable.getPageSize());
         }
         List<Tuple> tupleList = tupleTypedQuery.getResultList();
@@ -483,11 +483,6 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     public Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,String ...propertyNames){
         return findByProperties(map,pageable,Arrays.asList(propertyNames));
-    }
-
-    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
-    public Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable){
-        return  ${entity.name ?uncap_first}Repository.findByAuto(${entity.name ?uncap_first},pageable);
     }
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
@@ -549,7 +544,7 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
         tupleCriteriaQuery.multiselect(list);
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(tupleCriteriaQuery);
         if(null !=pageable){
-            typedQuery.setFirstResult(pageable.getOffset());
+            typedQuery.setFirstResult((int)pageable.getOffset());
             typedQuery.setMaxResults(pageable.getPageSize());
         }
         List<Tuple> tupleList = typedQuery.getResultList();

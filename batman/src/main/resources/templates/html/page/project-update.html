@@ -136,7 +136,7 @@
                                 <input type="text" class="form-control" name="projectDataSources[][dataBaseName]" th:value="${projectDataSource.dataBaseName}"  placeholder="字母数字">
                             </td>
                             <td>
-                                <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteProjectDataSourceTr(\''+${projectDataSource.id}+'\','+this+');'">删除</button>
+                                <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteProjectDataSourceTr(\''+[[${projectDataSource.id}]]+'\','+this+');'">删除</button>
                             </td>
                             <td>
                                 <button class="btn btn-danger btn-large" onclick="testConnection(this)">测试连接</button>
@@ -176,7 +176,7 @@
                                     <input type="text" class="form-control" name="modules[][description]"  th:value="${module.description}" placeholder="字母数字">
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteTr(\''+${module.id}+'\','+this+');'">删除</button>
+                                    <button class="btn btn-danger btn-large" th:onclick="'javascript:deleteRemoteTr(\''+[[${module.id}]]+'\','+this+');'">删除</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -254,7 +254,7 @@
 </div>
 
 <script th:replace="fragment/script"></script>
+<script th:src="@{/pageJs/project-update.js}"></script>
 </body>
 </html>
 
-<script type="text/javascript" th:src="@{/pageJs/project-update.js}"/>

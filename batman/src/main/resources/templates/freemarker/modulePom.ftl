@@ -11,7 +11,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <#--<version>1.5.2.RELEASE</version>-->
-        <version>${springBootVersion}</version>
+        <version>2.1.1.RELEASE</version>
 
     </parent>
 
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <junit.version>4.12</junit.version>
-        <rayleigh.core.version>0.0.1-SNAPSHOT</rayleigh.core.version>
+        <rayleigh.core.version>0.0.3-SNAPSHOT</rayleigh.core.version>
         <start-class>${basePackage}.${moduleName ?cap_first}Application</start-class>
     </properties>
 

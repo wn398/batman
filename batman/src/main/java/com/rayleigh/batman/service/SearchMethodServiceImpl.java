@@ -18,11 +18,11 @@ public class SearchMethodServiceImpl implements SearchMethodService {
 
     @Override
     public void delete(String id) {
-        searchMethodRepository.delete(id);
+        searchMethodRepository.deleteById(id);
     }
 
     @Override
     public SearchMethod findOne(String id) {
-        return searchMethodRepository.findOne(id);
+        return searchMethodRepository.findById(id).get();
     }
 }

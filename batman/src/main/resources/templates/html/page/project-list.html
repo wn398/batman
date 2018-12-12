@@ -44,8 +44,8 @@
                                 <td th:text="${#dates.format(project.hierachyDate,'yyyy-MM-dd hh:mm:ss')}"></td>
                                 <td th:text="${project.version}"></td>
                                 <td>
-                                    <a class="btn btn-success btn-xs" th:onclick="|showUpdate('${project.id}',this)|">更新</a>
-                                    <a  class="btn btn-danger btn-xs" th:onclick="|deleteById('${project.id}',this)|">删除</a>
+                                    <a class="btn btn-success btn-xs" th:onclick="showUpdate('[(${project.id})]',this)">更新</a>
+                                    <a  class="btn btn-danger btn-xs" th:onclick="deleteById('[(${project.id})]',this)">删除</a>
                                     <a class="btn btn-info btn-xs" th:href="@{'/projectCtl/goAllEntity/'+${project.id}}">实体列表</a>
                                 </td>
                                 <td>
@@ -66,4 +66,4 @@
 <script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
 <script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
 <!--<script type="text/javascript" th:src="@{/js/data-tables/DT_bootstrap.js/}"></script>-->
-<script type="text/javascript" th:src="@{/pageJs/project-list.js}"/>
+<script type="text/javascript" th:src="@{/pageJs/project-list.js}"></script>

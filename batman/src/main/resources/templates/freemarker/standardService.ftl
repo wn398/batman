@@ -96,8 +96,6 @@ public interface ${entity.name}Service extends BaseService{
 
     Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable,List<String> propertyNames);
 
-    Page<${entity.name}> findByAuto(${entity.name} ${entity.name ?uncap_first},Pageable pageable);
-
     List<${entity.name}> findAll();
 
     List<${entity.name}> findAll(String ...propertyNames);

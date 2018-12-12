@@ -4,6 +4,7 @@ import com.rayleigh.core.exception.NotBaseModelException;
 import com.rayleigh.core.model.BaseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -259,7 +260,7 @@ public class BaseModelUtil {
         String name = clazz.getSimpleName();
         //获取Repository
         String repositoryName = new StringBuilder(name.substring(0,1).toLowerCase()).append(name.substring(1)).append("Repository").toString();
-        BaseModel databaseModel = (BaseModel) ((JpaRepository)SpringContextUtils.getBean(repositoryName)).findOne(baseModel.getId());
+        BaseModel databaseModel = (BaseModel) ((JpaRepository)SpringContextUtils.getBean(repositoryName)).findOne(Example.of(baseModel)).get();
         return  databaseModel;
     }
 
