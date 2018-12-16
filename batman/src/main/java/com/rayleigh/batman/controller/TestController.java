@@ -5,9 +5,9 @@ import com.rayleigh.batman.model.Module;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.repository.EntitiesRepository;
 import com.rayleigh.batman.service.ProjectService;
-import com.rayleigh.batman.service.TestService;
 import com.rayleigh.batman.util.BuildProjectDirUtil;
 import com.rayleigh.batman.util.GeneratorStringUtil;
+import com.rayleigh.batman.util.SearchDBUtil;
 import com.rayleigh.core.async.AsyncServiceUtil;
 import com.rayleigh.core.dynamicDataSource.TargetDataSource;
 import com.rayleigh.core.controller.BaseController;
@@ -237,14 +237,10 @@ public class TestController extends BaseController{
         return "success";
     }
 
-    @GetMapping("/testLog")
+    @GetMapping("/testSearchDBUtil")
     @ResponseBody
-    public String test55(){
-        logger.info("info Logger");
-        logger.debug("debug Logger");
-        logger.warn("warn Logger");
-        logger.error("error logger");
-        return "success";
+    public ResultWrapper test55(){
+        return getSuccessResult(SearchDBUtil.isContainField("8aa652c65d6860a6015d686dc6aa0004","age"));
     }
 
     @GetMapping("/testComand")
@@ -253,7 +249,7 @@ public class TestController extends BaseController{
         Map<String, String> map = System.getenv();
         for(Iterator<String> itr = map.keySet().iterator();itr.hasNext();){
             String key = itr.next();
-            System.out.println(key + "=" + map.get(key));
+            logger.info(key + "=" + map.get(key));
         }
         String os2=System.getProperty("os.name");
         logger.info(os2);
@@ -287,7 +283,6 @@ public class TestController extends BaseController{
         Map<String, String> map = System.getenv();
         for(Iterator<String> itr = map.keySet().iterator();itr.hasNext();){
             String key = itr.next();
-            System.out.println(key + "=" + map.get(key));
         }
         String os2=System.getProperty("os.name");
        // logger.info(os2);
@@ -322,14 +317,7 @@ public class TestController extends BaseController{
 
 
     }
-    @Autowired
-    private TestService testService;
 
-    @GetMapping("/testMoreDataBases")
-    @ResponseBody
-    public ResultWrapper testMoreDataBases(){
-        return getSuccessResult(testService.test());
-    }
 
 
 

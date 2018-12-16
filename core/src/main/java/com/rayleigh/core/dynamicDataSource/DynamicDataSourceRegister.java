@@ -26,8 +26,7 @@ public class DynamicDataSourceRegister  implements ImportBeanDefinitionRegistrar
     private Logger logger = LoggerFactory.getLogger("DynamicDataSource");
     //如配置文件中未指定数据源类型，使用该默认值
     private static final Object DATASOURCE_TYPE_DEFAULT = "com.zaxxer.hikari.HikariDataSource";
-    private ConversionService conversionService = new DefaultConversionService();
-    private PropertyValues dataSourcePropertyValues;
+    //private ConversionService conversionService = new DefaultConversionService();
 
     private static Map sourcePoolMap = new HashMap();
     //数据源密钥

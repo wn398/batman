@@ -2,6 +2,7 @@ package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.util.*;
+import com.rayleigh.core.async.AsyncServiceUtil;
 import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.AESEncoderUtil;
 import com.rayleigh.core.util.StringUtil;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.partitioningBy;
@@ -33,11 +37,11 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     @Autowired
     private BuildService buildService;
 
-    @Value("${springBoot.version}")
-    private String springBootVersion;
-
     @Value("${batman.aesEncode.rule}")
     private String aesEndoeRule;
+
+    @Autowired
+    private AsyncServiceUtil asyncServiceUtil;
 
 
     //==================以下为生成文件夹组合方法 ==================================================
@@ -71,24 +75,6 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             buildService.deployJarFile(sourceDir);
         }
 
-
-
-
-
-//
-//
-//        String fileName=new String((project.getModules().get(0).getName()+"Standard-1.0-SNAPSHOT.jar").getBytes("UTF-8"),"iso-8859-1");//为了解决中文名称乱码问题
-//        response.reset();
-//        response.addHeader("Content-Length", "" + jarFile.length());
-//        response.setContentType("application/octet-stream;charset=UTF-8");
-//        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-//        try(OutputStream outputStream =response.getOutputStream();InputStream in = new FileInputStream(jarFile);){
-//            int len = 0;
-//            byte[] buf = new byte[1024];
-//            while ((len = in.read(buf, 0, 1024)) != -1) {
-//                outputStream.write(buf, 0, len);
-//            }
-//        }
     }
 
     @Override
@@ -121,32 +107,125 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         //standard serviceImpl路径
         File standardServiceImplPath = new File(BuildProjectDirUtil.getStandardServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
 
-        //生成entity文件
-        generateModelFile(standardModelPath,project,module);
-        //生成standRepository文件
-        generateRepositoryFile(standardRepositoryPath,project,module,false);
-        //生成standService文件
-        generateServiceFile(standardServicePath,project,module,false);
-        //生成方法的入参和结果类型 ---【2017-8-4】
-        generateMethodWrapperFile(standardMethodModelPath,project,module);
-        //生成modelRelation文件
-        generateModuleRelationFile(standardModelRelation,project,module);
-        //生成standServiceImpl文件
-        generateServiceImplFile(standardServiceImplPath,project,module,false);
-        //生成standController文件
-        generateControllerFile(standardControllerPath,project,module,false);
-        //生成standMethodIntercept文件
-        generateMethodInterceptFile(standardMethodInterceptPath,project,module);
-        //生成standardEntityUtil文件
-        generateStandardUtilFile(standardEntityUtil,project,module,false);
+//        //生成entity文件
+//        generateModelFile(standardModelPath,project,module);
+//        //生成standRepository文件
+//        generateRepositoryFile(standardRepositoryPath,project,module,false);
+//        //生成standService文件
+//        generateServiceFile(standardServicePath,project,module,false);
+//        //生成方法的入参和结果类型 ---【2017-8-4】
+//        generateMethodWrapperFile(standardMethodModelPath,project,module);
+//        //生成modelRelation文件
+//        generateModuleRelationFile(standardModelRelation,project,module);
+//        //生成standServiceImpl文件
+//        generateServiceImplFile(standardServiceImplPath,project,module,false);
+//        //生成standController文件
+//        generateControllerFile(standardControllerPath,project,module,false);
+//        //生成standMethodIntercept文件
+//        generateMethodInterceptFile(standardMethodInterceptPath,project,module);
+//        //生成standardEntityUtil文件
+//        generateStandardUtilFile(standardEntityUtil,project,module,false);
+        ExecutorService exec = Executors.newFixedThreadPool(9);
+        CountDownLatch countDownLatch = new CountDownLatch(9);
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成entity文件
+                generateModelFile(standardModelPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standRepository文件
+                generateRepositoryFile(standardRepositoryPath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standService文件
+                generateServiceFile(standardServicePath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成方法的入参和结果类型 ---【2017-8-4】
+                generateMethodWrapperFile(standardMethodModelPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成modelRelation文件
+                generateModuleRelationFile(standardModelRelation,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standServiceImpl文件
+                generateServiceImplFile(standardServiceImplPath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standController文件
+                generateControllerFile(standardControllerPath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standMethodIntercept文件
+                generateMethodInterceptFile(standardMethodInterceptPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standardEntityUtil文件
+                generateStandardUtilFile(standardEntityUtil,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        try {
+            countDownLatch.await();
+            exec.shutdown();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     //生成项目全部 standard部分代码
     public void produceProjectStandard(String generatorBasePath, Project project) {
         BuildProjectDirUtil.createDirForProjectStandard(generatorBasePath,project);
-        for(Module module:project.getModules()) {
-            produceModuleStandardAllFiles(generatorBasePath,project,module);
-        }
+        project.getModules().parallelStream().forEach(it->{
+            produceModuleStandardAllFiles(generatorBasePath,project,it);
+        });
+//        for(Module module:project.getModules()) {
+//            produceModuleStandardAllFiles(generatorBasePath,project,module);
+//        }
     }
 
     //生成项目module全部 standard部分代码
@@ -161,9 +240,12 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成项目全部extend部分代码文件
     public void produceProjectExtend(String generatorBasePath, Project project) {
         BuildProjectDirUtil.createDirForProjectExtend(generatorBasePath,project);
-        for(Module module:project.getModules()) {
-            produceModuleExtendAllFiles(generatorBasePath, project, module);
-        }
+        project.getModules().parallelStream().forEach(it->{
+            produceModuleExtendAllFiles(generatorBasePath, project, it);
+        });
+//        for(Module module:project.getModules()) {
+//            produceModuleExtendAllFiles(generatorBasePath, project, module);
+//        }
     }
 
 
@@ -179,15 +261,25 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         //生成项目git.ignore文件
         generatorIgnoreFile(projectRoot,project);
 
-        for(Module module:project.getModules()) {
+        project.getModules().parallelStream().forEach(it->{
             //生成模块下其它文件
-            produceModuleOtherFiles(generatorBasePath,project,module,port,root);
+            produceModuleOtherFiles(generatorBasePath,project,it,port,root);
             //生成standard路径下所有文件
-            produceModuleStandardAllFiles(generatorBasePath,project,module);
+            produceModuleStandardAllFiles(generatorBasePath,project,it);
             //produceModuleStandardJar(generatorBasePath,module.getId());
             //生成extend路径下所有文件
-            produceModuleExtendAllFiles(generatorBasePath,project,module);
-        }
+            produceModuleExtendAllFiles(generatorBasePath,project,it);
+        });
+
+//        for(Module module:project.getModules()) {
+//            //生成模块下其它文件
+//            produceModuleOtherFiles(generatorBasePath,project,module,port,root);
+//            //生成standard路径下所有文件
+//            produceModuleStandardAllFiles(generatorBasePath,project,module);
+//            //produceModuleStandardJar(generatorBasePath,module.getId());
+//            //生成extend路径下所有文件
+//            produceModuleExtendAllFiles(generatorBasePath,project,module);
+//        }
     }
 
     //生成项目全部文件,标准部分采用jar方式
@@ -203,15 +295,25 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         //生成项目git.ignore文件
         generatorIgnoreFile(projectRoot,project);
 
-        for(Module module:project.getModules()) {
+        project.getModules().parallelStream().forEach(it->{
             //生成模块下其它文件
-            produceModuleOtherFiles(generatorBasePath,project,module,port,root);
+            produceModuleOtherFiles(generatorBasePath,project,it,port,root);
             //生成standard路径下所有文件
             //produceModuleStandardAllFiles(generatorBasePath,project,module);
-            produceModuleStandardJar(generatorBasePath,module,project);
+            produceModuleStandardJar(generatorBasePath,it,project);
             //生成extend路径下所有文件
-            produceModuleExtendAllFiles(generatorBasePath,project,module);
-        }
+            produceModuleExtendAllFiles(generatorBasePath,project,it);
+        });
+
+//        for(Module module:project.getModules()) {
+//            //生成模块下其它文件
+//            produceModuleOtherFiles(generatorBasePath,project,module,port,root);
+//            //生成standard路径下所有文件
+//            //produceModuleStandardAllFiles(generatorBasePath,project,module);
+//            produceModuleStandardJar(generatorBasePath,module,project);
+//            //生成extend路径下所有文件
+//            produceModuleExtendAllFiles(generatorBasePath,project,module);
+//        }
     }
 
     //生成项目下某一模块的除了standard,extend外的配置文件，包括配置文件
@@ -231,28 +333,138 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         File filterPackagePath = new File(BuildProjectDirUtil.getRelativeFilterPath(generatorBasePath,project.getName(),module.getName(),project.getPackageName()));
         filterPackagePath.mkdirs();
 
-        //生成模块根目录下application.property文件
-        generateApplicationPropertyFile(resourceRootPath,project,module);
-        //生成模块根目录下application-pro.property文件
-        generateApplicationProPropertyFile(resourceRootPath,project,module);
-        //生成模块根目录下的application-dev.property文件
-        generateApplicationDevPropertyFile(resourceRootPath,project,module);
-        //生成模块permission文件
-        generatePermissionPropertyFile(resourceRootPath,project,module);
-        //生成模块filter.java文件
-        generateJwtFilterFile(filterPackagePath,project,module);
-        //生成日志配置文件
-        generateLogbackConfigerationFile(resourceRootPath,project,module);
-        //生成模块applicationJava文件,放在基础路径下
-        generateApplicationJavaFile(relativePackagePath,project,module);
-        //生成模块pom.xml文件
-        generateModulePOMFile(moduleRootPath,project,module);
-        //生成模块pom-war.xml文件
-        generatePOMWarFile(moduleRootPath,project,module);
-        //生成模块findbugs-include.xml文件
-        generateFindBugsIncludeFile(moduleRootPath,project,module);
-        //生成模块下的update.sh文件
-        generatorModuleUpdateFile(moduleRootPath,project,module,port,root);
+//        //生成模块根目录下application.property文件
+//        generateApplicationPropertyFile(resourceRootPath,project,module);
+//        //生成模块根目录下application-pro.property文件
+//        generateApplicationProPropertyFile(resourceRootPath,project,module);
+//        //生成模块根目录下的application-dev.property文件
+//        generateApplicationDevPropertyFile(resourceRootPath,project,module);
+//        //生成模块permission文件
+//        generatePermissionPropertyFile(resourceRootPath,project,module);
+//        //生成模块filter.java文件
+//        generateJwtFilterFile(filterPackagePath,project,module);
+//        //生成日志配置文件
+//        generateLogbackConfigerationFile(resourceRootPath,project,module);
+//        //生成模块applicationJava文件,放在基础路径下
+//        generateApplicationJavaFile(relativePackagePath,project,module);
+//        //生成模块pom.xml文件
+//        generateModulePOMFile(moduleRootPath,project,module);
+//        //生成模块pom-war.xml文件
+//        generatePOMWarFile(moduleRootPath,project,module);
+//        //生成模块findbugs-include.xml文件
+//        generateFindBugsIncludeFile(moduleRootPath,project,module);
+//        //生成模块下的update.sh文件
+//        generatorModuleUpdateFile(moduleRootPath,project,module,port,root);
+
+        ExecutorService exec = Executors.newFixedThreadPool(11);
+        CountDownLatch countDownLatch = new CountDownLatch(11);
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块根目录下application.property文件
+                generateApplicationPropertyFile(resourceRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块根目录下application-pro.property文件
+                generateApplicationProPropertyFile(resourceRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块根目录下的application-dev.property文件
+                generateApplicationDevPropertyFile(resourceRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块permission文件
+                generatePermissionPropertyFile(resourceRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块filter.java文件
+                generateJwtFilterFile(filterPackagePath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成日志配置文件
+                generateLogbackConfigerationFile(resourceRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块applicationJava文件,放在基础路径下
+                generateApplicationJavaFile(relativePackagePath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块pom.xml文件
+                generateModulePOMFile(moduleRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块pom-war.xml文件
+                generatePOMWarFile(moduleRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块findbugs-include.xml文件
+                generateFindBugsIncludeFile(moduleRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成模块下的update.sh文件
+                generatorModuleUpdateFile(moduleRootPath,project,module,port,root);
+                countDownLatch.countDown();
+            }
+        });
+
+        try{
+            countDownLatch.await();
+            exec.shutdown();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -285,27 +497,124 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         //standard serviceImpl路径
         File standardServiceImplPath = new File(BuildProjectDirUtil.getStandardServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
 
-        //生成entity文件
-        generateModelFile(standardModelPath,project,module);
-        //生成standRepository文件
-        generateRepositoryFile(standardRepositoryPath,project,module,false);
-        //生成standService文件
-        generateServiceFile(standardServicePath,project,module,false);
-        //生成方法的入参和结果类型 ---【2017-8-4】
-        generateMethodWrapperFile(standardMethodModelPath,project,module);
-        //生成modelRelation文件
-        generateModuleRelationFile(standardModelRelation,project,module);
-        //生成standServiceImpl文件
-        generateServiceImplFile(standardServiceImplPath,project,module,false);
-        //生成standController文件
-        generateControllerFile(standardControllerPath,project,module,false);
-        //生成standMethodIntercept文件
-        generateMethodInterceptFile(standardMethodInterceptPath,project,module);
-        //生成standardEntityUtil文件
-        generateStandardUtilFile(standardEntityUtil,project,module,false);
+        ExecutorService exec = Executors.newFixedThreadPool(10);
+        CountDownLatch countDownLatch = new CountDownLatch(10);
 
-        //生成pom文件
-        generateModuleStandardPOMFile(moduleRootPath,project,module);
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成entity文件
+                generateModelFile(standardModelPath, project, module);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standRepository文件
+                generateRepositoryFile(standardRepositoryPath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standService文件
+                generateServiceFile(standardServicePath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成方法的入参和结果类型 ---【2017-8-4】
+                generateMethodWrapperFile(standardMethodModelPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成modelRelation文件
+                generateModuleRelationFile(standardModelRelation,project,module);
+                countDownLatch.countDown();
+            }
+        });
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standServiceImpl文件
+                generateServiceImplFile(standardServiceImplPath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standController文件
+                generateControllerFile(standardControllerPath,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standMethodIntercept文件
+                generateMethodInterceptFile(standardMethodInterceptPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成pom文件
+                generateModuleStandardPOMFile(moduleRootPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成standardEntityUtil文件
+                generateStandardUtilFile(standardEntityUtil,project,module,false);
+                countDownLatch.countDown();
+            }
+        });
+
+        try {
+            countDownLatch.await();
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+
+        exec.shutdown();
+
+//        //生成entity文件
+//        generateModelFile(standardModelPath, project, module);
+//        //生成standRepository文件
+//        generateRepositoryFile(standardRepositoryPath,project,module,false);
+//        //生成standService文件
+//        generateServiceFile(standardServicePath,project,module,false);
+//        //生成方法的入参和结果类型 ---【2017-8-4】
+//        generateMethodWrapperFile(standardMethodModelPath,project,module);
+//        //生成modelRelation文件
+//        generateModuleRelationFile(standardModelRelation,project,module);
+//        //生成standServiceImpl文件
+//        generateServiceImplFile(standardServiceImplPath,project,module,false);
+//        //生成standController文件
+//        generateControllerFile(standardControllerPath,project,module,false);
+//        //生成standMethodIntercept文件
+//        generateMethodInterceptFile(standardMethodInterceptPath,project,module);
+//        //生成standardEntityUtil文件
+//        generateStandardUtilFile(standardEntityUtil,project,module,false);
+//        //生成pom文件
+//        generateModuleStandardPOMFile(moduleRootPath,project,module);
     }
     //生成某一模块扩展代码extend
     public void produceModuleExtendAllFiles(String generatorBasePath, Project project, Module module){
@@ -323,16 +632,73 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         //extend serviceImpl路径
         File extendServiceImplPath = new File(BuildProjectDirUtil.getExtendServiceImplPath(generatorBasePath, project.getName(), module.getName(), project.getPackageName()));
 
-        //生成extendRepository文件
-        generateRepositoryFile(extendRepositoryPath,project,module,true);
-        //生成extendService文件
-        generateServiceFile(extendServicePath,project,module,true);
-        //生成extendServiceImpl文件
-        generateServiceImplFile(extendServiceImplPath,project,module,true);
-        //生成extendController文件
-        generateControllerFile(extendControllerPath,project,module,true);
-        //生成extendMethodInterceptImpl文件
-        generateMethodInterceptImplFile(extendMethodInterceptImplPath,project,module);
+        ExecutorService exec = Executors.newFixedThreadPool(5);
+
+        CountDownLatch countDownLatch = new CountDownLatch(5);
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成extendRepository文件
+                generateRepositoryFile(extendRepositoryPath,project,module,true);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成extendService文件
+                generateServiceFile(extendServicePath,project,module,true);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成extendServiceImpl文件
+                generateServiceImplFile(extendServiceImplPath,project,module,true);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成extendController文件
+                generateControllerFile(extendControllerPath,project,module,true);
+                countDownLatch.countDown();
+            }
+        });
+
+        exec.submit(new Runnable() {
+            @Override
+            public void run() {
+                //生成extendMethodInterceptImpl文件
+                generateMethodInterceptImplFile(extendMethodInterceptImplPath,project,module);
+                countDownLatch.countDown();
+            }
+        });
+
+        try {
+            countDownLatch.await();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        exec.shutdown();
+
+
+//        //生成extendRepository文件
+//        generateRepositoryFile(extendRepositoryPath,project,module,true);
+//        //生成extendService文件
+//        generateServiceFile(extendServicePath,project,module,true);
+//        //生成extendServiceImpl文件
+//        generateServiceImplFile(extendServiceImplPath,project,module,true);
+//        //生成extendController文件
+//        generateControllerFile(extendControllerPath,project,module,true);
+//        //生成extendMethodInterceptImpl文件
+//        generateMethodInterceptImplFile(extendMethodInterceptImplPath,project,module);
     }
 //======================================================================以下为生成文件========================================================================================
 
@@ -449,7 +815,6 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             map.put("projectName",project.getName());
             map.put("moduleName",module.getName());
             map.put("basePackage",project.getPackageName());
-            map.put("springBootVersion",springBootVersion);
             if(project.getProjectDataSources().size()>0) {
                 map.put("isMemDatasource", false);
             }else{
@@ -473,7 +838,6 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             map.put("projectName",project.getName());
             map.put("moduleName",module.getName());
             map.put("basePackage",project.getPackageName());
-            map.put("springBootVersion",springBootVersion);
             if(project.getProjectDataSources().size()>0) {
                 map.put("isMemDatasource", false);
             }else{
@@ -494,7 +858,6 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             map.put("projectName",project.getName());
             map.put("moduleName",module.getName());
             map.put("basePackage",project.getPackageName());
-            map.put("springBootVersion",springBootVersion);
             if(project.getProjectDataSources().size()>0) {
                 map.put("isMemDatasource", false);
             }else{
@@ -691,13 +1054,34 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成实体类文件
     private void generateModelFile(File dir,Project project,Module module){
         try {
-            for(Entities entity:module.getEntities()){
+//            for(Entities entity:module.getEntities()){
+////                Map<String,Object> map = new HashMap();
+////                map.put("project",project);
+////                map.put("entity",entity);
+////                map.put("module",module);
+////                map.put("GeneratorStringUtil",new GeneratorStringUtil());
+////                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+////                if(entityFieldNames.contains("createDate")){
+////                    map.put("isCreateDate",true);
+////                }else{
+////                    map.put("isCreateDate",false);
+////                }
+////                if(entityFieldNames.contains("updateDate")){
+////                    map.put("isUpdateDate",true);
+////                }else{
+////                    map.put("isUpdateDate",false);
+////                }
+////                File entityFile = new File(dir,entity.getName()+".java");
+////                boolean isNewGenerate = checkIsNewGenerate(entityFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+////                generateLastFileByTemplate(entityFile,"entity.ftl",map,isNewGenerate);
+////            }
+            module.getEntities().parallelStream().forEach(it->{
                 Map<String,Object> map = new HashMap();
                 map.put("project",project);
-                map.put("entity",entity);
+                map.put("entity",it);
                 map.put("module",module);
                 map.put("GeneratorStringUtil",new GeneratorStringUtil());
-                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                List<String> entityFieldNames = it.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("createDate")){
                     map.put("isCreateDate",true);
                 }else{
@@ -708,10 +1092,14 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 }else{
                     map.put("isUpdateDate",false);
                 }
-                File entityFile = new File(dir,entity.getName()+".java");
-                boolean isNewGenerate = checkIsNewGenerate(entityFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
-                generateLastFileByTemplate(entityFile,"entity.ftl",map,isNewGenerate);
-            }
+                File entityFile = new File(dir,it.getName()+".java");
+                boolean isNewGenerate = checkIsNewGenerate(entityFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
+                try {
+                    generateLastFileByTemplate(entityFile, "entity.ftl", map, isNewGenerate);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            });
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛entity.ftl｝模板失败");
@@ -750,27 +1138,48 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         String paramTemplateFile = "methodParamWrapper.ftl";
         String resultTemplateFile = "methodResultWrapper.ftl";
         try {
-            for (Entities entities : module.getEntities()) {
-                for (SearchMethod method : entities.getMethods()) {
+            module.getEntities().parallelStream().forEach(it-> {
+                it.getMethods().parallelStream().forEach(it2-> {
                     Map<String,Object> map = new HashMap();
                     map.put("project", project);
-                    map.put("entity", entities);
-                    map.put("method",method);
+                    map.put("entity", it);
+                    map.put("method",it2);
                     map.put("searchDBUtil",new SearchDBUtil());
                     map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
-                    File paramFile = new File(dir,entities.getName()+"$"+method.getMethodName().substring(0,1).toUpperCase()+method.getMethodName().substring(1)+"ParamWrapper.java");
-                    File resultFile = new File(dir,entities.getName()+"$"+method.getMethodName().substring(0,1).toUpperCase()+method.getMethodName().substring(1)+"ResultWrapper.java");
+                    File paramFile = new File(dir,it.getName()+"$"+it2.getMethodName().substring(0,1).toUpperCase()+it2.getMethodName().substring(1)+"ParamWrapper.java");
+                    File resultFile = new File(dir,it.getName()+"$"+it2.getMethodName().substring(0,1).toUpperCase()+it2.getMethodName().substring(1)+"ResultWrapper.java");
 
-                    boolean isNewGenerate2 = checkIsNewGenerate(paramFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entities.getHierachyDate().getTime());
+                    boolean isNewGenerate2 = checkIsNewGenerate(paramFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
                     generateLastFileByTemplate(paramFile,paramTemplateFile,map,isNewGenerate2);
 
                     //如果方法返回类型选择了主对象类型，则不需要包装结果返回类型,默认返回包装类型
-                    if(null == method.getIsReturnObject()||(null != method.getIsReturnObject() && method.getIsReturnObject()== false)) {
-                        boolean isNewGenerate = checkIsNewGenerate(resultFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entities.getHierachyDate().getTime());
+                    if(null == it2.getIsReturnObject()||(null != it2.getIsReturnObject() && it2.getIsReturnObject()== false)) {
+                        boolean isNewGenerate = checkIsNewGenerate(resultFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
                         generateLastFileByTemplate(resultFile,resultTemplateFile,map,isNewGenerate);
                     }
-                }
-            }
+                });
+            });
+//            for (Entities entities : module.getEntities()) {
+//                for (SearchMethod method : entities.getMethods()) {
+//                    Map<String,Object> map = new HashMap();
+//                    map.put("project", project);
+//                    map.put("entity", entities);
+//                    map.put("method",method);
+//                    map.put("searchDBUtil",new SearchDBUtil());
+//                    map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
+//                    File paramFile = new File(dir,entities.getName()+"$"+method.getMethodName().substring(0,1).toUpperCase()+method.getMethodName().substring(1)+"ParamWrapper.java");
+//                    File resultFile = new File(dir,entities.getName()+"$"+method.getMethodName().substring(0,1).toUpperCase()+method.getMethodName().substring(1)+"ResultWrapper.java");
+//
+//                    boolean isNewGenerate2 = checkIsNewGenerate(paramFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entities.getHierachyDate().getTime());
+//                    generateLastFileByTemplate(paramFile,paramTemplateFile,map,isNewGenerate2);
+//
+//                    //如果方法返回类型选择了主对象类型，则不需要包装结果返回类型,默认返回包装类型
+//                    if(null == method.getIsReturnObject()||(null != method.getIsReturnObject() && method.getIsReturnObject()== false)) {
+//                        boolean isNewGenerate = checkIsNewGenerate(resultFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entities.getHierachyDate().getTime());
+//                        generateLastFileByTemplate(resultFile,resultTemplateFile,map,isNewGenerate);
+//                    }
+//                }
+//            }
         }catch (RuntimeException e){
             e.printStackTrace();
             logger.error("处理方法包装类失败");
@@ -783,15 +1192,24 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成每个类关联关系包装文件，为获取实体时，findOneWithRelationObj
     private void generateModuleRelationFile(File dir,Project project,Module module){
         try {
-            for (Entities entities : module.getEntities()) {
+             module.getEntities().parallelStream().forEach(it-> {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", entities);
-                File modelRelationFile = new File(dir,entities.getName()+"$Relation.java");
-                boolean isNewGenerate = checkIsNewGenerate(modelRelationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entities.getHierachyDate().getTime());
+                map.put("entity", it);
+                File modelRelationFile = new File(dir,it.getName()+"$Relation.java");
+                boolean isNewGenerate = checkIsNewGenerate(modelRelationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
 
                 generateLastFileByTemplate(modelRelationFile,"modelRelationWrapper.ftl",map,isNewGenerate);
-            }
+            });
+//            for (Entities entities : module.getEntities()) {
+//                Map<String,Object> map = new HashMap();
+//                map.put("project", project);
+//                map.put("entity", entities);
+//                File modelRelationFile = new File(dir,entities.getName()+"$Relation.java");
+//                boolean isNewGenerate = checkIsNewGenerate(modelRelationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entities.getHierachyDate().getTime());
+//
+//                generateLastFileByTemplate(modelRelationFile,"modelRelationWrapper.ftl",map,isNewGenerate);
+//            }
         }catch (RuntimeException e){
             e.printStackTrace();
             logger.error("处理方法包装类失败");
@@ -806,17 +1224,28 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             if(!dir.isDirectory()){
                 dir.mkdirs();
             }
-            for(Entities entity:module.getEntities()) {
+            module.getEntities().parallelStream().forEach(it-> {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", entity);
+                map.put("entity", it);
 
-                File methodInterceptFile = new File(dir,entity.getName()+"MethodIntercept.java");
-                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+                File methodInterceptFile = new File(dir,it.getName()+"MethodIntercept.java");
+                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
 
                 generateLastFileByTemplate(methodInterceptFile,"methodIntercept.ftl",map,isNewGenerate);
 
-            }
+            });
+//            for(Entities entity:module.getEntities()) {
+//                Map<String,Object> map = new HashMap();
+//                map.put("project", project);
+//                map.put("entity", entity);
+//
+//                File methodInterceptFile = new File(dir,entity.getName()+"MethodIntercept.java");
+//                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+//
+//                generateLastFileByTemplate(methodInterceptFile,"methodIntercept.ftl",map,isNewGenerate);
+//
+//            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛ methodIntercept.ftl ｝模板失败");
@@ -826,16 +1255,26 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成methodIntercept文件
     private void generateMethodInterceptImplFile(File dir,Project project,Module module){
         try {
-            for(Entities entity:module.getEntities()) {
+            module.getEntities().parallelStream().forEach(it-> {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", entity);
+                map.put("entity", it);
                 //List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
-                File methodInterceptFile = new File(dir,entity.getName()+"MethodInterceptImpl.java");
-                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+                File methodInterceptFile = new File(dir,it.getName()+"MethodInterceptImpl.java");
+                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
 
                 generateLastFileByTemplate(methodInterceptFile,"methodInterceptImpl.ftl",map,isNewGenerate);
-            }
+            });
+//            for(Entities entity:module.getEntities()) {
+//                Map<String,Object> map = new HashMap();
+//                map.put("project", project);
+//                map.put("entity", entity);
+//                //List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+//                File methodInterceptFile = new File(dir,entity.getName()+"MethodInterceptImpl.java");
+//                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+//
+//                generateLastFileByTemplate(methodInterceptFile,"methodInterceptImpl.ftl",map,isNewGenerate);
+//            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛methodInterceptImpl.ftl｝模板失败");
@@ -854,25 +1293,44 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             fileSuffix = "ServiceImpl.java";
         }
         try {
-            for(Entities entity:module.getEntities()) {
+            module.getEntities().parallelStream().forEach(it->{
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", entity);
+                map.put("entity", it);
                 map.put("module",module);
                 map.put("searchDBUtil",new SearchDBUtil());
                 map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
                 map.put("generatorStringUtil",new GeneratorStringUtil());
-                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                List<String> entityFieldNames = it.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("version")){
                     map.put("isVersion",true);
                 }else{
                     map.put("isVersion",false);
                 }
-                File serviceFile = new File(dir,entity.getName()+fileSuffix);
-                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+                File serviceFile = new File(dir,it.getName()+fileSuffix);
+                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
                 generateLastFileByTemplate(serviceFile,templateName,map,isNewGenerate);
 
-            }
+            });
+//            for(Entities entity:module.getEntities()) {
+//                Map<String,Object> map = new HashMap();
+//                map.put("project", project);
+//                map.put("entity", entity);
+//                map.put("module",module);
+//                map.put("searchDBUtil",new SearchDBUtil());
+//                map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
+//                map.put("generatorStringUtil",new GeneratorStringUtil());
+//                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+//                if(entityFieldNames.contains("version")){
+//                    map.put("isVersion",true);
+//                }else{
+//                    map.put("isVersion",false);
+//                }
+//                File serviceFile = new File(dir,entity.getName()+fileSuffix);
+//                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+//                generateLastFileByTemplate(serviceFile,templateName,map,isNewGenerate);
+//
+//            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛"+templateName+"｝模板失败");
@@ -904,14 +1362,14 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //处理模板文件,生成service,respository,standardEntityUtil,controller
     private void processTemplate(File dir, Project project, Module module, String templateName, String fileSuffix) {
         try {
-            for(Entities entity:module.getEntities()) {
+            module.getEntities().parallelStream().forEach(it-> {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", entity);
+                map.put("entity", it);
                 map.put("module", module);
                 map.put("GeneratorStringUtil",new GeneratorStringUtil());
                 map.put("searchDBUtil", new SearchDBUtil());
-                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                List<String> entityFieldNames = it.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("createDate")){
                     map.put("isCreateDate",true);
                 }else{
@@ -929,13 +1387,45 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 }
                 dir.mkdirs();
 
-                File serviceFile = new File(dir,entity.getName()+fileSuffix);
+                File serviceFile = new File(dir,it.getName()+fileSuffix);
 
 
-                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
 
                 generateLastFileByTemplate(serviceFile,templateName,map,isNewGenerate);
-            }
+            });
+//            for(Entities entity:module.getEntities()) {
+//                Map<String,Object> map = new HashMap();
+//                map.put("project", project);
+//                map.put("entity", entity);
+//                map.put("module", module);
+//                map.put("GeneratorStringUtil",new GeneratorStringUtil());
+//                map.put("searchDBUtil", new SearchDBUtil());
+//                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+//                if(entityFieldNames.contains("createDate")){
+//                    map.put("isCreateDate",true);
+//                }else{
+//                    map.put("isCreateDate",false);
+//                }
+//                if(entityFieldNames.contains("updateDate")){
+//                    map.put("isUpdateDate",true);
+//                }else{
+//                    map.put("isUpdateDate",false);
+//                }
+//                if(entityFieldNames.contains("version")){
+//                    map.put("isVersion",true);
+//                }else{
+//                    map.put("isVersion",false);
+//                }
+//                dir.mkdirs();
+//
+//                File serviceFile = new File(dir,entity.getName()+fileSuffix);
+//
+//
+//                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),entity.getHierachyDate().getTime());
+//
+//                generateLastFileByTemplate(serviceFile,templateName,map,isNewGenerate);
+//            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛"+templateName+"｝模板失败");
@@ -969,26 +1459,32 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     }
 
     //根据是否需要生成最新的文件去生成文件
-    public void generateLastFileByTemplate(File file, String templateFileName, Map map, boolean isNewGenerate)throws Exception{
-        if(file.exists()) {
-            if (isNewGenerate) {
-                logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件更新,重新生成!").toString());
+    public void generateLastFileByTemplate(File file, String templateFileName, Map map, boolean isNewGenerate){
+        try {
+            if (file.exists()) {
+                if (isNewGenerate) {
+                    logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件更新,重新生成!").toString());
+                    generateFileByTemplate(file, templateFileName, map);
+                } else {
+                    logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 已经生成,并且不需要更新!").toString());
+                }
+            } else {
+                logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件不存在,生成!").toString());
                 generateFileByTemplate(file, templateFileName, map);
-            }else{
-                logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 已经生成,并且不需要更新!").toString());
             }
-        }else{
-            logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件不存在,生成!").toString());
-            generateFileByTemplate(file, templateFileName, map);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     //根据提供的模版生成对应的文件
-    private void generateFileByTemplate(File file,String templateFileName,Map map) throws Exception{
+    private void generateFileByTemplate(File file,String templateFileName,Map map) {
         try(Writer writer = new OutputStreamWriter(new FileOutputStream(file),"utf-8");) {
             Template template = configuration.getTemplate(templateFileName);
             template.process(map, writer);
             writer.flush();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

@@ -15,4 +15,13 @@ import java.util.List;
 public interface FieldRepository extends CustomRepository<Field, String> {
     @Query("select field from Field field where field.entities.id=:entityId")
     List<Field> getByEntities(@Param("entityId") String entityId);
+
+    /**
+     *  获取某一个实体是否包含对应属性
+     * @param entityId
+     * @param fieldName
+     * @return
+     */
+    @Query("select count(field) from Field field where field.entities.id=:entityId and name=:fieldName")
+    Long getCountFieldName(@Param("entityId") String entityId,@Param("fieldName") String fieldName);
 }

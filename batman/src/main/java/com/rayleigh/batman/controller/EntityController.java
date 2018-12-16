@@ -207,7 +207,10 @@ public class EntityController extends BaseController{
             return getFailureResultAndInfo(entities,"请传入id");
         }
     }
-    //去一个实体类的方法列表页面
+
+    /**
+     * 去一个实体类的方法列表页面
+     */
     @RequestMapping("/showEntityMethod/{id}")
     public String showEntityMethod(Model model,@PathVariable("id") String entityId){
         Entities entities = entityService.findOne(entityId);
@@ -235,7 +238,9 @@ public class EntityController extends BaseController{
         return getSuccessResult(methods);
     }
 
-    //方法增加页面
+    /**
+     * 方法增加页面
+     */
     @RequestMapping("/goAddMethod/{id}")
     public String goAddMethod(Model model,@PathVariable("id") String entityId){
         Entities entities = entityService.findOne(entityId);
@@ -253,7 +258,9 @@ public class EntityController extends BaseController{
         return entities;
     }
 
-    //方法增加页面
+    /**
+     * 方法增加页面
+     */
     @RequestMapping("/showConfig/{id}")
     public String showConfig(Model model,@PathVariable("id") String projectId){
         Project project = projectService.findOne(projectId);
@@ -262,7 +269,9 @@ public class EntityController extends BaseController{
         return "/page/entities-config";
     }
 
-    //方法增加页面
+    /**
+     * 方法增加页面
+     */
     @RequestMapping("/showConfigList/{id}")
     public String goConfigList(Model model,@PathVariable("id") String projectId){
         Project project = projectService.findOne(projectId);
@@ -298,14 +307,24 @@ public class EntityController extends BaseController{
     public ResultWrapper getTableNames(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
         try (Connection connection = getConn(dataBaseConnectionModel)) {
             String sql = null;
+            PreparedStatement ps = null;
             if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.MySQL)){
-                sql = "select table_name as tablename from information_schema.tables where table_schema='"+dataBaseConnectionModel.getDataBaseName()+"' and table_type='base table' order by tablename";
+                //sql = "select table_name as tablename from information_schema.tables where table_schema='"+dataBaseConnectionModel.getDataBaseName()+"' and table_type='base table' order by tablename";
+                sql = "select table_name as tablename from information_schema.tables where table_schema=? and table_type='base table' order by tablename";
+                ps = connection.prepareStatement(sql);
+                ps.setString(1,dataBaseConnectionModel.getDataBaseName());
             }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.PostgreSql)){
                 sql = "SELECT   tablename   FROM   pg_tables WHERE   tablename   NOT   LIKE   'pg%' AND tablename NOT LIKE 'sql_%' ORDER   BY   tablename";
+                ps = connection.prepareStatement(sql);
             }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.Oracle)){
-                //todo
+                //todo 未经测试
+                sql = "select table_name from all_tables where owner = ?";
+                ps = connection.prepareStatement(sql);
+                ps.setString(1,dataBaseConnectionModel.getDataBaseName());
             }
-            PreparedStatement ps = connection.prepareStatement(sql);
+            if(null==ps){
+                return getFailureResultAndInfo(null,"数据库类型不在pg,mysql,oracle之一!");
+            }
             ResultSet rs = ps.executeQuery();
             List<String> tableNames = new ArrayList<>();
             while (rs.next()) {
@@ -325,14 +344,22 @@ public class EntityController extends BaseController{
     public ResultWrapper getTableNamesComment(@RequestBody DataBaseConnectionModel dataBaseConnectionModel){
         try (Connection connection = getConn(dataBaseConnectionModel)) {
             String sql = null;
+            PreparedStatement ps = null;
             if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.MySQL)){
-                sql = "select table_name as tablename,TABLE_COMMENT as comment from information_schema.tables where table_schema='"+dataBaseConnectionModel.getDataBaseName()+"' and table_type='base table'";
+               // sql = "select table_name as tablename,TABLE_COMMENT as comment from information_schema.tables where table_schema='"+dataBaseConnectionModel.getDataBaseName()+"' and table_type='base table'";
+                sql = "select table_name as tablename,TABLE_COMMENT as comment from information_schema.tables where table_schema=? and table_type='base table'";
+                ps = connection.prepareStatement(sql);
+                ps.setString(1,dataBaseConnectionModel.getDataBaseName());
             }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.PostgreSql)){
                 sql = "select relname as tablename,cast(obj_description(relfilenode,'pg_class') as varchar) as comment from pg_class c where  relkind = 'r' and relname not like 'pg_%' and relname not like 'sql_%' order by relname";
+                ps = connection.prepareStatement(sql);
             }else if(dataBaseConnectionModel.getDataBaseType().equals(DataBaseType.Oracle)){
                 //todo
             }
-            PreparedStatement ps = connection.prepareStatement(sql);
+
+            if(null==ps){
+                return getFailureResultAndInfo(null,"数据库类型不在mysql,pg,oracle");
+            }
             ResultSet rs = ps.executeQuery();
             List<Entities> entities = new ArrayList<>();
             while (rs.next()) {
@@ -428,6 +455,10 @@ public class EntityController extends BaseController{
 
             }else if(dataBaseType.equals(DataBaseType.Oracle)){
 
+            }
+
+            if(null==ps){
+                return getFailureResultAndInfo(null,"数据库类型不在mysql,pg,oracle之中!");
             }
 
             ResultSet rs = ps.executeQuery();

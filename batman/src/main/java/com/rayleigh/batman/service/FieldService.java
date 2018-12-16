@@ -15,4 +15,6 @@ public interface FieldService extends BaseService{
     Field findOne(String id);
 
     List<Field> getByEntities(String entityId);
+
+    Boolean isContainFiledName(String entityId,String fieldName);
 }
