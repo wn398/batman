@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
@@ -31,7 +30,7 @@ public class Entities extends BaseModel {
 
     @ApiModelProperty("实体名字")
     @Column
-    @NotEmpty(message = "实体名字不能空")
+    @NotNull(message = "实体名字不能空")
     //@Pattern(regexp = "",message = "不符合规则")
     private String name;
 

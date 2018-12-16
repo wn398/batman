@@ -330,8 +330,8 @@ public class CodeGeneratorController extends BaseController{
         try (OutputStream outputStream = response.getOutputStream(); InputStream in = new FileInputStream(targetFile);) {
 
             int len = 0;
-            byte[] buf = new byte[4096];
-            while ((len = in.read(buf, 0, 4096)) != -1) {
+            byte[] buf = new byte[1024];
+            while ((len = in.read(buf, 0, 1024)) != -1) {
                 outputStream.write(buf, 0, len);
             }
         }
@@ -343,18 +343,10 @@ public class CodeGeneratorController extends BaseController{
      * @return
      */
     private Project initProject(Project project) {
-//        Date projectHierachyDate = project.getHierachyDate();
-//        Project cacheProject = projectMap.get(project.getId());
-//        if(null!=cacheProject && cacheProject.getHierachyDate().getTime() >= projectHierachyDate.getTime()){
-//            return cacheProject;
-//        }else {
             project.getModules().stream().forEach(it -> {
                 initModule(it);
             });
-
- //           projectMap.put(project.getId(),project);
             return project;
- //       }
     }
 
     /**
@@ -363,12 +355,6 @@ public class CodeGeneratorController extends BaseController{
      * @return
      */
     private Module initModule(Module module){
-//        Date moduleHierachyDate = moduleService.getMaxModuleHierachyDate(module.getId());
-//        Module cacheModule = moduleMap.get(module.getId());
-//        if(null!=cacheModule && cacheModule.getUpdateDate().getTime()>=moduleHierachyDate.getTime()){
-//            return cacheModule;
-//        }else {
-
             module.getEntities().stream().forEach(it2 -> {
                         it2.getMethods().stream().forEach(it21 -> {
                             it21.getConditionList().size();
@@ -380,8 +366,6 @@ public class CodeGeneratorController extends BaseController{
                     }
 
             );
-           // module.setUpdateDate(moduleHierachyDate);
-           // moduleMap.put(module.getId(),module);
             return module;
         }
 
