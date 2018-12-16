@@ -7,9 +7,10 @@ import com.rayleigh.core.model.SearchMethodResultModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+
 @DynamicInsert
 @DynamicUpdate
 @Entity
