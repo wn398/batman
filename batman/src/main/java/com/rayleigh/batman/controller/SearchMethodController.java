@@ -6,11 +6,9 @@ import com.rayleigh.batman.service.FieldService;
 import com.rayleigh.batman.service.SearchMethodService;
 import com.rayleigh.batman.uiModel.SearchConditionResult;
 import com.rayleigh.core.controller.BaseController;
-import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.enums.LogicOperation;
-import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.ResultWrapper;
-import com.rayleigh.core.util.BaseModelUtil;
+import com.rayleigh.batman.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_search_condition")
-public class SearchCondition extends BaseModel{
+public class SearchCondition extends BatmanBaseModel{
 
 
 

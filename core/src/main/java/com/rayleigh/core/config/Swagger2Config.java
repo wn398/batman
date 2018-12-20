@@ -13,6 +13,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -41,8 +42,8 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
                 .title("Batman 不要让这个世界的复杂性阻碍你前进")
                 .description(new StringBuilder("swagger生成于").append("-").append(StringUtil.dateToString(new Date())).toString())
-                .termsOfServiceUrl("http://wn398.github.io/")
-                .contact("batman")
+                .termsOfServiceUrl("https://www.jianshu.com/u/8d438632373c")
+                .contact(new Contact("batman","https://www.jianshu.com/u/8d438632373c","tim698@qq.com"))
                 .version("2.0")
                 .build();
     }

@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * Created by wangn20 on 2017/6/13.
  */
-public interface EntityService extends BaseService{
+public interface EntityService {
     Entities save(Entities entities);
 
     Entities update(Entities entities);

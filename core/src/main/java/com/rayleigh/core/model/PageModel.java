@@ -11,9 +11,9 @@ public class PageModel<T> {
     private Long totalRecords;
     @ApiModelProperty("总页数")
     private Long totalPage;
-    @ApiModelProperty("当前页数")
+    @ApiModelProperty(value = "当前页数",example = "0")
     private Integer currentPage;
-    @ApiModelProperty("每页条数")
+    @ApiModelProperty(value = "每页条数",example = "10")
     private Integer pageSize;
     @ApiModelProperty("结果集")
     private List<T> results;

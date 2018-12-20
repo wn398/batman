@@ -2,7 +2,7 @@ package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.repository.EntitiesRepository;
-import com.rayleigh.core.util.BaseModelUtil;
+import com.rayleigh.batman.util.BaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -26,7 +26,7 @@ import java.util.List;
 @javax.persistence.Table(name = "batman_entity")
 @DynamicInsert
 @DynamicUpdate
-public class Entities extends BaseModel {
+public class Entities extends BatmanBaseModel {
 
     @ApiModelProperty("实体名字")
     @Column

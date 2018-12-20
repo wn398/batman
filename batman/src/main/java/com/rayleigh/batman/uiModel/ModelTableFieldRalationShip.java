@@ -1,5 +1,6 @@
 package com.rayleigh.batman.uiModel;
 
+import com.rayleigh.batman.model.BatmanBaseModel;
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
 import com.rayleigh.core.enums.RelationType;
@@ -8,7 +9,7 @@ import com.rayleigh.core.model.BaseModel;
 import javax.persistence.*;
 
 
-public class ModelTableFieldRalationShip extends BaseModel {
+public class ModelTableFieldRalationShip extends BatmanBaseModel {
 
 
     private RelationType relationType;

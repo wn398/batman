@@ -15,7 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_search_result")
-public class SearchResult extends BaseModel{
+public class SearchResult extends BatmanBaseModel{
 
     @ApiModelProperty("查询结果名字，主要用于id,createDate,updateDate,用(实体id_属性名)表示")
     @Column

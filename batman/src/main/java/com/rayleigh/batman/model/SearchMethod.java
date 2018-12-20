@@ -14,7 +14,7 @@ import java.util.List;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_search_method")
-public class SearchMethod extends BaseModel{
+public class SearchMethod extends BatmanBaseModel{
     @ApiModelProperty("方法名称")
     @Column
     @NotEmpty

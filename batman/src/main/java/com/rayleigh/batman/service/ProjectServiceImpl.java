@@ -3,7 +3,7 @@ package com.rayleigh.batman.service;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.repository.ModuleRepository;
 import com.rayleigh.batman.repository.ProjectRepository;
-import com.rayleigh.core.util.BaseModelUtil;
+import com.rayleigh.batman.util.BaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,7 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page getPageAll(int page,int pageSize) {
-        return projectRepository.findAll(new PageRequest(page,pageSize));
+        return projectRepository.findAll(PageRequest.of(page,pageSize));
     }
 
 

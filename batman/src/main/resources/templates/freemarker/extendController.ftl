@@ -8,7 +8,6 @@ import ${project.packageName}.standard.controller.${entity.name}Controller;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
-import com.rayleigh.core.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

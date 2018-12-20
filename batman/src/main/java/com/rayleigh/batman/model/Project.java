@@ -24,7 +24,7 @@ import java.util.List;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_project")
-public class Project extends BaseModel {
+public class Project extends BatmanBaseModel {
     @ApiModelProperty("工程名字")
     @Column
     @NotEmpty(message = "工程名不能为空")

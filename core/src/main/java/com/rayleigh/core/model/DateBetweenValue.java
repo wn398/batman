@@ -8,12 +8,12 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 //@ApiModel("日期间隔model")
 public class DateBetweenValue {
-    @ApiModelProperty("开始时间")
+    @ApiModelProperty(value = "开始时间",example = "1997-05-04 12:12:12")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date min;
 
-    @ApiModelProperty("结束时间")
+    @ApiModelProperty(value = "结束时间",example = "1997-05-04 12:12:12")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date max;

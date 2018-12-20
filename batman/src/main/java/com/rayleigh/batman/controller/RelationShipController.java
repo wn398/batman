@@ -6,9 +6,8 @@ import com.rayleigh.batman.uiModel.ModelTableFieldRalationShip;
 import com.rayleigh.core.exception.NotBaseModelException;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.enums.RelationType;
-import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.ResultWrapper;
-import com.rayleigh.core.util.BaseModelUtil;
+import com.rayleigh.batman.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 

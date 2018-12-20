@@ -22,7 +22,7 @@ import java.util.Set;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_sys_user")
-public class SysUser extends BaseModel {
+public class SysUser extends BatmanBaseModel {
     @ApiModelProperty("用户名")
     @Column
     @NotNull

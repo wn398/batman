@@ -3,7 +3,6 @@ package ${project.packageName}.extend.service.impl;
 
 import ${project.packageName}.standard.model.${entity.name};
 import ${project.packageName}.extend.repository.${entity.name}ExtendRepository;
-import com.rayleigh.core.util.BaseModelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

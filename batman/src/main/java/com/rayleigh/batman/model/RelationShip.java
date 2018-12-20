@@ -17,7 +17,7 @@ import javax.persistence.*;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_relationship")
-public class RelationShip extends BaseModel {
+public class RelationShip extends BatmanBaseModel {
 
     @ApiModelProperty("映射关系")
     @Enumerated(EnumType.STRING)

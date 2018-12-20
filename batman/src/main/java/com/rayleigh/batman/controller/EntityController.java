@@ -1,8 +1,6 @@
 package com.rayleigh.batman.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Strings;
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.ModuleService;
@@ -15,12 +13,9 @@ import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
-import com.rayleigh.core.service.BaseService;
-import com.rayleigh.core.util.BaseModelUtil;
+import com.rayleigh.batman.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import io.jsonwebtoken.lang.Collections;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.undertow.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;

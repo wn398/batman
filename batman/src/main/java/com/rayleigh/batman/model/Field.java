@@ -19,7 +19,7 @@ import java.util.List;
 @DynamicUpdate
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_field")
-public class Field extends BaseModel{
+public class Field extends BatmanBaseModel{
     @ApiModelProperty("名称")
     @Column
     @NotEmpty

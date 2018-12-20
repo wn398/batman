@@ -14,7 +14,7 @@ import java.util.List;
 @DynamicUpdate
 @javax.persistence.Entity
 @javax.persistence.Table(name = "batman_project_data_source")
-public class ProjectDataSource extends BaseModel{
+public class ProjectDataSource extends BatmanBaseModel{
 
     @ApiModelProperty("数据库类型")
     @Column

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/6/13.
  */
-public interface ProjectService extends BaseService {
+public interface ProjectService {
     Project save(Project project);
 
     List<Project> getAll();

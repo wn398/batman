@@ -3,7 +3,7 @@ package ${project.packageName}.standard.model;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.rayleigh.core.model.BasicModel;
+import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.util.StringUtil;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -36,7 +36,7 @@ import java.util.*;
         <#--</#if>-->
     <#--</#list>-->
 <#--}-->
-public class ${entity.name} extends BasicModel{
+public class ${entity.name} extends BaseModel{
 
 <#--生成普通属性-->
 <#list entity.fields as field>
@@ -64,7 +64,7 @@ public Long id;
     </#if>
 <#elseif fieldName == "createDate">
 
-@ApiModelProperty(value="创建时间")
+@ApiModelProperty(value="创建时间",example="1997-05-04 12:12:12")
 @CreatedDate
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -73,7 +73,7 @@ public Long id;
 public Date createDate;
     <#elseif fieldName == "updateDate">
 
-@ApiModelProperty(value="更新时间")
+@ApiModelProperty(value="更新时间",example="1997-05-04 12:12:12")
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
 @Temporal(TemporalType.TIMESTAMP)
@@ -87,7 +87,7 @@ public Date updateDate;
 public Long version;
     <#else>
 <#--处理id,createDate,updateDate,version特殊字段结束-->
-@ApiModelProperty(<#if (field.description ?exists && field.description ?length>0)>"${field.description}"<#else>"${field.name}"</#if>)
+@ApiModelProperty(<#if (field.description ?exists && field.description ?length>0)>value="${field.description}"<#else>value="${field.name}"</#if><#if field.dataType == "Date">,example="1997-05-04 12:12:12"</#if>)
     <#if field.dataType == "Date">
 @JSONField(format="yyyy-MM-dd HH:mm:ss")
 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

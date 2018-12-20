@@ -21,148 +21,52 @@ import ${project.packageName}.standard.methodModel.*;
     <#assign entityIdType="Long">
 </#if>
 
-public interface ${entity.name}Service extends BaseService{
-
-    ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception;
-
-    List<${entity.name}> saveWithAssignedId(List<${entity.name}> ${entity.name ?uncap_first}s)throws Exception;
-
-    void deleteByIds(List<${entityIdType}> ids);
-
-    ${entity.name} update(${entity.name} ${entity.name ?uncap_first});
-
-    ${entity.name} save(${entity.name} ${entity.name ?uncap_first});
-
-    List<${entity.name}> save(List<${entity.name}> ${entity.name ?uncap_first}s);
+public interface ${entity.name}Service extends BaseService<${entity.name},${entityIdType}>{
 
 <#if (entity.mainEntityRelationShips ?size >0)>
+    /**
+     * 更新连同相关联实体
+     * @param ${entity.name ?uncap_first}
+     * @return
+     */
     ${entity.name} updateWithRelated(${entity.name} ${entity.name ?uncap_first});
 
+    /**
+     * 保存连同相关联实体
+     * @param ${entity.name ?uncap_first}
+     * @return
+     */
     ${entity.name} saveWithRelated(${entity.name} ${entity.name ?uncap_first});
 
-    //获取带关系的实体
+    /**
+     * 获取连同带关联关系的实体
+     * @param ${entity.name ?uncap_first}$Relation
+     * @return
+     */
     ${entity.name} findOneWithRelationObj(${entity.name}$Relation ${entity.name ?uncap_first}$Relation);
 </#if>
 
-    void deleteById(${entityIdType} id);
-
-    List<${entity.name}> findByIds(List<${entityIdType}> ids);
-
-    List<${entity.name}> findByIds(List<${entityIdType}> ids,String ...propertyNames);
-
-    List<${entity.name}> findByIds(List<${entityIdType}> ids,List<String> propertyNames);
-
-    ${entity.name} findOne(${entityIdType} id);
-
-    ${entity.name} findOne(${entityIdType} id,String ...propertyNames);
-
-    ${entity.name} findOne(${entityIdType} id,List<String> propertyNames);
-
-    List<Object[]> findBySQL(String sql);
-
-    ${entity.name} findOneByProperties(Map<String,Object> map);
-
-    ${entity.name} findOneByProperties(Map<String,Object> map,String ...propertyNames);
-
-    ${entity.name} findOneByProperties(Map<String,Object> map,List<String> propertyNames);
-
-    List<${entity.name}> findByProperties(Map<String,Object> map);
-
-    List<${entity.name}> findByProperties(Map<String,Object> map,String ...propertyNames);
-
-    List<${entity.name}> findByProperties(Map<String,Object> map,List<String> propertyNames);
-
-    Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable);
-
-    Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,String ...propertyNames);
-
-    Page<${entity.name}> findByProperties(Map<String,Object> map,Pageable pageable,List<String> propertyNames);
-
-    ${entity.name} findOneByProperty(String name,Object value);
-
-    ${entity.name} findOneByProperty(String name,Object value,String ...propertyNames);
-
-    ${entity.name} findOneByProperty(String name,Object value,List<String> propertyNames);
-
-    List<${entity.name}> findByProperty(String name,Object value);
-
-    List<${entity.name}> findByProperty(String name,Object value,String ...propertyNames);
-
-    List<${entity.name}> findByProperty(String name,Object value,List<String> propertyNames);
-
-    Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable);
-
-    Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable,String ...propertyNames);
-
-    Page<${entity.name}> findByProperty(String name,Object value,Pageable pageable,List<String> propertyNames);
-
-    List<${entity.name}> findAll();
-
-    List<${entity.name}> findAll(String ...propertyNames);
-
-    List<${entity.name}> findAll(List<String> propertyNames);
-
-    Page<${entity.name}> findAll(Pageable pageable);
-
-    Page<${entity.name}> findAll(Pageable pageable,String ...propertyNames);
-
-    Page<${entity.name}> findAll(Pageable pageable,List<String> propertyNames);
-
-    List<${entity.name}> findAll(Specification<${entity.name}> specification);
-
-    List<${entity.name}> findAll(Specification<${entity.name}> specification, String ...propertyNames);
-
-    List<${entity.name}> findAll(Specification<${entity.name}> specification, List<String> propertyNames);
-
-    Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable);
-
-    Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,String ...propertyNames);
-
-    Page<${entity.name}> findAll(Specification<${entity.name}> specification,Pageable pageable,List<String> propertyNames);
-
-    List<${entity.name}> findAll(Specification<${entity.name}> specification,Sort sort);
-
-    Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,String name,Object value);
-
-    Integer updateById(${entityIdType} id<#if isVersion == true>,Long version</#if>,Map<String,Object> updatedNameValues);
-
-    Integer updateAll(Specification<${entity.name}> specification,Map<String,Object> updatedNameValues);
-
-    Integer updateAll(Specification<${entity.name}> specification,String name,Object value);
-    //根据前两个参数名值，更新所有符合条件的后两个
-    Integer updateByProperty(String fieldName,Object fieldValue,String name,Object value);
-
-    Integer updateByProperty(String fieldName,Object fieldValue,Map<String,Object> updatedNameValues);
-
-    Integer updateByProperties(Map<String,Object> conditionMap,String name,Object value);
-
-    Integer updateByProperties(Map<String,Object> conditionMap,Map<String,Object> updatedNameValues);
-
-    Integer deleteByProperty(String name,Object value);
-
-    Integer deleteByProperties(Map<String,Object> conditionMap);
-
-    Integer deleteAll(Specification<${entity.name}> specification);
-
-    Query getBySQL(String sql);
-
-    Query getByHQL(String hql);
-
-    Long getCount(Specification<${entity.name}> specification);
-
     <#--页面配置生成的方法-->
-    <#list entity.methods as method>
+<#list entity.methods as method>
         <#if method.isReturnObject ?exists && method.isReturnObject>
-    //${method.description}
+    /**
+     * 页面配置生成方法：${method.description}
+     * @param ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper
+     * @return
+     */
     PageModel<${entity.name}> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
         <#else>
-    //${method.description}
+    /**
+     * 页面配置生成方法：${method.description}
+     * @param ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper
+     * @return
+     */
     PageModel<${entity.name}$${method.methodName ?cap_first}ResultWrapper> ${method.methodName}(${entity.name}$${method.methodName ?cap_first}ParamWrapper ${entity.name ?uncap_first}$${method.methodName ?cap_first}ParamWrapper);
         </#if>
-    </#list>
+</#list>
 
     <#--处理实体之间的关系的方法-->
-    <#list entity.mainEntityRelationShips as relationShip>
+<#list entity.mainEntityRelationShips as relationShip>
         <#--设置另一个实体的主键类型-->
         <#if (relationShip.otherEntity.primaryKeyType=="String")>
             <#assign otherEntityIdType="String">
@@ -173,16 +77,39 @@ public interface ${entity.name}Service extends BaseService{
         <#if relationShip.mainEntity.name == relationShip.otherEntity.name>
         <#else>
             <#if relationShip.relationType == "OneToMany" || relationShip.relationType == "ManyToMany">
-     //增加与${relationShip.otherEntity.name}的关系
+    /**
+     * 增加与${relationShip.otherEntity.name}的关系
+     * @param ${entity.name ?uncap_first}Id
+     * @param  ${relationShip.otherEntity.name ?uncap_first}Ids
+     * @return
+     */
     String add${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids);
-     //解除与${relationShip.otherEntity.name}的关系
+
+    /**
+     * 解除与${relationShip.otherEntity.name}的关系
+     * @param ${entity.name ?uncap_first}Id
+     * @param  ${relationShip.otherEntity.name ?uncap_first}Ids
+     * @return
+     */
     String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,List<${otherEntityIdType}> ${relationShip.otherEntity.name ?uncap_first}Ids);
             <#elseif relationShip.relationType == "ManyToOne" ||relationShip.relationType == "OneToOne">
-     //重新设置与${relationShip.otherEntity.name}的关系
+    /**
+     * 重新设置与${relationShip.otherEntity.name}的关系
+     * @param ${entity.name ?uncap_first}Id
+     * @param  ${relationShip.otherEntity.name ?uncap_first}Ids
+     * @return
+     */
     String set${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2);
+
+    /**
+     * 解除与${relationShip.otherEntity.name}的关系
+     * @param ${entity.name ?uncap_first}Id
+     * @param  ${relationShip.otherEntity.name ?uncap_first}Ids
+     * @return
+     */
     String remove${relationShip.otherEntity.name} (${entityIdType} ${entity.name ?uncap_first}Id,${otherEntityIdType} ${relationShip.otherEntity.name ?uncap_first}Id2);
             </#if>
         </#if>
-    </#list>
+</#list>
 
 }

@@ -6,7 +6,7 @@ import com.rayleigh.core.service.BaseService;
 
 import java.util.List;
 
-public interface ProjectDataSourceService extends BaseService {
+public interface ProjectDataSourceService  {
     List<ProjectDataSource> getAll();
 
     void deleteById(String id);

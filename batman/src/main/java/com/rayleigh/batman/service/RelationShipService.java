@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/6/14.
  */
-public interface RelationShipService extends BaseService {
+public interface RelationShipService {
     List<RelationShip> save(List<RelationShip> relationShipList);
 
     List<RelationShip> getByMainEntity(Entities entities);

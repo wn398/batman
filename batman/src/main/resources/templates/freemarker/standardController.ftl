@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiOperation;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
-import com.rayleigh.core.util.BaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

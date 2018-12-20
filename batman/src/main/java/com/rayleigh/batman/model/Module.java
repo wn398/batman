@@ -20,7 +20,7 @@ import java.util.Set;
 @DynamicUpdate
 @Entity
 @Table(name = "batman_module")
-public class Module extends BaseModel {
+public class Module extends BatmanBaseModel {
     @ApiModelProperty("模块名字")
     @Column
     @NotEmpty(message = "模块名字(name)不能为空")

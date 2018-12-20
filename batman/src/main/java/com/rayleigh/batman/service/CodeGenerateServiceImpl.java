@@ -705,7 +705,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成application.java文件
     private void generateApplicationJavaFile(File extendJavaRootPath, Project project, Module module) {
         try {
-            Map<String, BaseModel> map = new HashMap<>();
+            Map<String, BatmanBaseModel> map = new HashMap<>();
             map.put("project",project);
             map.put("module",module);
             File pomFile = new File(extendJavaRootPath, GeneratorStringUtil.upperFirstLetter(module.getName())+"Application.java");

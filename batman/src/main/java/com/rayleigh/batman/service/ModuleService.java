@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/6/13.
  */
-public interface ModuleService extends BaseService {
+public interface ModuleService {
     List<Module> getAll();
 
     void deleteById(String id);
