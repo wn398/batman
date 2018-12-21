@@ -99,12 +99,22 @@ public class CodeGeneratorController extends BaseController{
 
         Project project = projectService.findOne(projectId);
 
-        project = initProject(project);
-
-        codeGenerateService.produceProjectStandard(generatorBasePath, project);
-
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("standard").append(".zip").toString());
+
+        //如果已经存在并且不需要更新，则直接返回
+        if(targetFile.exists()){
+            Long fileUpdateTime = targetFile.lastModified();
+            Long hierachyTime = projectService.getMaxHierachyDate(project).getTime();
+            if(fileUpdateTime > hierachyTime){
+                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
+                responseOutputFile(response,fileName,targetFile);
+                return;
+            }
+        }
+        //project = initProject(project);
+        codeGenerateService.produceProjectStandard(generatorBasePath, project);
         FileCompressUtil.compress(sourceDir,targetFile);
 
         String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
@@ -128,7 +138,7 @@ public class CodeGeneratorController extends BaseController{
 
         Project project = projectService.findOne(projectId);
 
-        initProject(project);
+        //initProject(project);
 
         for(Module module :project.getModules()){
             codeGenerateService.produceModuleStandardJar(generatorBasePath,module,project);
@@ -148,7 +158,7 @@ public class CodeGeneratorController extends BaseController{
         Module module = moduleService.findOne(moduleId);
         Project project = module.getProject();
 
-        initModule(module);
+        //initModule(module);
         //生成的每个项目生成对应目录
         String basePath = new StringBuilder("/").append(project.getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
@@ -169,7 +179,7 @@ public class CodeGeneratorController extends BaseController{
         tempMap.put("root",request.getRequestURI().split("/")[1]);
         Module module = moduleService.findOne(moduleId);
 
-        initModule(module);
+        //initModule(module);
         //生成的模块对应根目录
         String basePath = new StringBuilder("/").append(module.getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
@@ -212,7 +222,7 @@ public class CodeGeneratorController extends BaseController{
         Module module = moduleService.findOne(moduleId);
         Project project = module.getProject();
 
-        initModule(module);
+        //initModule(module);
 
         //生成的每个项目生成对应目录
         String basePath = new StringBuilder("/").append(module.getProject().getId()).toString();
@@ -237,7 +247,6 @@ public class CodeGeneratorController extends BaseController{
             FileCompressUtil.compress(sourceDir, targetFile);
         }
 
-
         String fileName = new StringBuilder(module.getName()).append("Extend.zip").toString();
         responseOutputFile(response,fileName,targetFile);
 
@@ -258,12 +267,22 @@ public class CodeGeneratorController extends BaseController{
 
         Project project = projectService.findOne(projectId);
 
-        initProject(project);
-
-        codeGenerateService.produceProjectExtend(generatorBasePath, project);
-
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("extend").append(".zip").toString());
+
+        //如果已经存在并且不需要更新，则直接返回
+        if(targetFile.exists()){
+            Long fileUpdateTime = targetFile.lastModified();
+            Long hierachyTime = project.getHierachyDate().getTime();
+            if(fileUpdateTime > hierachyTime){
+                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
+                responseOutputFile(response,fileName,targetFile);
+                return;
+            }
+        }
+
+        codeGenerateService.produceProjectExtend(generatorBasePath, project);
         FileCompressUtil.compress(sourceDir,targetFile);
 
         String fileName=new StringBuilder(project.getName()).append("extend").append(".zip").toString();
@@ -284,11 +303,22 @@ public class CodeGeneratorController extends BaseController{
 
         Project project = projectService.findOne(projectId);
 
-        initProject(project);
-        codeGenerateService.produceProjectAll(generatorBasePath, project,tempMap.get("port"),tempMap.get("root"));
-
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append(".zip").toString());
+
+        //如果已经存在并且不需要更新，则直接返回
+        if(targetFile.exists()){
+            Long fileUpdateTime = targetFile.lastModified();
+            Long hierachyTime = projectService.getMaxHierachyDate(project).getTime();
+            if(fileUpdateTime > hierachyTime){
+                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
+                responseOutputFile(response,fileName,targetFile);
+                return;
+            }
+        }
+        //initProject(project);
+        codeGenerateService.produceProjectAll(generatorBasePath, project,tempMap.get("port"),tempMap.get("root"));
         FileCompressUtil.compress(sourceDir,targetFile);
         String fileName = new StringBuilder(project.getName()).append(".zip").toString();
         responseOutputFile(response,fileName,targetFile);
@@ -309,12 +339,23 @@ public class CodeGeneratorController extends BaseController{
 
         Project project = projectService.findOne(projectId);
 
-        initProject(project);
-
-        codeGenerateService.produceProjectAllWithStandardJar(generatorBasePath, project,tempMap.get("port"),tempMap.get("root"));
+       // initProject(project);
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append(".zip").toString());
+        //如果已经存在并且不需要更新，则直接返回
+        if(targetFile.exists()){
+            Long fileUpdateTime = targetFile.lastModified();
+            Long hierachyTime = project.getHierachyDate().getTime();
+            if(fileUpdateTime > hierachyTime){
+                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
+                responseOutputFile(response,fileName,targetFile);
+                return;
+            }
+        }
+
+        codeGenerateService.produceProjectAllWithStandardJar(generatorBasePath, project,tempMap.get("port"),tempMap.get("root"));
         FileCompressUtil.compress(sourceDir,targetFile);
         String fileName = new StringBuilder(project.getName()).append(".zip").toString();
         responseOutputFile(response,fileName,targetFile);
@@ -337,36 +378,6 @@ public class CodeGeneratorController extends BaseController{
         }
     }
 
-    /**
-     * @Description
-     * @param project
-     * @return
-     */
-    private Project initProject(Project project) {
-            project.getModules().stream().forEach(it -> {
-                initModule(it);
-            });
-            return project;
-    }
 
-    /**
-     *
-     * @param module
-     * @return
-     */
-    private Module initModule(Module module){
-            module.getEntities().stream().forEach(it2 -> {
-                        it2.getMethods().stream().forEach(it21 -> {
-                            it21.getConditionList().size();
-                            it21.getSearchResults().size();
-                        });
-                        it2.getMainFieldRelationShips().size();
-                        it2.getMainEntityRelationShips().size();
-                        it2.getFields().size();
-                    }
-
-            );
-            return module;
-        }
 
 }

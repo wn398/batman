@@ -82,8 +82,14 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Date getMaxUpdateDate(Project project) {
-        return null;
+    public Date getMaxHierachyDate(Project project) {
+        Date maxDate =  projectRepository.getMaxHierachyDateByProjectId(project.getId());
+        Date prDate = project.getHierachyDate();
+        if(maxDate.getTime()>prDate.getTime()){
+            return maxDate;
+        }else{
+            return prDate;
+        }
     }
 
 

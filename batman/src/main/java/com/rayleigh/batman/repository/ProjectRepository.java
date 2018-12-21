@@ -20,4 +20,7 @@ public interface ProjectRepository extends CustomRepository<Project, String> {
 
     @Query("select max(projectDataSource.updateDate) from ProjectDataSource projectDataSource where projectDataSource.project.id=:projectId")
     Date getMaxDataSourceUpdateDateByProjectId(@Param("projectId") String projectId);
+
+    @Query("select max(project.hierachy_date) from Project project where project.id=:projectId")
+    Date getMaxHierachyDateByProjectId(@Param("projectId") String projectId);
 }

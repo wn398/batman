@@ -29,5 +29,5 @@ public interface ProjectService {
 
     List<Project> findByUserId(String userId);
 
-    Date getMaxUpdateDate(Project project);
+    Date getMaxHierachyDate(Project project);
 }

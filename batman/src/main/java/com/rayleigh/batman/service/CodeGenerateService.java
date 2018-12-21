@@ -9,11 +9,26 @@ import java.io.File;
 import java.util.Map;
 
 public interface CodeGenerateService {
-    //生成模块标准部分代码并打包发布
+    /**
+     * 生成模块标准部分代码并打包发布
+     * @param generateBasePath
+     * @param module
+     * @param project
+     */
     void produceModuleStandardJar(String generateBasePath, Module module,Project project);
-    //生成模块标准部分代码，只是标准代码，不包括一些配置文件
+
+    /**
+     * 生成模块标准部分代码，只是标准代码，不包括一些配置文件
+     * @param generateBasePath
+     * @param moduleId
+     */
     void produceModuleStandard(String generateBasePath, String moduleId);
-    //生成项目全部 standard部分代码
+
+    /**
+     * 生成项目全部 standard部分代码
+     * @param generatorBasePath
+     * @param project
+     */
     void produceProjectStandard(String generatorBasePath, Project project);
     //生成项目全部extend部分代码文件
     void produceProjectExtend(String generatorBasePath, Project project);
