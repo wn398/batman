@@ -13,16 +13,18 @@ import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.enums.PrimaryKeyType;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
-import com.rayleigh.batman.util.BaseModelUtil;
+import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiOperation;
 import io.undertow.util.FileUtils;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
@@ -48,6 +50,8 @@ public class EntityController extends BaseController{
     private ProjectService projectService;
     @Autowired
     private ModuleService moduleService;
+    @Autowired
+    private EntityManager entityManager;
 
     @PostMapping(value = "/doAdd")
     @ResponseBody
@@ -82,12 +86,12 @@ public class EntityController extends BaseController{
 
         }
 
-        Entities resultEntities = (Entities) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
+        Entities resultEntities = (Entities) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
         resultEntities.setHierachyDate(new Date());
         Entities entities1 = entityService.save(resultEntities);
-        BaseModelUtil.preventMutualRef(entities1,new ArrayList());
+        //BatmanBaseModelUtil.preventMutualRef(entities1,new ArrayList());
 
-        return getSuccessResult(entities1);
+        return getSuccessResult("新增成功！");
     }
 
     @PostMapping(value = "/partUpdate")
@@ -164,9 +168,7 @@ public class EntityController extends BaseController{
 
             entities.setHierachyDate(new Date());
             Entities entities1 = entityService.partUpdate(entities);
-            //entities1 = preventCirculation(entities1);
-            BaseModelUtil.preventMutualRef(entities1,new ArrayList());
-            return getSuccessResult(entities1);
+            return getSuccessResult("更新成功!");
         }else{
             return getFailureResultAndInfo(entities,"id不能空!");
         }

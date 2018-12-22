@@ -8,7 +8,7 @@ import com.rayleigh.batman.uiModel.SearchConditionResult;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.enums.LogicOperation;
 import com.rayleigh.core.model.ResultWrapper;
-import com.rayleigh.batman.util.BaseModelUtil;
+import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,7 +66,7 @@ public class SearchMethodController extends BaseController {
             }
             searchMethod.setConditionList(realConditionList);
             searchMethod.setSearchResults(realResultList);
-            SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
+            SearchMethod searchMethod1 = (SearchMethod) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
             Entities entities =searchMethod1.getEntities();
             entities.setHierachyDate(new Date());
@@ -244,13 +244,13 @@ public class SearchMethodController extends BaseController {
 
             searchMethod.setConditionList(realConditionList);
             searchMethod.setSearchResults(realResultList);
-            SearchMethod searchMethod1 = (SearchMethod) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
+            SearchMethod searchMethod1 = (SearchMethod) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
             Entities entities = searchMethod1.getEntities();
             entities.setHierachyDate(new Date());
             entityService.update(entities);
-            BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
-            return getSuccessResult(searchMethod1);
+            //BatmanBaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
+            return getSuccessResult("更新成功!");
         } else {
             return getFailureResultAndInfo("", "传入对象为空");
         }

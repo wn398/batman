@@ -7,8 +7,8 @@ import com.rayleigh.core.util.SpringContextUtils;
 import com.rayleigh.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Example;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ import java.util.List;
 /**
  * Created by wangn20 on 2017/7/17.
  */
-public class BaseModelUtil {
-    private final static Logger logger = LoggerFactory.getLogger(BaseModelUtil.class);
+public class BatmanBaseModelUtil {
+    private final static Logger logger = LoggerFactory.getLogger(BatmanBaseModelUtil.class);
 
 
     /**去掉相互引用，防止生成JSON失败,传入list作为存储已经存在的对象
@@ -263,7 +263,7 @@ public class BaseModelUtil {
         String name = clazz.getSimpleName();
         //获取Repository
         String repositoryName = new StringBuilder(name.substring(0,1).toLowerCase()).append(name.substring(1)).append("Repository").toString();
-        BatmanBaseModel databaseModel = (BatmanBaseModel) ((JpaRepository) SpringContextUtils.getBean(repositoryName)).findOne(Example.of(baseModel)).get();
+        BatmanBaseModel databaseModel = (BatmanBaseModel) ((CrudRepository) SpringContextUtils.getBean(repositoryName)).findById(baseModel.getId()).get();
         return  databaseModel;
     }
 

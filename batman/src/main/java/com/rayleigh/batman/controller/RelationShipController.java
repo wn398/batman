@@ -7,7 +7,7 @@ import com.rayleigh.core.exception.NotBaseModelException;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.enums.RelationType;
 import com.rayleigh.core.model.ResultWrapper;
-import com.rayleigh.batman.util.BaseModelUtil;
+import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -86,7 +86,7 @@ public class RelationShipController extends BaseController {
                 }
             });
             try {
-                list3 = (List<RelationShip>) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(twoSideList);
+                list3 = (List<RelationShip>) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(twoSideList);
             } catch (NotBaseModelException e) {
                 e.printStackTrace();
                 return getFailureResultAndInfo(relationShipMap, e.getMessage());
@@ -122,7 +122,7 @@ public class RelationShipController extends BaseController {
             });
 
             try {
-                list4 = (List<FieldRelationShip>) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(twoSideFieldList);
+                list4 = (List<FieldRelationShip>) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(twoSideFieldList);
             } catch (NotBaseModelException e) {
                 e.printStackTrace();
                 return getFailureResultAndInfo(relationShipMap, e.getMessage());

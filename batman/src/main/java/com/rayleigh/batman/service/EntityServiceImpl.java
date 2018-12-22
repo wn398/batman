@@ -2,7 +2,7 @@ package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.repository.EntitiesRepository;
-import com.rayleigh.batman.util.BaseModelUtil;
+import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class EntityServiceImpl implements EntityService {
 //        Entities databaseEntities = entityRepository.findOne(entities.getId());
 //        BaseModelUtil.copyProperty(entities,databaseEntities);
 
-        Entities resultEntities = (Entities) BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
+        Entities resultEntities = (Entities) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
         //MapperUtil.getModelMapper().updatePropertyForEntities(entities,databaseEntities);
         entityRepository.save(resultEntities);
         return resultEntities;

@@ -3,7 +3,7 @@ package com.rayleigh.batman.service;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.repository.ModuleRepository;
 import com.rayleigh.batman.repository.ProjectRepository;
-import com.rayleigh.batman.util.BaseModelUtil;
+import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
         //更新必须先查出来
        // Project dataBaseProject = projectRepository.findOne(project.getId());
         //部分更新
-        Project resultProject = (Project)BaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(project);
+        Project resultProject = (Project) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(project);
        // MapperUtil.getModelMapper().updatePropertyForProject(project,dataBaseProject);
        // dataBaseProject.getModules().parallelStream().forEach(module -> module.setProject(dataBaseProject));
         projectRepository.save(resultProject);
