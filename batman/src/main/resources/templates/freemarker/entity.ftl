@@ -1,5 +1,5 @@
 <#include "CopyRight.ftl">
-package ${project.packageName}.standard.model;
+package ${project.packageName}.base.model;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;

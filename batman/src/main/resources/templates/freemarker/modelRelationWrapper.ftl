@@ -1,6 +1,6 @@
 <#include "CopyRight.ftl">
 <#--构建关联模型 传参：project,entity -->
-package ${project.packageName}.standard.modelRelation;
+package ${project.packageName}.base.modelRelation;
 
 import com.rayleigh.core.model.*;
 <#--设定主键类型-->

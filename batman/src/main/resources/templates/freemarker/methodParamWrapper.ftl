@@ -1,6 +1,6 @@
 <#include "CopyRight.ftl">
 <#--构建方法的参数模型 传参：project,entity,method-->
-package ${project.packageName}.standard.methodModel;
+package ${project.packageName}.base.methodModel;
 import com.rayleigh.core.enums.DataType;
 import com.rayleigh.core.model.*;
 import com.alibaba.fastjson.annotation.JSONField;

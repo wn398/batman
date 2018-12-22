@@ -3,19 +3,19 @@ package ${project.packageName}.extend.methodInterceptImpl;
 
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
-import ${project.packageName}.standard.model.${entity.name};
+import ${project.packageName}.base.model.${entity.name};
 <#list entity.mainEntityRelationShips as relationShip>
-import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
-import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
-import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util;
+import ${project.packageName}.base.model.${relationShip.otherEntity.name};
+import ${project.packageName}.base.service.${relationShip.otherEntity.name}Service;
+import ${project.packageName}.base.util.${relationShip.otherEntity.name}Util;
 </#list>
 <#if (entity.methods ?size >0) >
-import ${project.packageName}.standard.methodModel.*;
+import ${project.packageName}.base.methodModel.*;
 </#if>
-import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
-import ${project.packageName}.standard.service.${entity.name}Service;
-import ${project.packageName}.standard.util.${entity.name}Util;
-import ${project.packageName}.standard.methodIntercept.${entity.name}MethodIntercept;
+import ${project.packageName}.base.modelRelation.${entity.name}$Relation;
+import ${project.packageName}.base.service.${entity.name}Service;
+import ${project.packageName}.base.util.${entity.name}Util;
+import ${project.packageName}.base.methodIntercept.${entity.name}MethodIntercept;
 import org.springframework.stereotype.Component;
 @Component
 public class ${entity.name}MethodInterceptImpl extends ${entity.name}MethodIntercept {

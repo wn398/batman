@@ -1,20 +1,20 @@
 <#include "CopyRight.ftl">
-package ${project.packageName}.standard.methodIntercept;
+package ${project.packageName}.base.methodIntercept;
 
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.enums.ResultStatus;
-import ${project.packageName}.standard.model.${entity.name};
+import ${project.packageName}.base.model.${entity.name};
 <#list entity.mainEntityRelationShips as relationShip>
-import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
-import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
-import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util;
+import ${project.packageName}.base.model.${relationShip.otherEntity.name};
+import ${project.packageName}.base.service.${relationShip.otherEntity.name}Service;
+import ${project.packageName}.base.util.${relationShip.otherEntity.name}Util;
 </#list>
 <#if (entity.methods ?size >0) >
-import ${project.packageName}.standard.methodModel.*;
+import ${project.packageName}.base.methodModel.*;
 </#if>
-import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
-import ${project.packageName}.standard.service.${entity.name}Service;
-import ${project.packageName}.standard.util.${entity.name}Util;
+import ${project.packageName}.base.modelRelation.${entity.name}$Relation;
+import ${project.packageName}.base.service.${entity.name}Service;
+import ${project.packageName}.base.util.${entity.name}Util;
 
 public class ${entity.name}MethodIntercept {
     public ResultWrapper saveBefore(${entity.name} ${entity.name ?uncap_first}){

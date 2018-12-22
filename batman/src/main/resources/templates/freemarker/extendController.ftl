@@ -1,10 +1,10 @@
 <#include "CopyRight.ftl">
 package ${project.packageName}.extend.controller;
 
-import ${project.packageName}.standard.model.*;
+import ${project.packageName}.base.model.*;
 import ${project.packageName}.extend.service.*;
 import com.rayleigh.core.controller.BaseController;
-import ${project.packageName}.standard.controller.${entity.name}Controller;
+import ${project.packageName}.base.controller.${entity.name}Controller;
 import com.rayleigh.core.enums.ResultStatus;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;

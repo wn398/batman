@@ -1,9 +1,9 @@
 <#include "CopyRight.ftl">
-package ${project.packageName}.standard.service;
+package ${project.packageName}.base.service;
 
 import com.rayleigh.core.model.PageModel;
-import ${project.packageName}.standard.model.${entity.name};
-import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
+import ${project.packageName}.base.model.${entity.name};
+import ${project.packageName}.base.modelRelation.${entity.name}$Relation;
 import com.rayleigh.core.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.Query;
 import java.util.*;
 <#if (entity.methods ?size >0) >
-import ${project.packageName}.standard.methodModel.*;
+import ${project.packageName}.base.methodModel.*;
 </#if>
 <#--设置主键类型变量-->
 <#if entity.primaryKeyType=="String">

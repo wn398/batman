@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>${projectBasePackage}</groupId>
-    <artifactId>${projectName}-${moduleName}Standard</artifactId>
+    <artifactId>${projectName}-${moduleName}Base</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 

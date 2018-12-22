@@ -100,14 +100,14 @@ public class CodeGeneratorController extends BaseController{
         Project project = projectService.findOne(projectId);
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
-        File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("standard").append(".zip").toString());
+        File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("base").append(".zip").toString());
 
         //如果已经存在并且不需要更新，则直接返回
         if(targetFile.exists()){
             Long fileUpdateTime = targetFile.lastModified();
             Long hierachyTime = projectService.getMaxHierachyDate(project).getTime();
             if(fileUpdateTime > hierachyTime){
-                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
                 return;
@@ -117,7 +117,7 @@ public class CodeGeneratorController extends BaseController{
         codeGenerateService.produceProjectStandard(generatorBasePath, project);
         FileCompressUtil.compress(sourceDir,targetFile);
 
-        String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+        String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
         responseOutputFile(response,fileName,targetFile);
     }
 
@@ -191,19 +191,19 @@ public class CodeGeneratorController extends BaseController{
         if(targetFile.exists()){
             boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,module.getProject().getHierachyDate().getTime(),module.getUpdateDate().getTime(),maxModuleDate.getTime());
             if(isGenerate){
-                logger.info(new StringBuilder("文件【").append(module.getName()).append("Standard.zip】存在，需要更新生成！").toString());
+                logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】存在，需要更新生成！").toString());
                 codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
                 FileCompressUtil.compress(sourceDir, targetFile);
             }else{
-                logger.info(new StringBuilder("文件【").append(module.getName()).append("Standard.zip】存在，不需要更新生成！").toString());
+                logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】存在，不需要更新生成！").toString());
             }
         }else{
-            logger.info(new StringBuilder("文件【").append(module.getName()).append("Standard.zip】不存在，生成！").toString());
+            logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】不存在，生成！").toString());
             codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
             FileCompressUtil.compress(sourceDir, targetFile);
         }
 
-            String fileName = new StringBuilder(module.getName()).append("Standard").append(".zip").toString();
+            String fileName = new StringBuilder(module.getName()).append("Base").append(".zip").toString();
             responseOutputFile(response,fileName,targetFile);
 
 
@@ -275,7 +275,7 @@ public class CodeGeneratorController extends BaseController{
             Long fileUpdateTime = targetFile.lastModified();
             Long hierachyTime = project.getHierachyDate().getTime();
             if(fileUpdateTime > hierachyTime){
-                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
                 return;
@@ -311,7 +311,7 @@ public class CodeGeneratorController extends BaseController{
             Long fileUpdateTime = targetFile.lastModified();
             Long hierachyTime = projectService.getMaxHierachyDate(project).getTime();
             if(fileUpdateTime > hierachyTime){
-                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
                 return;
@@ -348,7 +348,7 @@ public class CodeGeneratorController extends BaseController{
             Long fileUpdateTime = targetFile.lastModified();
             Long hierachyTime = project.getHierachyDate().getTime();
             if(fileUpdateTime > hierachyTime){
-                String fileName=new StringBuilder(project.getName()).append("standard").append(".zip").toString();
+                String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
                 return;

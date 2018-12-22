@@ -22,16 +22,16 @@ IFS="$OLD_IFS"
 for s in ${r'${arr[@]}'}
 do
 echo "$s"
-rm -rf "$s/src/main/java/${project.packageName ?replace(".","/")}/standard"
+rm -rf "$s/src/main/java/${project.packageName ?replace(".","/")}/base"
 done
 
-#curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectStandard/$projectId -o ${project.name}_standard.zip
+#curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectStandard/$projectId -o ${project.name}_base.zip
 
-#unzip ${project.name}_standard.zip
+#unzip ${project.name}_base.zip
 
 curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectStandardJar/$projectId
 
-rm -rf ${project.name}_standard.zip
+rm -rf ${project.name}_base.zip
 
 curl http://$ip:$port/$context/codeGeneratorCtl/generateProjectExtend/$projectId -o ${project.name}_extend.zip
 

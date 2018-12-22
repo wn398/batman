@@ -1,6 +1,6 @@
 <#include "CopyRight.ftl">
 <#--<!--构建方法的结果模型  需要传入的参数 project, entity, method,searchDBUtil&ndash;&gt;-->
-package ${project.packageName}.standard.methodModel;
+package ${project.packageName}.base.methodModel;
 import java.math.BigDecimal;
 import java.util.*;
 import io.swagger.annotations.ApiModel;

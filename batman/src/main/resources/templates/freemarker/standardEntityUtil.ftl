@@ -1,16 +1,16 @@
 <#include "CopyRight.ftl">
-package ${project.packageName}.standard.util;
+package ${project.packageName}.base.util;
 
 import com.rayleigh.core.util.SpringContextUtils;
 import com.rayleigh.core.util.StringUtil;
 import com.rayleigh.core.model.NameValueType;
 import com.rayleigh.core.enums.*;
-import ${project.packageName}.standard.model.${entity.name};
-import ${project.packageName}.standard.service.${entity.name}Service;
+import ${project.packageName}.base.model.${entity.name};
+import ${project.packageName}.base.service.${entity.name}Service;
 <#list entity.mainEntityRelationShips as relationShip>
     <#if relationShip.otherEntity.name != entity.name>
-import ${project.packageName}.standard.model.${relationShip.otherEntity.name};
-import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
+import ${project.packageName}.base.model.${relationShip.otherEntity.name};
+import ${project.packageName}.base.service.${relationShip.otherEntity.name}Service;
     </#if>
 </#list>
 <#if entity.primaryKeyType=="String">
@@ -82,7 +82,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
 <#--设置主对象结果，如果有id则查询出持久化对象作为基准结果，然后copy基本属性过去，如果没有id则查看对象属性里有没有需要转变成持久化的对象-->
     ${entity.name} ${entity.name ?uncap_first}Result;
     if(null != ${entity.name ?uncap_first}.getId()){
-        ${entity.name ?uncap_first}Result = ((${entity.name}Service)SpringContextUtils.getBean("${entity.name ?uncap_first}ExtendServiceImpl")).findOne(${entity.name ?uncap_first}.getId());
+        ${entity.name ?uncap_first}Result = ((${entity.name}Service)SpringContextUtils.getBean("${entity.name ?uncap_first}ExtServiceImpl")).findOne(${entity.name ?uncap_first}.getId());
         ${entity.name}Util.copySimplePropertyNotNullValue(${entity.name ?uncap_first}, ${entity.name ?uncap_first}Result);
     }else{
         ${entity.name ?uncap_first}Result = ${entity.name ?uncap_first};
@@ -98,7 +98,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     <#--并且id不为空-->
         if(null != ${relationShip.otherEntity.name ?uncap_first}1.getId()){
     <#--id不为空，需要转换成持久化对象，从数据库中加载出来-->
-        ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtendServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}1.getId());
+        ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}1.getId());
     <#--id,version都不为空，可能更新基本属性，进行copy-->
         <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>if(null!=${relationShip.otherEntity.name ?uncap_first}1.getVersion()){</#if>
         ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}1,db${relationShip.otherEntity.name});
@@ -141,7 +141,7 @@ public static  ${entity.name} buildRelation(${entity.name} ${entity.name ?uncap_
     <#--如果id不为空，则需要从数据库中加载持久化对象出来-->
             if(null != ${relationShip.otherEntity.name ?uncap_first}2 && null !=${relationShip.otherEntity.name ?uncap_first}2.getId()){
     <#--加载持久化对象-->
-                ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtendServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}2.getId());
+                ${relationShip.otherEntity.name} db${relationShip.otherEntity.name} = ((${relationShip.otherEntity.name}Service)SpringContextUtils.getBean("${relationShip.otherEntity.name ?uncap_first}ExtServiceImpl")).findOne(${relationShip.otherEntity.name ?uncap_first}2.getId());
     <#--id,version不为空，则是更新，copy基本属性过去-->
                 <#if searchDBUtil.isContainField(relationShip.otherEntity.id,"version")==true>if(null!=${relationShip.otherEntity.name ?uncap_first}2.getVersion()){</#if>
                     ${relationShip.otherEntity.name}Util.copySimplePropertyNotNullValue(${relationShip.otherEntity.name ?uncap_first}2,db${relationShip.otherEntity.name});

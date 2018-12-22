@@ -1,15 +1,15 @@
-package ${project.packageName}.standard.service.impl;
+package ${project.packageName}.base.service.impl;
 
-import ${project.packageName}.standard.model.*;
-import ${project.packageName}.standard.repository.${entity.name}Repository;
+import ${project.packageName}.base.model.*;
+import ${project.packageName}.base.repository.${entity.name}Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import ${project.packageName}.standard.service.${entity.name}Service;
-import ${project.packageName}.standard.methodModel.*;
+import ${project.packageName}.base.service.${entity.name}Service;
+import ${project.packageName}.base.methodModel.*;
 import javax.persistence.EntityManager;
 import java.util.*;
 /**

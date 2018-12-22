@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>${basePackage}</groupId>
-            <artifactId>${projectName}-${moduleName}Standard</artifactId>
+            <artifactId>${projectName}-${moduleName}Base</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

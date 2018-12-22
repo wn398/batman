@@ -2,7 +2,6 @@ package com.rayleigh.batman.model;
 
 import com.rayleigh.batman.util.SearchDBUtil;
 import com.rayleigh.core.enums.OrderBy;
-import com.rayleigh.core.model.BaseModel;
 import com.rayleigh.core.model.SearchMethodResultModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;

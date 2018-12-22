@@ -58,20 +58,20 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("/").append(module.getName()).toString());
 
-        File jarFile = new File(sourceDir.getPath()+"/target/"+project.getName()+"-"+module.getName()+"Standard-0.0.1-SNAPSHOT.jar");
+        File jarFile = new File(sourceDir.getPath()+"/target/"+project.getName()+"-"+module.getName()+"Base-0.0.1-SNAPSHOT.jar");
         if(jarFile.exists()) {
             Date moduleMaxDate = moduleService.getMaxModuleHierachyDate(module.getId());
             boolean isGenerate = checkIsNewGenerate(jarFile, project.getHierachyDate().getTime(), module.getUpdateDate().getTime(), moduleMaxDate.getTime());
             if (isGenerate) {
-                logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】已存在，并且需要更新").toString());
+                logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Base-0.0.1-SNAPSHOT.jar").append("】已存在，并且需要更新").toString());
                 produceProjectModuleStandard(generatorBasePath, project,module);
                 buildService.deployJarFile(sourceDir);
             }else{
-                logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】已存在，并且不需要更新").toString());
+                logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Base-0.0.1-SNAPSHOT.jar").append("】已存在，并且不需要更新").toString());
                 return;
             }
         }else{
-            logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Standard-0.0.1-SNAPSHOT.jar").append("】不存在,立即生成").toString());
+            logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Base-0.0.1-SNAPSHOT.jar").append("】不存在,立即生成").toString());
             produceProjectModuleStandard(generatorBasePath, project,module);
             buildService.deployJarFile(sourceDir);
         }

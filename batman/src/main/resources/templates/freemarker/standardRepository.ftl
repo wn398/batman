@@ -1,7 +1,7 @@
 <#include "CopyRight.ftl">
-package ${project.packageName}.standard.repository;
+package ${project.packageName}.base.repository;
 
-import ${project.packageName}.standard.model.${entity.name};
+import ${project.packageName}.base.model.${entity.name};
 import com.rayleigh.core.customQuery.CustomRepository;
 <#if entity.primaryKeyType=="String">
     <#assign entityIdType="String">

@@ -1,12 +1,12 @@
 <#include "CopyRight.ftl">
-package ${project.packageName}.standard.service.impl;
+package ${project.packageName}.base.service.impl;
 <#--project,entity,constructSearchMethodUtil-->
 import java.math.BigDecimal;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import ${project.packageName}.standard.model.*;
-import ${project.packageName}.standard.modelRelation.${entity.name}$Relation;
-import ${project.packageName}.standard.repository.${entity.name}Repository;
+import ${project.packageName}.base.model.*;
+import ${project.packageName}.base.modelRelation.${entity.name}$Relation;
+import ${project.packageName}.base.repository.${entity.name}Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.rayleigh.core.model.SearchMethodConditionModel;
@@ -19,17 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ${project.packageName}.standard.service.${entity.name}Service;
-import ${project.packageName}.standard.util.${entity.name}Util;
+import ${project.packageName}.base.service.${entity.name}Service;
+import ${project.packageName}.base.util.${entity.name}Util;
 <#--导入相关联service-->
 <#list entity.mainEntityRelationShips as relationShip>
     <#if relationShip.otherEntity.name != entity.name>
-import ${project.packageName}.standard.service.${relationShip.otherEntity.name}Service;
-import ${project.packageName}.standard.util.${relationShip.otherEntity.name}Util;
+import ${project.packageName}.base.service.${relationShip.otherEntity.name}Service;
+import ${project.packageName}.base.util.${relationShip.otherEntity.name}Util;
     </#if>
 </#list>
 <#if (entity.methods ?size >0) >
-import ${project.packageName}.standard.methodModel.*;
+import ${project.packageName}.base.methodModel.*;
 </#if>
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;

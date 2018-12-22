@@ -1,7 +1,6 @@
 package com.rayleigh.batman.model;
 
 import com.rayleigh.core.enums.RelationType;
-import com.rayleigh.core.model.BaseModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;

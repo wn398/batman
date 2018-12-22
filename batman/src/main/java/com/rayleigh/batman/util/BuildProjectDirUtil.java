@@ -56,9 +56,9 @@ public class BuildProjectDirUtil {
         String projectBasePath = getProjectBasePath(generatorBasePath,projectName);
         String relativePackagePath = basePackageName.replaceAll("[.]","/");
         if(StringUtil.isEmpty(moduleName)){
-            return new StringBuilder(projectBasePath).append("/src/main/java").append("/").append(relativePackagePath).append("/standard").toString();
+            return new StringBuilder(projectBasePath).append("/src/main/java").append("/").append(relativePackagePath).append("/base").toString();
         }else{
-            return new StringBuilder(projectBasePath).append("/").append(moduleName).append("/src/main/java").append("/").append(relativePackagePath).append("/standard").toString();
+            return new StringBuilder(projectBasePath).append("/").append(moduleName).append("/src/main/java").append("/").append(relativePackagePath).append("/base").toString();
         }
     }
 
@@ -164,7 +164,7 @@ public class BuildProjectDirUtil {
         //相对基本包路径
         String relativePackagePath = project.getPackageName().replaceAll("[.]","/");
         //相对standard包路径
-        String standardRelativePackagePath = new StringBuilder(relativePackagePath).append("/standard").toString();
+        String standardRelativePackagePath = new StringBuilder(relativePackagePath).append("/base").toString();
         //相对extend包路径
         String extendRelativePackagePath = new StringBuilder(relativePackagePath).append("/extend").toString();
         //构建模块目录结构
@@ -330,7 +330,7 @@ public class BuildProjectDirUtil {
         //相对基本包路径
         String relativePackagePath = project.getPackageName().replaceAll("[.]","/");
         //相对standard包路径
-        String standardRelativePackagePath = new StringBuilder(relativePackagePath).append("/standard").toString();
+        String standardRelativePackagePath = new StringBuilder(relativePackagePath).append("/base").toString();
 
         File moduleDir = new File(projectDir,module.getName());
 

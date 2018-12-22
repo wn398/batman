@@ -15,7 +15,7 @@ hs_err_pid*
 .idea
 logging.**
 <#list project.modules as module>
-${module.name}/src/main/java/${project.packageName ?replace(".","/")}/standard/**
+${module.name}/src/main/java/${project.packageName ?replace(".","/")}/base/**
 </#list>
 
 <#list project.modules as module>
