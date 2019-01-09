@@ -38,6 +38,14 @@ public interface BaseService<T extends BaseModel,ID extends Serializable>{
     List<T> saveWithAssignedId(List<T> ts)throws Exception;
 
     /**
+     * 同saveWithAssignedId方法，这个是批量保存方法
+     * @param ts
+     * @return
+     * @throws Exception
+     */
+    List<T> saveWithAssignedId2(List<T> ts)throws Exception;
+
+    /**
      * 更新方法
      * @param t
      * @return

@@ -154,28 +154,8 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
     public ${entity.name} saveWithAssignedId(${entity.name} ${entity.name ?uncap_first})throws Exception{
         if(null==${entity.name ?uncap_first}.getId()<#if isVersion ==true>||null==${entity.name ?uncap_first}.getVersion()</#if>){
             throw new RuntimeException("保存实体id或version不能为空!");
-        }
-         StringBuilder sb = new StringBuilder(${generatorStringUtil.constructInsertPartSql(project,entity)});
-         List<NameValueType> nameValueTypeList = ${entity.name}Util.getNameValueTypeList(${entity.name ?uncap_first});
-         StringBuilder names = new StringBuilder();
-         StringBuilder values = new StringBuilder(" ");
-         nameValueTypeList.stream().forEach(it->{
-            names.append(StringUtil.humpToUnderline(it.getName())).append(",");
-                if(it.getDataType()== DataType.String) {
-                    values.append("\'").append(((String)it.getValue()).replaceAll("\'","\'\'")).append("\'").append(",");
-                }else if(it.getDataType() == DataType.Date){
-                    values.append("\'").append(StringUtil.dateToDbString((Date)it.getValue())).append("\'").append(",");
-                }else if(it.getDataType() == DataType.Integer || it.getDataType() == DataType.Double || it.getDataType() == DataType.BigDecimal || it.getDataType() == DataType.Long){
-                    values.append(it.getValue()).append(",");
-                }else if(it.getDataType() == DataType.Boolean){
-                    values.append("\'").append(StringUtil.booleanToString((Boolean)it.getValue())).append("\'").append(",");
-                }
-            });
-            StringBuilder sb2 = new StringBuilder(values.toString().substring(0,values.toString().length()-1));
-            sb2.append(")");
-            sb.append(" (").append(names.toString().substring(0,names.toString().length()-1)).append(") values (").append(sb2.toString());
-         logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
-         jdbcTemplate.execute(sb.toString());
+         }
+         saveWithAssignedId2(Collections.singletonList(${entity.name ?uncap_first}));
          return ${entity.name ?uncap_first};
     }
 
@@ -196,39 +176,109 @@ public class ${entity.name}ServiceImpl implements ${entity.name}Service {
             Map<String,Object> nameValues = ${entity.name}Util.getAllPropertiesValueMap(it);
             for(String name:properties){
                 DataType dataType = ${entity.name}Util.getPropertyDataType(name);
-                if(dataType== DataType.String) {
-                    if(null != nameValues.get(name)){
-                        value.append("\'").append(((String)nameValues.get(name)).replaceAll("\'","\'\'")).append("\'").append(",");
-                    }else{
-                        value.append("NULL").append(" ,");
+                if(null != nameValues.get(name)){
+                    switch (dataType){
+                        case BigDecimal:
+                            value.append(nameValues.get(name)).append(",");
+                            break;
+                        case Boolean:
+                            value.append("\'").append(StringUtil.booleanToString((Boolean)nameValues.get(name))).append("\'").append(",");
+                            break;
+                        case String:
+                            value.append("\'").append(((String)nameValues.get(name)).replace("\'","\'\'")).append("\'").append(",");
+                            break;
+                        case Integer:
+                            value.append(nameValues.get(name)).append(",");
+                            break;
+                        case Double:
+                            value.append(nameValues.get(name)).append(",");
+                            break;
+                        case Long:
+                            value.append(nameValues.get(name)).append(",");
+                            break;
+                        case Date:
+                            value.append("\'").append(StringUtil.dateToDbString((Date)nameValues.get(name))).append("\'").append(",");
+                            break;
+                        default:
+                            value.append("\'").append(((String)nameValues.get(name)).replace("\'","\'\'")).append("\'").append(",");
                     }
-                }else if(dataType == DataType.Date){
-                    if(null != nameValues.get(name)){
-                        value.append("\'").append(StringUtil.dateToDbString((Date)nameValues.get(name))).append("\'").append(",");
-                    }else{
-                        value.append("NULL").append(" ,");
-                    }
-                }else if(dataType == DataType.Integer || dataType == DataType.Double || dataType == DataType.BigDecimal || dataType == DataType.Long){
-                    if(null != nameValues.get(name)){
-                        value.append(nameValues.get(name)).append(",");
-                    }else{
-                        value.append("NULL").append(" ,");
-                    }
-                }else if(dataType == DataType.Boolean){
-                    if(null != nameValues.get(name)){
-                        value.append("\'").append(StringUtil.booleanToString((Boolean)nameValues.get(name))).append("\'").append(",");
-                    }else{
-                        value.append("NULL").append(" ,");
-                    }
+                }else{
+                    value.append("NULL").append(" ,");
                 }
             }
             values.append(value.toString().substring(0,value.toString().length()-1)).append(")").append(",");
         });
         sb.append(") values ").append(values.toString().substring(0,values.toString().length()-1));
-        logger.info(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
+        logger.debug(new StringBuilder("执行本地SQL:").append(sb.toString()).toString());
         jdbcTemplate.execute(sb.toString());
         return ${entity.name ?uncap_first}s;
     }
+
+    //保存人为分配id的实体列表2
+    <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
+    @Override
+    public List<${entity.name}> saveWithAssignedId2(List<${entity.name}> ${entity.name ?uncap_first}s)throws Exception{
+        StringBuilder sb = new StringBuilder(${generatorStringUtil.constructInsertPartSql(project,entity)});
+        List<String> properties = ${entity.name}Util.getPropertyNames();
+        StringBuilder names = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        for(String name:properties){
+            names.append(StringUtil.humpToUnderline(name)).append(",");
+                values.append("?,");
+            }
+            sb.append(" (").append(names.toString().substring(0,names.toString().length()-1));
+            sb.append(") values(").append(values.toString().substring(0,values.toString().length()-1)).append(")");
+            String sql = sb.toString();
+            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Map<String,Object> nameValues = ${entity.name}Util.getAllPropertiesValueMap(${entity.name ?uncap_first}s.get(i));
+                for(int j=0;j<properties.size();j++){
+                    String name = properties.get(j);
+                    DataType dataType = ${entity.name}Util.getPropertyDataType(name);
+                    Object value = nameValues.get(name);
+                    int position=j+1;
+                    if(null != value){
+                        switch (dataType){
+                            case Date:
+                                ps.setDate(position,new java.sql.Date(((Date)value).getTime()));
+                                break;
+                            case Long:
+                                ps.setLong(position,(Long) value);
+                                break;
+                            case Double:
+                                ps.setDouble(position,(Double) value);
+                                break;
+                            case String:
+                                ps.setString(position, (String) value);
+                                break;
+                            case Boolean:
+                                ps.setBoolean(position,(Boolean) value);
+                                break;
+                            case Integer:
+                                ps.setInt(position,(Integer) value);
+                                break;
+                            case BigDecimal:
+                                ps.setBigDecimal(position,(BigDecimal) value);
+                                break;
+                            default:
+                                ps.setString(position, (String) value);
+                        }
+                    }else{
+                        ps.setNull(position, Types.NULL);
+                    }
+                }
+            }
+
+        @Override
+        public int getBatchSize() {
+            return ${entity.name ?uncap_first}s.size();
+        }
+        });
+
+        return ${entity.name ?uncap_first}s;
+    }
+
 
     <#if (entity.dataSourceName ?exists) && (entity.dataSourceName ?length>0)>@TargetDataSource("${entity.dataSourceName}")</#if>
     @Override
