@@ -16,5 +16,5 @@ public interface ModuleService {
 
     Module findOne(String id);
 
-    Date getMaxModuleHierachyDate(String moduleId);
+    void setUpdateDate(String id,Date updateDate);
 }

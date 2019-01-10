@@ -3,6 +3,7 @@ package com.rayleigh.batman.controller;
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.FieldRelationShipService;
+import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.util.StringUtil;
@@ -26,6 +27,8 @@ public class FieldRelationShipController extends BaseController {
     private FieldRelationShipService fieldRelationShipService;
     @Autowired
     private EntityService entityService;
+    @Autowired
+    private ModuleService moduleService;
 
     @DeleteMapping("/delById")
     @ResponseBody
@@ -80,12 +83,12 @@ public class FieldRelationShipController extends BaseController {
             }
             //更新hierachyDate
             Entities mainEntity = entityService.findOne(mainEntityId);
-            mainEntity.setHierachyDate(new Date());
             entityService.update(mainEntity);
 
             Entities otherEntity = entityService.findOne(otherEntityId);
-            otherEntity.setHierachyDate(new Date());
             entityService.update(otherEntity);
+
+            moduleService.setUpdateDate(otherEntity.getModule().getId(),new Date());
 
             return getSuccessResult("success");
         }else{

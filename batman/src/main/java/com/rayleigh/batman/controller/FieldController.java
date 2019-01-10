@@ -4,6 +4,7 @@ import com.rayleigh.batman.model.Entities;
 import com.rayleigh.batman.model.Field;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.FieldService;
+import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.core.controller.BaseController;
 import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.core.service.BaseService;
@@ -28,6 +29,8 @@ public class FieldController extends BaseController {
     private FieldService fieldService;
     @Autowired
     private EntityService entityService;
+    @Autowired
+    private ModuleService moduleService;
 
     @RequestMapping(value = "/delById")
     @ResponseBody
@@ -36,9 +39,7 @@ public class FieldController extends BaseController {
             try {
                 //更新层级时间
                 Field field2 = fieldService.findOne(field.getId());
-                Entities entities = field2.getEntities();
-                entities.setHierachyDate(new Date());
-                entityService.update(entities);
+                moduleService.setUpdateDate(field2.getEntities().getModule().getId(),new Date());
                 fieldService.deleteById(field.getId());
 
             }catch (Exception e ){

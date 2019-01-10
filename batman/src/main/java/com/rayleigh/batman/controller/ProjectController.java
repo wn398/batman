@@ -93,7 +93,6 @@ public class ProjectController extends BaseController{
         String userId = (String)request.getSession().getAttribute("userId");
         SysUser sysUser = sysUserService.findOne(userId);
         project.setSysUser(sysUser);
-        project.setHierachyDate(new Date());
         project = projectService.save(project);
         preventCirculation(project);
         return getSuccessResult(project);
@@ -185,7 +184,6 @@ public class ProjectController extends BaseController{
             SysUser sysUser = new SysUser();
             sysUser.setId(userId);
             project.setSysUser(sysUser);
-            project.setHierachyDate(new Date());
             Project project1 =projectService.partUpdate(project);
             project1 = preventCirculation(project1);
             return getSuccessResult(project1);

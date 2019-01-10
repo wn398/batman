@@ -5,22 +5,18 @@ import com.rayleigh.batman.service.*;
 import com.rayleigh.batman.uiModel.ProjectListModel;
 import com.rayleigh.batman.util.*;
 import com.rayleigh.core.controller.BaseController;
-import org.apache.http.client.utils.DateUtils;
-import org.hibernate.cache.ehcache.internal.HibernateEhcacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping("/codeGeneratorCtl")
@@ -28,11 +24,7 @@ public class CodeGeneratorController extends BaseController{
     @Autowired
     private ProjectService projectService;
     @Autowired
-    private SysUserService sysUserService;
-    @Autowired
     private ModuleService moduleService;
-    @Autowired
-    private EntityService entityService;
     @Autowired
     private CodeGenerateService codeGenerateService;
     @Autowired
@@ -86,79 +78,73 @@ public class CodeGeneratorController extends BaseController{
     }
 
     /**
-     * 生成整个项目standard部分代码
+     * 生成整个项目base部分代码
      */
     @RequestMapping("/generateProjectStandard/{projectId}")
     public void generatorByProjectStandard(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId) throws IOException {
         String realPath = request.getServletContext().getRealPath("/");
-        tempMap.put("port",request.getServerPort()+"");
-        tempMap.put("root",request.getRequestURI().split("/")[1]);
-        //生成的每个项目根据时间生成对应目录
+        if(tempMap.isEmpty()) {
+            tempMap.put("port", request.getServerPort() + "");
+            tempMap.put("root", request.getRequestURI().split("/")[1]);
+        }
+        //生成的每个项目对应目录
         String basePath = new StringBuilder("/").append(projectId).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
-
         Project project = projectService.findOne(projectId);
-
-        File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("base").append(".zip").toString());
-
-        //如果已经存在并且不需要更新，则直接返回
+        String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
         if(targetFile.exists()){
-            Long fileUpdateTime = targetFile.lastModified();
-            Long hierachyTime = projectService.getMaxHierachyDate(project).getTime();
-            if(fileUpdateTime > hierachyTime){
-                String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
-                logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,project.getUpdateDate().getTime(),null);
+            if(!isGenerate){
                 responseOutputFile(response,fileName,targetFile);
                 return;
             }
         }
-        //project = initProject(project);
-        codeGenerateService.produceProjectStandard(generatorBasePath, project);
-        FileCompressUtil.compress(sourceDir,targetFile);
 
-        String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
+        FileSystemUtils.deleteRecursively(new File(generatorBasePath));
+        codeGenerateService.produceProjectStandard(generatorBasePath, project);
+        File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
+        FileCompressUtil.compress(sourceDir,targetFile);
         responseOutputFile(response,fileName,targetFile);
     }
 
 
     /**
-     * 生成项目module standard部分代码并编译生成jar包
+     * 生成项目module base部分代码并编译生成jar包
      */
     @RequestMapping("/generateProjectStandardJar/{projectId}")
     public void generatorByProjectStandardJar(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId)  {
 
 
         String realPath = request.getServletContext().getRealPath("/");
-        tempMap.put("port",request.getServerPort()+"");
-        tempMap.put("root",request.getRequestURI().split("/")[1]);
+        if(tempMap.isEmpty()) {
+            tempMap.put("port", request.getServerPort() + "");
+            tempMap.put("root", request.getRequestURI().split("/")[1]);
+        }
         //生成的每个项目根据时间生成对应目录
         String basePath = new StringBuilder("/").append(projectId).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
 
         Project project = projectService.findOne(projectId);
-
-        //initProject(project);
-
         for(Module module :project.getModules()){
             codeGenerateService.produceModuleStandardJar(generatorBasePath,module,project);
         }
     }
 
     /**
-     * 生成某个module standard部分代码并编译生成jar包
+     * 生成某个module base部分代码并编译生成jar包
      */
     @RequestMapping("/generateModuleStandardJar/{moduleId}")
     public void generatorModuleStandardJar(HttpServletRequest request, HttpServletResponse response, @PathVariable("moduleId") String moduleId)  {
 
 
         String realPath = request.getServletContext().getRealPath("/");
-        tempMap.put("port",request.getServerPort()+"");
-        tempMap.put("root",request.getRequestURI().split("/")[1]);
+        if(tempMap.isEmpty()) {
+            tempMap.put("port", request.getServerPort() + "");
+            tempMap.put("root", request.getRequestURI().split("/")[1]);
+        }
         Module module = moduleService.findOne(moduleId);
         Project project = module.getProject();
-
-        //initModule(module);
         //生成的每个项目生成对应目录
         String basePath = new StringBuilder("/").append(project.getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
@@ -175,38 +161,31 @@ public class CodeGeneratorController extends BaseController{
 
 
         String realPath = request.getServletContext().getRealPath("/");
-        tempMap.put("port",request.getServerPort()+"");
-        tempMap.put("root",request.getRequestURI().split("/")[1]);
+        if(tempMap.isEmpty()) {
+            tempMap.put("port", request.getServerPort() + "");
+            tempMap.put("root", request.getRequestURI().split("/")[1]);
+        }
         Module module = moduleService.findOne(moduleId);
-
-        //initModule(module);
         //生成的模块对应根目录
         String basePath = new StringBuilder("/").append(module.getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(module.getProject().getName()).append("/").append(module.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(module.getProject().getName()).append("/").append(module.getName()).append("Standard").append(".zip").toString());
-
-        Date maxModuleDate = moduleService.getMaxModuleHierachyDate(moduleId);
-        if(targetFile.exists()){
-            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,module.getProject().getHierachyDate().getTime(),module.getUpdateDate().getTime(),maxModuleDate.getTime());
-            if(isGenerate){
-                logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】存在，需要更新生成！").toString());
-                codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
-                FileCompressUtil.compress(sourceDir, targetFile);
-            }else{
+        String fileName = new StringBuilder(module.getName()).append("Base").append(".zip").toString();
+        if(targetFile.exists()) {
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile, module.getProject().getUpdateDate().getTime(), module.getUpdateDate().getTime());
+            if (!isGenerate) {
                 logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】存在，不需要更新生成！").toString());
+                responseOutputFile(response, fileName, targetFile);
+                return;
             }
-        }else{
-            logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】不存在，生成！").toString());
-            codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
-            FileCompressUtil.compress(sourceDir, targetFile);
         }
-
-            String fileName = new StringBuilder(module.getName()).append("Base").append(".zip").toString();
-            responseOutputFile(response,fileName,targetFile);
-
-
+        logger.info(new StringBuilder("文件【").append(module.getName()).append("Base.zip】不存在，生成！").toString());
+        FileSystemUtils.deleteRecursively(new File(generatorBasePath));
+        codeGenerateService.produceModuleStandard(generatorBasePath,moduleId);
+        FileCompressUtil.compress(sourceDir, targetFile);
+        responseOutputFile(response, fileName, targetFile);
     }
 
 
@@ -217,38 +196,35 @@ public class CodeGeneratorController extends BaseController{
     public void generatorModuleExtend(HttpServletRequest request, HttpServletResponse response, @PathVariable("moduleId") String moduleId) throws IOException {
 
         String realPath = request.getServletContext().getRealPath("/");
-        tempMap.put("port",request.getServerPort()+"");
-        tempMap.put("root",request.getRequestURI().split("/")[1]);
+        if(tempMap.isEmpty()) {
+            tempMap.put("port", request.getServerPort() + "");
+            tempMap.put("root", request.getRequestURI().split("/")[1]);
+        }
         Module module = moduleService.findOne(moduleId);
         Project project = module.getProject();
-
-        //initModule(module);
-
         //生成的每个项目生成对应目录
         String basePath = new StringBuilder("/").append(module.getProject().getId()).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("/").append(module.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("/").append(module.getName()).append("Extend.zip").toString());
-        Date maxModuleDate = moduleService.getMaxModuleHierachyDate(moduleId);
-
-        if(targetFile.exists()){
-            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),maxModuleDate.getTime());
-            if(isGenerate){
-                logger.info(new StringBuilder("文件【").append(module.getName()).append("Extend.zip】存在，需要更新生成！").toString());
-                codeGenerateService.produceModuleExtendAllFiles(generatorBasePath,module.getProject(),module);
-                FileCompressUtil.compress(sourceDir, targetFile);
-            }else{
-                logger.info(new StringBuilder("文件【").append(module.getName()).append("Extend.zip】存在，不需要更新生成！").toString());
-            }
-        }else{
-            logger.info(new StringBuilder("文件【").append(module.getName()).append("Extend.zip】不存在，生成！").toString());
-            codeGenerateService.produceModuleExtendAllFiles(generatorBasePath,module.getProject(),module);
-            FileCompressUtil.compress(sourceDir, targetFile);
-        }
-
         String fileName = new StringBuilder(module.getName()).append("Extend.zip").toString();
+        if(targetFile.exists()){
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,project.getUpdateDate().getTime(),module.getUpdateDate().getTime());
+            if(!isGenerate){
+                logger.info(new StringBuilder("文件【").append(module.getName()).append("Extend.zip】存在，不需要更新生成！").toString());
+                responseOutputFile(response,fileName,targetFile);
+                return;
+            }
+        }
+        logger.info(new StringBuilder("文件【").append(module.getName()).append("Extend.zip】不存在，生成！").toString());
+        FileSystemUtils.deleteRecursively(new File(generatorBasePath));
+        codeGenerateService.produceModuleExtendAllFiles(generatorBasePath,module.getProject(),module);
+        FileCompressUtil.compress(sourceDir, targetFile);
         responseOutputFile(response,fileName,targetFile);
+
+
+
 
 
     }
@@ -259,8 +235,10 @@ public class CodeGeneratorController extends BaseController{
     @RequestMapping("/generateProjectExtend/{projectId}")
     public void generatorByProjectExtend(HttpServletRequest request, HttpServletResponse response, @PathVariable("projectId") String projectId) throws IOException {
         String realPath = request.getServletContext().getRealPath("/");
-        tempMap.put("port",request.getServerPort()+"");
-        tempMap.put("root",request.getRequestURI().split("/")[1]);
+        if(tempMap.isEmpty()) {
+            tempMap.put("port", request.getServerPort() + "");
+            tempMap.put("root", request.getRequestURI().split("/")[1]);
+        }
         //生成的每个项目生成对应目录
         String basePath = new StringBuilder("/").append(projectId).toString();
         String generatorBasePath = new StringBuilder(realPath).append("/").append(basePath).toString();
@@ -269,23 +247,20 @@ public class CodeGeneratorController extends BaseController{
 
         File sourceDir = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).toString());
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append("extend").append(".zip").toString());
-
+        String fileName=new StringBuilder(project.getName()).append("extend").append(".zip").toString();
         //如果已经存在并且不需要更新，则直接返回
         if(targetFile.exists()){
-            Long fileUpdateTime = targetFile.lastModified();
-            Long hierachyTime = project.getHierachyDate().getTime();
-            if(fileUpdateTime > hierachyTime){
-                String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,project.getUpdateDate().getTime(),null);
+            if(!isGenerate){
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
                 return;
             }
         }
-
+        logger.info(new StringBuilder("文件【").append(project.getName()).append("Extend.zip】不存在，生成！").toString());
+        FileSystemUtils.deleteRecursively(new File(generatorBasePath));
         codeGenerateService.produceProjectExtend(generatorBasePath, project);
         FileCompressUtil.compress(sourceDir,targetFile);
-
-        String fileName=new StringBuilder(project.getName()).append("extend").append(".zip").toString();
         responseOutputFile(response,fileName,targetFile);
     }
 
@@ -308,9 +283,8 @@ public class CodeGeneratorController extends BaseController{
 
         //如果已经存在并且不需要更新，则直接返回
         if(targetFile.exists()){
-            Long fileUpdateTime = targetFile.lastModified();
-            Long hierachyTime = projectService.getMaxHierachyDate(project).getTime();
-            if(fileUpdateTime > hierachyTime){
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,project.getUpdateDate().getTime(),null);
+            if(!isGenerate){
                 String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
@@ -345,9 +319,8 @@ public class CodeGeneratorController extends BaseController{
         File targetFile = new File(new StringBuilder(generatorBasePath).append("/").append(project.getName()).append(".zip").toString());
         //如果已经存在并且不需要更新，则直接返回
         if(targetFile.exists()){
-            Long fileUpdateTime = targetFile.lastModified();
-            Long hierachyTime = project.getHierachyDate().getTime();
-            if(fileUpdateTime > hierachyTime){
+            boolean isGenerate = codeGenerateService.checkIsNewGenerate(targetFile,project.getUpdateDate().getTime(),null);
+            if(!isGenerate){
                 String fileName=new StringBuilder(project.getName()).append("base").append(".zip").toString();
                 logger.info(new StringBuilder("文件 【").append(fileName).append("】 已经存在，并且不需要重新生成!").toString());
                 responseOutputFile(response,fileName,targetFile);
@@ -377,6 +350,10 @@ public class CodeGeneratorController extends BaseController{
             }
         }
     }
+
+
+
+
 
 
 

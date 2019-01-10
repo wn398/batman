@@ -87,8 +87,8 @@ public class EntityController extends BaseController{
         }
 
         Entities resultEntities = (Entities) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(entities);
-        resultEntities.setHierachyDate(new Date());
         Entities entities1 = entityService.save(resultEntities);
+        moduleService.setUpdateDate(entities.getModule().getId(),new Date());
         //BatmanBaseModelUtil.preventMutualRef(entities1,new ArrayList());
 
         return getSuccessResult("新增成功！");
@@ -164,10 +164,8 @@ public class EntityController extends BaseController{
 
             }
 
-
-
-            entities.setHierachyDate(new Date());
             Entities entities1 = entityService.partUpdate(entities);
+            moduleService.setUpdateDate(entities.getModule().getId(),new Date());
             return getSuccessResult("更新成功!");
         }else{
             return getFailureResultAndInfo(entities,"id不能空!");
@@ -193,6 +191,7 @@ public class EntityController extends BaseController{
     public ResultWrapper delete(@RequestBody Entities entities){
         if(null!=entities&&!StringUtil.isEmpty(entities.getId())) {
             try {
+                moduleService.setUpdateDate(entityService.findOne(entities.getId()).getModule().getId(),new Date());
                 entityService.deleteOne(entities);
                 return getSuccessResult(ResultStatus.SUCCESS);
             } catch (Exception e) {
@@ -383,6 +382,9 @@ public class EntityController extends BaseController{
     @ResponseBody
     public ResultWrapper addMoreEntities(@RequestBody DataBaseConnectionWithEntityModel dataBaseConnectionWithEntityModel){
         List<Entities> entitiesList = dataBaseConnectionWithEntityModel.getEntity();
+        if(entitiesList.size()>0){
+            moduleService.setUpdateDate(entitiesList.get(0).getModule().getId(),new Date());
+        }
         entitiesList.stream().forEach(it-> {
                     dataBaseConnectionWithEntityModel.setTableName(it.getTableName());
                     List<Field> fieldList = (List<Field>)getTableColums(dataBaseConnectionWithEntityModel).getData();
@@ -416,7 +418,6 @@ public class EntityController extends BaseController{
                     if(null==it.getPrimaryKeyType()){
                         it.setPrimaryKeyType(PrimaryKeyType.String);
                     }
-                    it.setHierachyDate(new Date());
                     it.setFields(fieldList);
                     entityService.save(it);
                 }

@@ -47,13 +47,6 @@ public class Entities extends BatmanBaseModel {
     @Column
     private Boolean addPrefix;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column
-    @ApiModelProperty("层级更新日期,主要用于标示下面属性变化")
-    private Date hierachyDate;
-
     @Column
     @ApiModelProperty("自定义表名前辍")
     private String preFix;
@@ -228,19 +221,6 @@ public class Entities extends BatmanBaseModel {
 
     public void setAddPrefix(Boolean addPrefix) {
         this.addPrefix = addPrefix;
-    }
-
-    public Date getHierachyDate() {
-        if(null!=hierachyDate) {
-            return (Date)hierachyDate.clone();
-        }
-        else{
-            return null;
-        }
-    }
-
-    public void setHierachyDate(Date hierachyDate) {
-        this.hierachyDate = hierachyDate;
     }
 
     public String getPreFix() {

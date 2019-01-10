@@ -42,10 +42,8 @@ public interface CodeGenerateService {
     void produceModuleStandardAllFiles(String generatorBasePath, Project project, Module module);
     //生成某一模块扩展代码extend，包括配置文件
     void produceModuleExtendAllFiles(String generatorBasePath, Project project, Module module);
-    //根据是否需要生成最新的文件去生成文件
-    void generateLastFileByTemplate(File file, String templateFileName, Map map, boolean isNewGenerate)throws Exception;
     //判断是否需要重新生成文件
-    boolean checkIsNewGenerate(File file, Long projectUpdateTime, Long moduleUpdateTime, Long entityTime);
+    boolean checkIsNewGenerate(File file, Long projectUpdateTime, Long moduleUpdateTime);
 
 
 

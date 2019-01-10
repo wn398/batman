@@ -50,13 +50,6 @@ public class Project extends BatmanBaseModel {
     @Column
     private Boolean isEncodeDataSource;
 
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column
-    @ApiModelProperty("层级更新日期,主要用于标示下面属性变化")
-    private Date hierachyDate;
-
     @Valid
     @OneToMany(mappedBy = "project",cascade = {CascadeType.PERSIST,CascadeType.REMOVE,CascadeType.MERGE},fetch = FetchType.LAZY,orphanRemoval = true)
     private List<Module> modules=new ArrayList<>();
@@ -181,15 +174,4 @@ public class Project extends BatmanBaseModel {
         this.isEncodeDataSource = encodeDataSource;
     }
 
-    public Date getHierachyDate() {
-        if(null!=hierachyDate) {
-            return (Date)hierachyDate.clone();
-        }else{
-            return null;
-        }
-    }
-
-    public void setHierachyDate(Date hierachyDate) {
-        this.hierachyDate = hierachyDate;
-    }
 }

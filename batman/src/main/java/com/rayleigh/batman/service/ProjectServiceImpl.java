@@ -7,8 +7,14 @@ import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -82,15 +88,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Date getMaxHierachyDate(Project project) {
-        Date maxDate =  projectRepository.getMaxHierachyDateByProjectId(project.getId());
-        Date prDate = project.getHierachyDate();
-        if(maxDate.getTime()>prDate.getTime()){
-            return maxDate;
-        }else{
-            return prDate;
-        }
+    public void setUpdateDate(String id, Date date) {
+        projectRepository.updateAll(new Specification<Project>() {
+            @Override
+            public Predicate toPredicate(Root<Project> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                return cb.equal(root.get("id"),id);
+            }
+        }, Collections.singletonMap("updateDate",date));
     }
-
 
 }

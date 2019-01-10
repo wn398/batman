@@ -12,14 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.partitioningBy;
 
 /**
@@ -48,6 +43,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //==================以下为生成文件夹组合方法 ==================================================
     //生成模块标准部分代码并打包发布
     //@Async
+    @Override
     public void produceModuleStandardJar(String generateBasePath, Module module,Project project) {
 
         String realPath = generateBasePath;
@@ -60,8 +56,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 
         File jarFile = new File(sourceDir.getPath()+"/target/"+project.getName()+"-"+module.getName()+"Base-0.0.1-SNAPSHOT.jar");
         if(jarFile.exists()) {
-            Date moduleMaxDate = moduleService.getMaxModuleHierachyDate(module.getId());
-            boolean isGenerate = checkIsNewGenerate(jarFile, project.getHierachyDate().getTime(), module.getUpdateDate().getTime(), moduleMaxDate.getTime());
+            boolean isGenerate = checkIsNewGenerate(jarFile, project.getUpdateDate().getTime(), module.getUpdateDate().getTime());
             if (isGenerate) {
                 logger.info(new StringBuilder("文件【").append(project.getName()).append("-").append(module.getName()).append("Base-0.0.1-SNAPSHOT.jar").append("】已存在，并且需要更新").toString());
                 produceProjectModuleStandard(generatorBasePath, project,module);
@@ -130,6 +125,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     }
 
     //生成项目全部 standard部分代码
+    @Override
     public void produceProjectStandard(String generatorBasePath, Project project) {
         BuildProjectDirUtil.createDirForProjectStandard(generatorBasePath,project);
         for(Module module:project.getModules()) {
@@ -147,6 +143,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 
 
     //生成项目全部extend部分代码文件
+    @Override
     public void produceProjectExtend(String generatorBasePath, Project project) {
         BuildProjectDirUtil.createDirForProjectExtend(generatorBasePath,project);
         for(Module module:project.getModules()) {
@@ -156,6 +153,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 
 
     //生成项目全部文件
+    @Override
     public void produceProjectAll(String generatorBasePath, Project project,String port,String root) {
         BuildProjectDirUtil.createDirForProject(generatorBasePath,project);
         //项目根路径
@@ -179,6 +177,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     }
 
     //生成项目全部文件,标准部分采用jar方式
+    @Override
     public void produceProjectAllWithStandardJar(String generatorBasePath, Project project,String port,String root) {
         //BuildProjectDirUtil.createDirForProject(generatorBasePath,project);
         BuildProjectDirUtil.createDirForProjectExtend(generatorBasePath,project);
@@ -203,6 +202,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     }
 
     //生成项目下某一模块的除了standard,extend外的配置文件，包括配置文件
+    @Override
     public void produceModuleOtherFiles(String generatorBasePath, Project project, Module module,String port,String root){
         //生成所需要的目录
         //BuildProjectDirUtil.createDirForProjectModuleStandard(generatorBasePath,project,module);
@@ -246,6 +246,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
 
 
     //生成某一模块标准部分代码standard
+    @Override
     public void produceModuleStandardAllFiles(String generatorBasePath, Project project, Module module){
 
         BuildProjectDirUtil.createDirForProjectModuleStandard(generatorBasePath,project,module);
@@ -296,6 +297,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         generateModuleStandardPOMFile(moduleRootPath,project,module);
     }
     //生成某一模块扩展代码extend
+    @Override
     public void produceModuleExtendAllFiles(String generatorBasePath, Project project, Module module){
         BuildProjectDirUtil.createDirForProjectModuleExtend(generatorBasePath,project,module);
         //extend Java根路径
@@ -331,8 +333,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             map.put("project",project);
             map.put("module",module);
             File pomFile = new File(extendJavaRootPath, GeneratorStringUtil.upperFirstLetter(module.getName())+"Application.java");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(pomFile,"applicationJava.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"applicationJava.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛applicationJava.ftl｝模板失败");
@@ -347,17 +348,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             Map<String, Project> map = new HashMap<>();
             map.put("project",project);
             File pomFile = new File(projectRootDir,"pom.xml");
-            boolean isNewGenerate = true;
-            if(pomFile.exists()){
-                if(project.getUpdateDate().getTime()> pomFile.lastModified()){
-                    isNewGenerate = true;
-                }else{
-                    isNewGenerate = false;
-                }
-            }else{
-                isNewGenerate = true;
-            }
-            generateLastFileByTemplate(pomFile,"projectPom.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"projectPom.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛projectPom.ftl｝模板失败");
@@ -373,8 +364,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             map.put("project",project);
             map.put("ip", NetworkUtil.getLocalHostLANAddress().getHostAddress());
             File pomFile = new File(projectRootDir,"update.sh");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),null,null);
-            generateLastFileByTemplate(pomFile,"updateScript.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"updateScript.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛updateScript.ftl｝模板失败");
@@ -392,8 +382,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             map.put("module",module);
             map.put("ip", NetworkUtil.getLocalHostLANAddress().getHostAddress());
             File pomFile = new File(moduleRootPath,"update.sh");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(pomFile,"moduleUpdateScript.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"moduleUpdateScript.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛moduleUpdateScript.ftl｝模板失败");
@@ -405,8 +394,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             Map<String, Project> map = new HashMap<>();
             map.put("project",project);
             File pomFile = new File(projectRootDir,".gitignore");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),null,null);
-            generateLastFileByTemplate(pomFile,"gitIgnore.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"gitIgnore.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -423,8 +411,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             stringBuilder.append("\\.extend\\..*");
             map.put("path",stringBuilder.toString());
             File pomFile = new File(dir,"findbugs-include.xml");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(pomFile,"findbugs-include.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"findbugs-include.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取{findbugs-include.ftl}模板失败");
@@ -443,8 +430,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 map.put("isMemDatasource", true);
             }
             File pomFile = new File(dir,"pom.xml");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(pomFile,"modulePom.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"modulePom.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -466,8 +452,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 map.put("isMemDatasource", true);
             }
             File pomFile = new File(dir,"standard-pom.xml");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(pomFile,"moduleStandardPom.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"moduleStandardPom.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取{moduleStandardPom.ftl}模板失败");
@@ -486,8 +471,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 map.put("isMemDatasource", true);
             }
             File pomFile = new File(dir,"pom-war.xml");
-            boolean isNewGenerate = checkIsNewGenerate(pomFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(pomFile,"modulePom-War.ftl",map,isNewGenerate);
+            generateFileByTemplate(pomFile,"modulePom-War.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -498,8 +482,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     private void generateApplicationPropertyFile(File dir, Project project,Module module){
         try {
             File applicationFile = new File(dir,"application.properties");
-            boolean isNewGenerate = checkIsNewGenerate(applicationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(applicationFile,"application.ftl",null,isNewGenerate);
+            generateFileByTemplate(applicationFile,"application.ftl",null);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取{application.ftl}模板失败");
@@ -559,8 +542,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             }
             map.put("mainDataSource",mainDataSource);
             File applicationFile = new File(dir,"application-pro.properties");
-            boolean isNewGenerate = checkIsNewGenerate(applicationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(applicationFile,"application-pro.ftl",map,isNewGenerate);
+            generateFileByTemplate(applicationFile,"application-pro.ftl",map);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取{application-pro.ftl}模板失败");
@@ -620,8 +602,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             }
             map.put("mainDataSource",mainDataSource);
             File applicationFile = new File(dir,"application-dev.properties");
-            boolean isNewGenerate = checkIsNewGenerate(applicationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(applicationFile,"application-dev.ftl",map,isNewGenerate);
+            generateFileByTemplate(applicationFile,"application-dev.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -634,8 +615,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         try {
             Map<String, Object> map = new HashMap<>();
             File applicationFile = new File(dir,"permission.properties");
-            boolean isNewGenerate = checkIsNewGenerate(applicationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(applicationFile,"jwt/permissionProperty.ftl",map,isNewGenerate);
+            generateFileByTemplate(applicationFile,"jwt/permissionProperty.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -648,8 +628,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             Map<String, Object> map = new HashMap<>();
             map.put("basePackage",project.getPackageName());
             File applicationFile = new File(dir,"JwtFilter.java");
-            boolean isNewGenerate = checkIsNewGenerate(applicationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(applicationFile,"jwt/JwtFilter.ftl",map,isNewGenerate);
+            generateFileByTemplate(applicationFile,"jwt/JwtFilter.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -663,8 +642,7 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             Map<String, Object> map = new HashMap<>();
             map.put("module",module);
             File applicationFile = new File(dir,"logback-spring.xml");
-            boolean isNewGenerate = checkIsNewGenerate(applicationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),null);
-            generateLastFileByTemplate(applicationFile,"logbackXML.ftl",map,isNewGenerate);
+            generateFileByTemplate(applicationFile,"logbackXML.ftl",map);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -676,13 +654,13 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成实体类文件
     private void generateModelFile(File dir,Project project,Module module){
         try {
-            module.getEntities().stream().forEach(it->{
+            for(Entities entity:module.getEntities()){
                 Map<String,Object> map = new HashMap();
                 map.put("project",project);
-                map.put("entity",it);
+                map.put("entity",entity);
                 map.put("module",module);
                 map.put("GeneratorStringUtil",new GeneratorStringUtil());
-                List<String> entityFieldNames = it.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("createDate")){
                     map.put("isCreateDate",true);
                 }else{
@@ -693,15 +671,9 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 }else{
                     map.put("isUpdateDate",false);
                 }
-                File entityFile = new File(dir,it.getName()+".java");
-                boolean isNewGenerate = checkIsNewGenerate(entityFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-
-                try {
-                    generateLastFileByTemplate(entityFile, "entity.ftl", map, isNewGenerate);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            });
+                File entityFile = new File(dir,entity.getName()+".java");
+                generateFileByTemplate(entityFile,"entity.ftl",map);
+            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛entity.ftl｝模板失败");
@@ -740,27 +712,24 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
         String paramTemplateFile = "methodParamWrapper.ftl";
         String resultTemplateFile = "methodResultWrapper.ftl";
         try {
-            module.getEntities().stream().forEach(it-> {
-                it.getMethods().stream().forEach(it2-> {
+            for (Entities entities : module.getEntities()) {
+                for (SearchMethod method : entities.getMethods()) {
                     Map<String,Object> map = new HashMap();
                     map.put("project", project);
-                    map.put("entity", it);
-                    map.put("method",it2);
+                    map.put("entity", entities);
+                    map.put("method",method);
                     map.put("searchDBUtil",new SearchDBUtil());
                     map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
-                    File paramFile = new File(dir,it.getName()+"$"+it2.getMethodName().substring(0,1).toUpperCase()+it2.getMethodName().substring(1)+"ParamWrapper.java");
-                    File resultFile = new File(dir,it.getName()+"$"+it2.getMethodName().substring(0,1).toUpperCase()+it2.getMethodName().substring(1)+"ResultWrapper.java");
-
-                    boolean isNewGenerate2 = checkIsNewGenerate(paramFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-                    generateLastFileByTemplate(paramFile,paramTemplateFile,map,isNewGenerate2);
+                    File paramFile = new File(dir,entities.getName()+"$"+method.getMethodName().substring(0,1).toUpperCase()+method.getMethodName().substring(1)+"ParamWrapper.java");
+                    File resultFile = new File(dir,entities.getName()+"$"+method.getMethodName().substring(0,1).toUpperCase()+method.getMethodName().substring(1)+"ResultWrapper.java");
+                    generateFileByTemplate(paramFile,paramTemplateFile,map);
 
                     //如果方法返回类型选择了主对象类型，则不需要包装结果返回类型,默认返回包装类型
-                    if(null == it2.getIsReturnObject()||(null != it2.getIsReturnObject() && it2.getIsReturnObject()== false)) {
-                        boolean isNewGenerate = checkIsNewGenerate(resultFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-                        generateLastFileByTemplate(resultFile,resultTemplateFile,map,isNewGenerate);
+                    if(null == method.getIsReturnObject()||(null != method.getIsReturnObject() && method.getIsReturnObject()== false)) {
+                        generateFileByTemplate(resultFile,resultTemplateFile,map);
                     }
-                });
-            });
+                }
+            }
         }catch (RuntimeException e){
             e.printStackTrace();
             logger.error("处理方法包装类失败");
@@ -773,15 +742,13 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成每个类关联关系包装文件，为获取实体时，findOneWithRelationObj
     private void generateModuleRelationFile(File dir,Project project,Module module){
         try {
-             module.getEntities().stream().forEach(it-> {
+            for (Entities entities : module.getEntities()) {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", it);
-                File modelRelationFile = new File(dir,it.getName()+"$Relation.java");
-                boolean isNewGenerate = checkIsNewGenerate(modelRelationFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-
-                generateLastFileByTemplate(modelRelationFile,"modelRelationWrapper.ftl",map,isNewGenerate);
-            });
+                map.put("entity", entities);
+                File modelRelationFile = new File(dir,entities.getName()+"$Relation.java");
+                generateFileByTemplate(modelRelationFile,"modelRelationWrapper.ftl",map);
+            }
         }catch (RuntimeException e){
             e.printStackTrace();
             logger.error("处理方法包装类失败");
@@ -796,17 +763,15 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             if(!dir.isDirectory()){
                 dir.mkdirs();
             }
-            module.getEntities().stream().forEach(it-> {
+            for(Entities entity:module.getEntities()) {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", it);
+                map.put("entity", entity);
 
-                File methodInterceptFile = new File(dir,it.getName()+"MethodIntercept.java");
-                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
+                File methodInterceptFile = new File(dir,entity.getName()+"MethodIntercept.java");
+                generateFileByTemplate(methodInterceptFile,"methodIntercept.ftl",map);
 
-                generateLastFileByTemplate(methodInterceptFile,"methodIntercept.ftl",map,isNewGenerate);
-
-            });
+            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛ methodIntercept.ftl ｝模板失败");
@@ -816,16 +781,14 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //生成methodIntercept文件
     private void generateMethodInterceptImplFile(File dir,Project project,Module module){
         try {
-            module.getEntities().stream().forEach(it-> {
+            for(Entities entity:module.getEntities()) {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", it);
+                map.put("entity", entity);
                 //List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
-                File methodInterceptFile = new File(dir,it.getName()+"MethodInterceptImpl.java");
-                boolean isNewGenerate = checkIsNewGenerate(methodInterceptFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-
-                generateLastFileByTemplate(methodInterceptFile,"methodInterceptImpl.ftl",map,isNewGenerate);
-            });
+                File methodInterceptFile = new File(dir,entity.getName()+"MethodInterceptImpl.java");
+                generateFileByTemplate(methodInterceptFile,"methodInterceptImpl.ftl",map);
+            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛methodInterceptImpl.ftl｝模板失败");
@@ -844,25 +807,24 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
             fileSuffix = "ServiceImpl.java";
         }
         try {
-            module.getEntities().stream().forEach(it->{
+            for(Entities entity:module.getEntities()) {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", it);
+                map.put("entity", entity);
                 map.put("module",module);
                 map.put("searchDBUtil",new SearchDBUtil());
                 map.put("constructSearchMethodUtil",new ConstructSearchMethodUtil());
                 map.put("generatorStringUtil",new GeneratorStringUtil());
-                List<String> entityFieldNames = it.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("version")){
                     map.put("isVersion",true);
                 }else{
                     map.put("isVersion",false);
                 }
-                File serviceFile = new File(dir,it.getName()+fileSuffix);
-                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-                generateLastFileByTemplate(serviceFile,templateName,map,isNewGenerate);
+                File serviceFile = new File(dir,entity.getName()+fileSuffix);
+                generateFileByTemplate(serviceFile,templateName,map);
 
-            });
+            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛"+templateName+"｝模板失败");
@@ -894,14 +856,14 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //处理模板文件,生成service,respository,standardEntityUtil,controller
     private void processTemplate(File dir, Project project, Module module, String templateName, String fileSuffix) {
         try {
-            module.getEntities().stream().forEach(it-> {
+            for(Entities entity:module.getEntities()) {
                 Map<String,Object> map = new HashMap();
                 map.put("project", project);
-                map.put("entity", it);
+                map.put("entity", entity);
                 map.put("module", module);
                 map.put("GeneratorStringUtil",new GeneratorStringUtil());
                 map.put("searchDBUtil", new SearchDBUtil());
-                List<String> entityFieldNames = it.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
+                List<String> entityFieldNames = entity.getFields().parallelStream().map(field -> field.getName()).collect(Collectors.toList());
                 if(entityFieldNames.contains("createDate")){
                     map.put("isCreateDate",true);
                 }else{
@@ -919,13 +881,10 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
                 }
                 dir.mkdirs();
 
-                File serviceFile = new File(dir,it.getName()+fileSuffix);
+                File serviceFile = new File(dir,entity.getName()+fileSuffix);
 
-
-                boolean isNewGenerate = checkIsNewGenerate(serviceFile,project.getHierachyDate().getTime(),module.getUpdateDate().getTime(),it.getHierachyDate().getTime());
-
-                generateLastFileByTemplate(serviceFile,templateName,map,isNewGenerate);
-            });
+                generateFileByTemplate(serviceFile,templateName,map);
+            }
         }catch (Exception e){
             e.printStackTrace();
             logger.error("获取｛"+templateName+"｝模板失败");
@@ -935,23 +894,20 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     //===============================================================================================================以下为生成文件配置====================
 
     //判断是否需要重新生成文件
-    public boolean checkIsNewGenerate(File file, Long projectUpdateTime, Long moduleUpdateTime, Long entityTime){
+    @Override
+    public boolean checkIsNewGenerate(File file, Long projectHierachyTime, Long moduleHierachyTime){
         boolean isNewGenerate = true;
         if (!file.exists()) {
             isNewGenerate = true;
         } else {
-            long fileUpdateTime = file.lastModified();
-            if (projectUpdateTime > fileUpdateTime) {
+            long fileUpdateTime = file.lastModified()-60000;
+            if (projectHierachyTime >= fileUpdateTime) {
                 isNewGenerate = true;
             } else {
-                if (null!=moduleUpdateTime && moduleUpdateTime > fileUpdateTime) {
+                if (null!=moduleHierachyTime && moduleHierachyTime >= fileUpdateTime) {
                     isNewGenerate = true;
                 } else {
-                    if(null!=entityTime && entityTime>fileUpdateTime){
-                        isNewGenerate = true;
-                    }else{
-                        isNewGenerate = false;
-                    }
+                    isNewGenerate = false;
                 }
             }
         }
@@ -959,21 +915,17 @@ public class CodeGenerateServiceImpl implements CodeGenerateService{
     }
 
     //根据是否需要生成最新的文件去生成文件
-    public void generateLastFileByTemplate(File file, String templateFileName, Map map, boolean isNewGenerate){
-        try {
-            if (file.exists()) {
-                if (isNewGenerate) {
-                    logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件更新,重新生成!").toString());
-                    generateFileByTemplate(file, templateFileName, map);
-                } else {
-                    logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 已经生成,并且不需要更新!").toString());
-                }
-            } else {
-                logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件不存在,生成!").toString());
+    public void generateLastFileByTemplate(File file, String templateFileName, Map map, boolean isNewGenerate)throws Exception{
+        if(file.exists()) {
+            if (isNewGenerate) {
+                logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件更新,重新生成!").toString());
                 generateFileByTemplate(file, templateFileName, map);
+            }else{
+                logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 已经生成,并且不需要更新!").toString());
             }
-        }catch (Exception e){
-            e.printStackTrace();
+        }else{
+            logger.info(new StringBuilder("【").append(file.getName()).append("】").append(" 文件不存在,生成!").toString());
+            generateFileByTemplate(file, templateFileName, map);
         }
     }
 

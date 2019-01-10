@@ -28,8 +28,7 @@ public class ProjectDataSourceController extends BaseController {
         //设置hierachyDate
         ProjectDataSource projectDataSource2 = projectDataSourceService.findOne(projectDataSource.getId());
         Project project = projectDataSource2.getProject();
-        project.setHierachyDate(new Date());
-        projectService.update(project);
+        projectService.setUpdateDate(project.getId(),new Date());
 
         projectDataSourceService.deleteById(projectDataSource.getId());
         return projectDataSource;

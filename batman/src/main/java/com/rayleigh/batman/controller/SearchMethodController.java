@@ -3,6 +3,7 @@ package com.rayleigh.batman.controller;
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.EntityService;
 import com.rayleigh.batman.service.FieldService;
+import com.rayleigh.batman.service.ModuleService;
 import com.rayleigh.batman.service.SearchMethodService;
 import com.rayleigh.batman.uiModel.SearchConditionResult;
 import com.rayleigh.core.controller.BaseController;
@@ -28,6 +29,8 @@ public class SearchMethodController extends BaseController {
     private EntityService entityService;
     @Autowired
     private FieldService fieldService;
+    @Autowired
+    private ModuleService moduleService;
 
 
     @PostMapping("/doAdd")
@@ -69,8 +72,7 @@ public class SearchMethodController extends BaseController {
             SearchMethod searchMethod1 = (SearchMethod) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
             Entities entities =searchMethod1.getEntities();
-            entities.setHierachyDate(new Date());
-            entityService.update(entities);
+            moduleService.setUpdateDate(entityService.findOne(entities.getId()).getModule().getId(),new Date());
             //BaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
             return getSuccessResult("添加成功!");
         } else {
@@ -84,9 +86,7 @@ public class SearchMethodController extends BaseController {
         try {
             SearchMethod searchMethod = searchMethodService.findOne(id);
             Entities entities = searchMethod.getEntities();
-            entities.setHierachyDate(new Date());
-            entityService.update(entities);
-
+            moduleService.setUpdateDate(entities.getModule().getId(),new Date());
             searchMethodService.delete(id);
             return getSuccessResult("success!");
         } catch (Exception e) {
@@ -247,7 +247,7 @@ public class SearchMethodController extends BaseController {
             SearchMethod searchMethod1 = (SearchMethod) BatmanBaseModelUtil.saveOrUpdateBaseModelObjWithRelationPreProcess(searchMethod);
             searchMethodService.save(searchMethod1);
             Entities entities = searchMethod1.getEntities();
-            entities.setHierachyDate(new Date());
+            moduleService.setUpdateDate(entities.getModule().getId(),new Date());
             entityService.update(entities);
             //BatmanBaseModelUtil.preventMutualRef(searchMethod1, new ArrayList());
             return getSuccessResult("更新成功!");
