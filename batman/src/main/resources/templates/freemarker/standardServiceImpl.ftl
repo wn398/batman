@@ -19,6 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
 import ${project.packageName}.base.service.${entity.name}Service;
 import ${project.packageName}.base.util.${entity.name}Util;
 <#--导入相关联service-->
