@@ -3,10 +3,12 @@ package com.rayleigh.batman.service;
 import com.rayleigh.batman.model.Project;
 import com.rayleigh.batman.repository.ModuleRepository;
 import com.rayleigh.batman.repository.ProjectRepository;
+import com.rayleigh.batman.uiModel.ProjectListModel;
 import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -95,6 +97,16 @@ public class ProjectServiceImpl implements ProjectService {
                 return cb.equal(root.get("id"),id);
             }
         }, Collections.singletonMap("updateDate",date));
+    }
+
+    @Override
+    public Page<ProjectListModel> getCodeGeneraterProjectListModel(String userId, Pageable pageable) {
+        return projectRepository.getCodeGeneraterProjectListModel(userId,pageable);
+    }
+
+    @Override
+    public List<ProjectListModel> getCodeGeneraterProjectListModel(String userId) {
+        return projectRepository.getCodeGeneraterProjectListModel(userId);
     }
 
 }

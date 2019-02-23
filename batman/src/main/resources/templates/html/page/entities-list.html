@@ -27,7 +27,8 @@
                                 <th>所属模块</th>
                                 <th>表关联</th>
                                 <th>字段关联</th>
-                                <th>方法个数</th>
+                                <th>配置方法数</th>
+                                <th>SQL方法数</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
                                 <th>版本号</th>
@@ -42,6 +43,7 @@
                                     <td th:text="${entity.tableNum}"></td>
                                     <td th:text="${entity.fieldNum}"></td>
                                     <td th:text="${entity.methodNum}"></td>
+                                    <td th:text="${entity.methodNum2}"></td>
                                     <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                                     <td th:text="${#dates.format(entity.hierachyDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                                     <td th:text="${entity.version}"></td>
@@ -49,7 +51,8 @@
                                         <a class="btn btn-success btn-xs" th:onclick="showUpdate([[${entity.id}]],this,[[${project.id}]])">更新</a>
                                         <a class="btn btn-danger btn-xs" th:onclick="deleteById([[${entity.id}]],this,[[${project.id}]])">删除</a>
                                         <a class="btn btn-info btn-xs" th:onclick="showAddRelation([[${entity.id}]],this,[[${entity.modelId}]],[[${project.id}]])">关联</a>
-                                        <a class="btn btn-info btn-xs" th:onclick="showMethodList([[${entity.id}]])">方法服务</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="showMethodList([[${entity.id}]])">配置方法</a>
+                                        <a class="btn btn-info btn-xs" th:onclick="showSqlMethodList([[${entity.id}]])">SQL方法</a>
                                     </td>
 
                                 </tr>

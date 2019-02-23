@@ -72,6 +72,9 @@ public class Entities extends BatmanBaseModel {
 
     @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REMOVE,CascadeType.MERGE},mappedBy = "entities")
     private List<SearchMethod> methods;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.REMOVE,CascadeType.MERGE},mappedBy = "entities")
+    private List<SqlMethod> sqlMethods;
     /**
      * 双向多对多
      */
@@ -245,5 +248,13 @@ public class Entities extends BatmanBaseModel {
 
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
+    }
+
+    public List<SqlMethod> getSqlMethods() {
+        return sqlMethods;
+    }
+
+    public void setSqlMethods(List<SqlMethod> sqlMethods) {
+        this.sqlMethods = sqlMethods;
     }
 }

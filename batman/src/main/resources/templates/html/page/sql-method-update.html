@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="method" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title" style="display:inline;">更新SQL服务方法信息</h3>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <input type="hidden" th:value="${entity.id}" name="entities[id]">
+                <input type="hidden" th:value="${method.id}" name="id">
+                <input type="hidden" th:value="${method.version}" name="version">
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">方法名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="name" placeholder="字母数字" th:value="${method.name}">
+                            </td>
+                            <td>
+                                <label class="control-label">方法描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" placeholder="文字" th:value="${method.description}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否服务化</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isRestful">
+                                    <option th:value="true" th:text="是"  th:if="${method.isRestful == true}" th:selected="selected"></option>
+                                    <option th:value="false" th:text="否" th:if="${method.isRestful == false}" th:selected="selected"></option>
+
+                                    <option th:value="true" th:text="是"  th:unless="${method.isRestful == true}" ></option>
+                                    <option th:value="false" th:text="否" th:unless="${method.isRestful == false}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">方法路径</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="visitPath" placeholder="路径/开头" th:value="${method.visitPath}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">列表结果是否分页</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isPage">
+                                    <option th:value="false" th:text="否" th:if="${method.isPage == true}" th:selected="selected"></option>
+                                    <option th:value="true" th:text="是" th:if="${method.isPage == false}" th:selected="selected"></option>
+
+                                    <option th:value="false" th:text="否" th:unless="${method.isPage == false}"></option>
+                                    <option th:value="true" th:text="是" th:unless="${method.isPage == true}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">数据源</label>
+                            </td>
+                            <td>
+                                <input th:type="text" th:name="dataSource" th:value="${method.dataSource}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">数据库类型</label>
+                            </td>
+                            <td>
+                                <select th:name="databaseType" th:class="control-label">
+                                    <option th:value="MySQL" th:if="${method.databaseType eq 'MySQL'}" th:selected="selected">MySQL</option>
+                                    <option th:value="PostgreSql"  th:if="${method.databaseType eq 'PostgreSql'}" th:selected="selected">PostgreSql</option>
+
+                                    <option th:value="MySQL" th:unless="${method.databaseType eq 'MySQL'}" >MySQL</option>
+                                    <option th:value="PostgreSql"  th:unless="${method.databaseType eq 'PostgreSql'}" >PostgreSql</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </section>
+
+            <section class="panel">
+                <header class="panel-heading">
+                    <div class="input-group m-bot15">
+                        <span class="input-group-addon">SQL</span>
+                        <input type="text" name="sqlContext"  class="form-control" th:value="${method.sqlContext}">
+                        <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">分析</button>
+                                              </span>
+                        <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button">检查</button>
+                                              </span>
+                    </div>
+                </header>
+                <div class="panel-body">
+                    <div class="col-lg-6">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div>
+                                    <label class="control-label">结果包装类名</label> <input type="text" class="form-control" th:value="resultClassName" th:name="resultClassName" placeholder="首字母大写">
+                                </div>
+                            </header>
+                            <div class="panel-body">
+                                <table class="table  table-hover general-table objTable">
+                                    <thead>
+                                    <tr>
+                                        <th >名称</th>
+                                        <th >描述</th>
+                                        <th >类型</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="result:${method.resultList}">
+                                        <td ><input type="text" name="resultList[][name]" class="form-control" th:value="${result.name}"></td>
+                                        <td ><input type="text" name="resultList[][description]" class="form-control" th:value="${result.description}"></td>
+                                        <td>
+                                        <select  name="resultList[][dataType]" class="form-control">
+                                            <option></option>
+                                            <option th:if="${result.dataType eq 'String'}" th:selected="selected">String</option>
+                                            <option th:if="${result.dataType eq 'Integer'}" th:selected="selected">Integer</option>
+                                            <option th:if="${result.dataType eq 'Long'}" th:selected="selected">Long</option>
+                                            <option th:if="${result.dataType eq 'Double'}" th:selected="selected">Double</option>
+                                            <option th:if="${result.dataType eq 'Date'}" th:selected="selected">Date</option>
+                                            <option th:if="${result.dataType eq 'Boolean'}" th:selected="selected">Boolean</option>
+
+                                            <option th:unless="${result.dataType eq 'String'}" >String</option>
+                                            <option th:unless="${result.dataType eq 'Integer'}" >Integer</option>
+                                            <option th:unless="${result.dataType eq 'Long'}" >Long</option>
+                                            <option th:unless="${result.dataType eq 'Double'}" >Double</option>
+                                            <option th:unless="${result.dataType eq 'Date'}" >Date</option>
+                                            <option th:unless="${result.dataType eq 'Boolean'}">Boolean</option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-lg-6">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div>
+                                    <label class="control-label" >参数包装</label> <input type="text" class="form-control" th:value="${method.paramClassName}" th:name="paramClassName" placeholder="首字母大写">
+                                </div>
+                            </header>
+                            <div class="panel-body">
+                                <table class="table  table-hover general-table obj2Table">
+                                    <thead>
+                                    <tr>
+                                        <th>名称</th>
+                                        <th>描述</th>
+                                        <th>类型</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="param2:${method.paramList}">
+                                        <td ><input type="text" name="paramList[][name]" class="form-control" th:value="${param2.name}"></td>
+                                        <td ><input type="text" name="paramList[][description]" class="form-control" th:value="${param2.description}"></td>
+                                        <td>
+                                        <select  name="paramList[][dataType]" class="form-control">
+                                            <option></option>
+                                            <option th:if="${param2.dataType eq 'String'}" th:selected="selected">String</option>
+                                            <option th:if="${param2.dataType eq 'Integer'}" th:selected="selected">Integer</option>
+                                            <option th:if="${param2.dataType eq 'Long'}" th:selected="selected">Long</option>
+                                            <option th:if="${param2.dataType eq 'Double'}" th:selected="selected">Double</option>
+                                            <option th:if="${param2.dataType eq 'Date'}" th:selected="selected">Date</option>
+                                            <option th:if="${param2.dataType eq 'Boolean'}" th:selected="selected">Boolean</option>
+                                            <option th:if="${param2.dataType eq 'List-String'}" th:selected="selected">List-String</option>
+                                            <option th:if="${param2.dataType eq 'List-Integer'}" th:selected="selected">List-Integer</option>
+                                            <option th:if="${param2.dataType eq 'List-Long'}" th:selected="selected">List-Long</option>
+                                            <option th:if="${param2.dataType eq 'List-Double'}" th:selected="selected">List-Double</option>
+                                            <option th:if="${param2.dataType eq 'List-Date'}" th:selected="selected">List-Date</option>
+
+                                            <option th:unless="${param2.dataType eq 'String'}" >String</option>
+                                            <option th:unless="${param2.dataType eq 'Integer'}" >Integer</option>
+                                            <option th:unless="${param2.dataType eq 'Long'}" >Long</option>
+                                            <option th:unless="${param2.dataType eq 'Double'}" >Double</option>
+                                            <option th:unless="${param2.dataType eq 'Date'}" >Date</option>
+                                            <option th:unless="${param2.dataType eq 'Boolean'}" >Boolean</option>
+                                            <option th:unless="${param2.dataType eq 'List-String'}">List-String</option>
+                                            <option th:unless="${param2.dataType eq 'List-Integer'}" >List-Integer</option>
+                                            <option th:unless="${param2.dataType eq 'List-Long'}" >List-Long</option>
+                                            <option th:unless="${param2.dataType eq 'List-Double'}" >List-Double</option>
+                                            <option th:unless="${param2.dataType eq 'List-Date'}" >List-Date</option>
+                                        </select>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+<script type="text/javascript" th:src="@{/pageJs/sql-method-update.js}"></script>
+</body>
+</html>

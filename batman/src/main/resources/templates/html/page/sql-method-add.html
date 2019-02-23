@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/head"></head>
+
+<body style="background: #E3E4E8">
+
+<form class="panel-body" role="form" id="method" onsubmit="return false;"><!--class="form-horizontal"style="background: #E3E4E8"-->
+    <div class="wrapper">
+        <div class="row">
+            <section class="panel panel-info">
+                <header class="panel-heading">
+                    <h3 class="panel-title" style="display:inline;">新增SQL服务方法信息</h3>
+                    <span class="tools pull-right">
+                            <a href="javascript:;" class="fa fa-chevron-down"></a>
+                    </span>
+                </header>
+                <input type="hidden" th:value="${entity.Id}" name="entities[id]">
+                <div class="panel-body">
+                    <table class="table  table-hover general-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <label class="control-label">方法名称</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="name" placeholder="字母数字">
+                            </td>
+                            <td>
+                                <label class="control-label">方法描述</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="description" placeholder="文字">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">是否服务化</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isRestful">
+                                    <option th:value="true" th:text="是"></option>
+                                    <option th:value="false" th:text="否"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">方法路径</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" th:name="visitPath" placeholder="路径/开头">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">列表结果是否分页</label>
+                            </td>
+                            <td>
+                                <select class="form-control" th:name="isPage">
+                                    <option th:value="false" th:text="否"></option>
+                                    <option th:value="true" th:text="是"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <label class="control-label">数据源</label>
+                            </td>
+                            <td>
+                                <input th:type="text" th:name="dataSource">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="control-label">数据库类型</label>
+                            </td>
+                            <td>
+                                <select th:name="databaseType" th:class="control-label">
+                                    <option th:value="MySQL">MySQL</option>
+                                    <option th:value="PostgreSql">PostgreSql</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </section>
+
+            <section class="panel">
+                <header class="panel-heading">
+                    <div class="input-group m-bot15">
+                        <span class="input-group-addon">SQL</span>
+                        <input type="text" name="sqlContext"  class="form-control">
+                        <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" th:onclick="analise(this)">分析</button>
+                                              </span>
+                        <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" th:onclick="check(this)">检查</button>
+                                              </span>
+                    </div>
+                </header>
+                <div class="panel-body">
+                    <div class="col-lg-6">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div>
+                                    <label class="control-label">方法结果配置</label>
+                                    <input th:name="IsResultEntity" hidden="true" >
+                                    <input type="text" class="form-control" th:name="resultClassName" placeholder="首字母大写">
+                                </div>
+                            </header>
+                            <div class="panel-body">
+                                <table class="table  table-hover general-table objTable">
+                                    <thead>
+                                    <tr>
+                                        <th >名称</th>
+                                        <th >描述</th>
+                                        <th >类型</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td ><input type="text" name="resultList[][name]" class="form-control"></td>
+                                            <td ><input type="text" name="resultList[][description]" class="form-control"></td>
+                                            <td>
+                                                <select  name="resultList[][dataType]" class="form-control">
+                                                    <option></option>
+                                                    <option>String</option>
+                                                    <option>Integer</option>
+                                                    <option>Long</option>
+                                                    <option>Double</option>
+                                                    <option>Date</option>
+                                                    <option>Boolean</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-lg-6">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div>
+                                    <label class="control-label" >方法参数配置</label> <input type="text" class="form-control" th:name="paramClassName" placeholder="首字母大写">
+                                </div>
+                            </header>
+                            <div class="panel-body">
+                                <table class="table  table-hover general-table obj2Table">
+                                    <thead>
+                                    <tr>
+                                        <th>名称</th>
+                                        <th>描述</th>
+                                        <th>类型</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td ><input type="text" name="paramList[][name]" class="form-control"></td>
+                                            <td ><input type="text" name="paramList[][description]" class="form-control"></td>
+                                            <td>
+                                                <select  name="paramList[][dataType]" class="form-control">
+                                                    <option></option>
+                                                    <option>String</option>
+                                                    <option>Integer</option>
+                                                    <option>Long</option>
+                                                    <option>Double</option>
+                                                    <option>Date</option>
+                                                    <option>Boolean</option>
+                                                    <option>List-String</option>
+                                                    <option>List-Integer</option>
+                                                    <option>List-Long</option>
+                                                    <option>List-Double</option>
+                                                    <option>List-Date</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+
+<!--</section>-->
+
+<script th:replace="fragment/script"></script>
+<script type="text/javascript" th:src="@{/pageJs/sql-method-add.js}"></script>
+</body>
+</html>

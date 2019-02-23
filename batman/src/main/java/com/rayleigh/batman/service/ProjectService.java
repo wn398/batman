@@ -1,8 +1,10 @@
 package com.rayleigh.batman.service;
 
 import com.rayleigh.batman.model.Project;
+import com.rayleigh.batman.uiModel.ProjectListModel;
 import com.rayleigh.core.service.BaseService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -30,4 +32,8 @@ public interface ProjectService {
     List<Project> findByUserId(String userId);
 
     void setUpdateDate(String id,Date date);
+
+    Page<ProjectListModel> getCodeGeneraterProjectListModel(String userId, Pageable pageable);
+
+    List<ProjectListModel> getCodeGeneraterProjectListModel(String userId);
 }

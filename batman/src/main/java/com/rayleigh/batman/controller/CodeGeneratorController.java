@@ -1,12 +1,17 @@
 package com.rayleigh.batman.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.rayleigh.batman.model.*;
 import com.rayleigh.batman.service.*;
 import com.rayleigh.batman.uiModel.ProjectListModel;
+import com.rayleigh.batman.uiModel.ProjectListModelImpl;
 import com.rayleigh.batman.util.*;
 import com.rayleigh.core.controller.BaseController;
+import com.rayleigh.core.model.ResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,42 +43,8 @@ public class CodeGeneratorController extends BaseController{
     @GetMapping("/goProjectCodeGenerator")
     public String goCodeGenerator(HttpServletRequest request, Model model2){
         String userId = (String)request.getSession().getAttribute("userId");
-        String sql = "SELECT\n" +
-                "  project.id as id,\n" +
-                "\tproject. NAME AS NAME,\n" +
-                "\tproject.description as description,\n"+
-                "\tproject.package_name as packageName,"+
-                "\tCOUNT (DISTINCT(\"module\". ID)) AS moduleNum,\n" +
-                "\tCOUNT (DISTINCT(entity. ID)) AS entityNum,\n" +
-                "\tproject.create_date AS createDate,\n" +
-                "\tproject.hierachy_date as hierachyDate,\n" +
-                "\tproject.\"version\" as version\n" +
-                "FROM\n" +
-                "\tbatman_project project\n" +
-                "LEFT JOIN batman_module MODULE ON \"module\".project_id = project.\"id\"\n" +
-                "LEFT JOIN batman_entity entity ON entity.project_id = project. ID\n" +
-                "WHERE\n" +
-                "\tproject.sysuser_id = '"+userId+"'\n" +
-                "GROUP BY\n" +
-                "\tproject. ID";
-        logger.info(new StringBuilder("执行本地sql：").append(sql).toString());
-        List<Map<String,Object>> list = jdbcTemplate.queryForList(sql);
-        List<ProjectListModel> resultList = new ArrayList<>();
-        list.stream().forEach(it->{
-            ProjectListModel model = new ProjectListModel();
-            model.setId((String)it.get("id"));
-            model.setDescription((String)it.get("description"));
-            model.setPackageName((String)it.get("packageName"));
-            model.setCreateDate((Date)it.get("createDate"));
-            model.setHierachyDate((Date)it.get("hierachyDate"));
-            model.setEntityNum((Long)it.get("entityNum"));
-            model.setModuleNum((Long)it.get("moduleNum"));
-            model.setVersion((Long)it.get("version"));
-            model.setName((String)it.get("name"));
-            resultList.add(model);
-        });
-        model2.addAttribute("projects",resultList);
-
+        List<ProjectListModel> list =projectService.getCodeGeneraterProjectListModel(userId);
+        model2.addAttribute("projects",list);
         return "/page/project-list";
     }
 

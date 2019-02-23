@@ -221,6 +221,7 @@ public class ProjectController extends BaseController{
                     "COUNT (DISTINCT(relationship. ID)) AS tableNum,\n" +
                     "COUNT (distinct(fieldRelationShip. ID)) AS fieldNum,\n" +
                     "COUNT (DISTINCT(METHOD . ID)) AS methodNum,\n" +
+                    "COUNT (DISTINCT(METHOD2 . ID)) AS methodNum2,\n" +
                     "entity.create_date AS createDate,\n" +
                     "entity.hierachy_date AS hierachyDate,\n" +
                     "entity. VERSION AS VERSION\n" +
@@ -230,6 +231,7 @@ public class ProjectController extends BaseController{
                     "LEFT JOIN batman_field_relationship fieldRelationShip ON entity. ID = fieldRelationShip.main_entity_id\n" +
                     "LEFT JOIN batman_module module ON entity.module_id = MODULE . ID\n" +
                     "LEFT JOIN batman_search_method METHOD ON entity. ID = METHOD .entity_id\n" +
+                    "LEFt JOIN batman_sql_method method2 on entity.id = method2.entity_id "+
                     "WHERE\n" +
                     "\tentity.project_id = '"+id+"'\n" +
                     "GROUP BY\n" +
@@ -248,6 +250,7 @@ public class ProjectController extends BaseController{
                 model2.setTableNum((Long)it.get("tableNum"));
                 model2.setFieldNum((Long)it.get("fieldNum"));
                 model2.setMethodNum((Long)it.get("methodNum"));
+                model2.setMethodNum2((Long)it.get("methodNum2"));
                 model2.setCreateDate((Date)it.get("createDate"));
                 model2.setHierachyDate((Date)it.get("hierachyDate"));
                 model2.setVersion((Long)it.get("version"));

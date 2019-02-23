@@ -23,8 +23,10 @@ public class EntityListModel {
     private Long tableNum;
     @ApiModelProperty("字段关联个数")
     private Long fieldNum;
-    @ApiModelProperty("方法个数")
+    @ApiModelProperty("方法1个数")
     private Long methodNum;
+    @ApiModelProperty("sql方法个数")
+    private Long methodNum2;
     @ApiModelProperty("创建时间")
     private Date createDate;
     @ApiModelProperty("继承更新时间")
@@ -119,5 +121,13 @@ public class EntityListModel {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public Long getMethodNum2() {
+        return methodNum2;
+    }
+
+    public void setMethodNum2(Long methodNum2) {
+        this.methodNum2 = methodNum2;
     }
 }

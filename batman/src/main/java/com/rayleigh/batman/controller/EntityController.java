@@ -16,6 +16,7 @@ import com.rayleigh.core.model.ResultWrapper;
 import com.rayleigh.batman.util.BatmanBaseModelUtil;
 import com.rayleigh.core.util.StringUtil;
 import io.jsonwebtoken.lang.Collections;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.undertow.util.FileUtils;
 import org.hibernate.Session;
@@ -206,11 +207,20 @@ public class EntityController extends BaseController{
     /**
      * 去一个实体类的方法列表页面
      */
+    @ApiOperation("去配置方法页面")
     @RequestMapping("/showEntityMethod/{id}")
     public String showEntityMethod(Model model,@PathVariable("id") String entityId){
         Entities entities = entityService.findOne(entityId);
         model.addAttribute("entity",entities);
         return "/page/method-list";
+    }
+
+    @ApiOperation("去SQL方法页面")
+    @RequestMapping("/showEntitySqlMethod/{id}")
+    public String showSqlEntityMethod(Model model,@PathVariable("id") String entityId){
+        Entities entities = entityService.findOne(entityId);
+        model.addAttribute("entity",entities);
+        return "/page/sql-method-list";
     }
 
     @PostMapping("/getEntityMethodData/{id}")
@@ -233,6 +243,19 @@ public class EntityController extends BaseController{
         return getSuccessResult(methods);
     }
 
+
+    @PostMapping("/getEntitySqlMethodData/{id}")
+    @ResponseBody
+    public ResultWrapper showEntitySqlMethodData(@PathVariable("id") String entityId){
+        Entities entities = entityService.findOne(entityId);
+        List<SqlMethod> methods = entities.getSqlMethods();
+        for(SqlMethod method:methods){
+            method.setEntities(null);
+        }
+        methods.size();
+        return getSuccessResult(methods);
+    }
+
     /**
      * 方法增加页面
      */
@@ -241,6 +264,16 @@ public class EntityController extends BaseController{
         Entities entities = entityService.findOne(entityId);
         model.addAttribute("entity",entities);
         return "/page/method-add";
+    }
+
+    /**
+     * 方法增加页面
+     */
+    @RequestMapping("/goAddSqlMethod/{id}")
+    public String goAddSqlMethod(Model model,@PathVariable("id") String entityId){
+        Entities entities = entityService.findOne(entityId);
+        model.addAttribute("entity",entities);
+        return "/page/sql-method-add";
     }
     //防止循环检测
     private Entities preventCirculation(Entities entities){

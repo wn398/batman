@@ -13,7 +13,7 @@
         <div class="col-sm-12">
             <section class="panel">
                 <header class="panel-heading">
-                    <label th:text="|${entity.description}(${entity.name}) 服务方法列表|"></label>
+                    <label th:text="|${entity.description}(${entity.name}) SQL服务方法列表|"></label>
                     <span class="tools pull-right">
                 <a href="javascript:;" class="fa fa-chevron-down"></a>
                 <!--<a href="javascript:;" class="fa fa-times"></a>-->
@@ -22,7 +22,7 @@
                 <div class="panel-body">
                     <div class="adv-table">
                         <input type="hidden" id="entityId" th:value="${entity.id}">
-                        <div><button type="button" class="btn btn-success" th:onclick="showAddMethod('[(${entity.id})]')">&nbsp;&nbsp;&nbsp;新增方法服务&nbsp;&nbsp;&nbsp;</button>
+                        <div><button type="button" class="btn btn-success" th:onclick="showAddSqlMethod('[(${entity.id})]')">&nbsp;&nbsp;&nbsp;新增SQL方法服务&nbsp;&nbsp;&nbsp;</button>
                         </div>
                         <table class="display table table-bordered table-striped" id="methodTable" width="100%">
                             <thead>
@@ -30,8 +30,9 @@
                                 <th>方法名称</th>
                                 <th>方法描述</th>
                                 <th>是否接口</th>
-                                <th>是否动态查询</th>
-                                <th>返回对象</th>
+                                <th>参数类名</th>
+                                <th>结果类名</th>
+                                <th>是否分页</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
                                 <th>版本号</th>
@@ -66,6 +67,6 @@
 
 <script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/jquery.dataTables.js}"></script>
 <script type="text/javascript" language="javascript" th:src="@{/js/DataTables-1.10.15/media/js/dataTables.bootstrap.js}"></script>
-<script type="text/javascript" th:src="@{/pageJs/method-list.js}"></script>
+<script type="text/javascript" th:src="@{/pageJs/sql-method-list.js}"></script>
 </body>
 </html>

@@ -293,12 +293,30 @@ function saveRelationShips(index,url,data,projectId) {
 function showMethodList(entityId) {
     layer.open({
         type: 2,
-        title: '服务方法列表',
+        title: '配置服务方法列表',
         shade: 0.8,
         maxmin:true,
         area: ['100%', '100%'],
         shadeClose: false, //点击遮罩关闭
         content: getRootPath()+'/entitiesCtl/showEntityMethod/'+entityId//,
+        // btn: ['关闭'], //只是为了演示
+        // yes: function(index,layero){
+        //     layer.close(index);
+        //
+        // }
+    });
+}
+
+//到sql服务方法列表
+function showSqlMethodList(entityId) {
+    layer.open({
+        type: 2,
+        title: 'Sql服务方法列表',
+        shade: 0.8,
+        maxmin:true,
+        area: ['100%', '100%'],
+        shadeClose: false, //点击遮罩关闭
+        content: getRootPath()+'/entitiesCtl/showEntitySqlMethod/'+entityId//,
         // btn: ['关闭'], //只是为了演示
         // yes: function(index,layero){
         //     layer.close(index);
