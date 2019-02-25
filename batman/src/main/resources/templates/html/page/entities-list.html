@@ -45,7 +45,7 @@
                                     <td th:text="${entity.methodNum}"></td>
                                     <td th:text="${entity.methodNum2}"></td>
                                     <td th:text="${#dates.format(entity.createDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
-                                    <td th:text="${#dates.format(entity.hierachyDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                                    <td th:text="${#dates.format(entity.updateDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                                     <td th:text="${entity.version}"></td>
                                     <td>
                                         <a class="btn btn-success btn-xs" th:onclick="showUpdate([[${entity.id}]],this,[[${project.id}]])">更新</a>

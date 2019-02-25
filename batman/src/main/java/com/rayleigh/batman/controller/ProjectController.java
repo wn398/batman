@@ -223,7 +223,7 @@ public class ProjectController extends BaseController{
                     "COUNT (DISTINCT(METHOD . ID)) AS methodNum,\n" +
                     "COUNT (DISTINCT(METHOD2 . ID)) AS methodNum2,\n" +
                     "entity.create_date AS createDate,\n" +
-                    "entity.hierachy_date AS hierachyDate,\n" +
+                    "entity.update_date AS updateDate,\n" +
                     "entity. VERSION AS VERSION\n" +
                     "FROM\n" +
                     "batman_entity entity\n" +
@@ -252,7 +252,7 @@ public class ProjectController extends BaseController{
                 model2.setMethodNum((Long)it.get("methodNum"));
                 model2.setMethodNum2((Long)it.get("methodNum2"));
                 model2.setCreateDate((Date)it.get("createDate"));
-                model2.setHierachyDate((Date)it.get("hierachyDate"));
+                model2.setUpdateDate((Date)it.get("updateDate"));
                 model2.setVersion((Long)it.get("version"));
                 resultList.add(model2);
             });

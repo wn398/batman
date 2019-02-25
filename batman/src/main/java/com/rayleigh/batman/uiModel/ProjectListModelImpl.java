@@ -21,7 +21,7 @@ public class ProjectListModelImpl  {
     @ApiModelProperty("创建时间")
     private Date createDate;
     @ApiModelProperty("更新时间")
-    private Date hierachyDate;
+    private Date updateDate;
     @ApiModelProperty("版本")
     private Long version;
 
@@ -66,12 +66,12 @@ public class ProjectListModelImpl  {
         this.createDate = createDate;
     }
 
-    public Date getHierachyDate() {
-        return hierachyDate;
+    public Date getUpdateDate() {
+        return updateDate;
     }
 
-    public void setHierachyDate(Date hierachyDate) {
-        this.hierachyDate = hierachyDate;
+    public void setUpdate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     public Long getVersion() {
